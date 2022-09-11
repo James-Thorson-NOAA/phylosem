@@ -1,0 +1,25 @@
+Package: phylosem
+Type: Package
+Title: Phyloenetic structural equation model
+Version: 1.0
+Date: 2022-09-10
+Authors@R: 
+    c(person(given = "James",
+             family = "Thorson",
+             role = c("aut", "cre"),
+             email = "James.Thorson@noaa.gov",
+             comment = c(ORCID = "0000-0001-7415-1010"))
+    )
+Depends:
+    R (>= 4.0.0),
+    TMB,
+    ape
+Remotes: 
+    kaskr/TMB_contrib_R/TMBhelper,
+    kaskr/adcomp/TMB
+LinkingTo:
+    TMB, 
+    RcppEigen
+Description: More about what it does (maybe more than one line)
+License: file LICENSE
+RoxygenNote: 7.2.1
