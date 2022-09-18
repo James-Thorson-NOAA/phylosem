@@ -62,6 +62,7 @@ bool isNA(Type x){
 template<class Type>
 matrix<Type> V_sem( vector<Type> beta_z,
                                  matrix<int> RAM,
+                                 vector<Type> RAMstart,
                                  int n_vars ){
 
   // Define temporary objects
@@ -74,9 +75,20 @@ matrix<Type> V_sem( vector<Type> beta_z,
   Rho_vv.setZero();
   Gamma_vv.setZero();
   I_vv.setIdentity();
-  for(int z=0; z<RAM.rows(); z++){
-    if(RAM(z,0)==1) Rho_vv( RAM(z,1)-1, RAM(z,2)-1 ) = beta_z(RAM(z,3)-1);
-    if(RAM(z,0)==2) Gamma_vv( RAM(z,1)-1, RAM(z,2)-1 ) = beta_z(RAM(z,3)-1); // Cholesky of covariance, so -Inf to Inf;
+  Type tmp;
+  for(int r=0; r<RAM.rows(); r++){
+    // Extract estimated or fixed value
+    if(RAM(r,3)>=1){
+      tmp = beta_z(RAM(r,3)-1);
+    }else{
+      tmp = RAMstart(r);
+    }
+    // Assign to proper matrix
+    if(RAM(r,0)==1){
+      Rho_vv( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+    }else{
+      Gamma_vv( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+    }
   }
   L_vv = I_vv - Rho_vv;
   L_vv = atomic::matinv( L_vv );
@@ -96,6 +108,8 @@ Type objective_function<Type>::operator() ()
   DATA_IMATRIX( edge_ez );
   DATA_VECTOR( length_e );
   DATA_IMATRIX( RAM );
+  DATA_VECTOR( RAMstart );
+  DATA_INTEGER( measurement_error );
   DATA_INTEGER( estimate_theta );
   DATA_INTEGER( estimate_lambda );
   DATA_INTEGER( estimate_kappa );
@@ -139,7 +153,7 @@ Type objective_function<Type>::operator() ()
 
   // Evolutionary inverse-covariance
   matrix<Type> V( n_j, n_j );
-  V = V_sem( beta_z, RAM, n_j );
+  V = V_sem( beta_z, RAM, RAMstart, n_j );
 
   // Distribution of OU evolution -- Root
   // Correlation between i and parent(i) as distance -> INF
@@ -152,6 +166,7 @@ Type objective_function<Type>::operator() ()
     //xtmp_j = x_vj.row(root).array() - xbar_j;
     for(int j=0; j<n_j; j++) xtmp_j(j) = x_vj(vroot,j) - xbar_j(j);
     jnll_v(vroot) = MVNORM(Vtmp)( xtmp_j );
+    // Optionally fix the root at the mean
   }else{
     rho_v(vroot) = NAN;
     var_v(vroot) = NAN;
@@ -187,8 +202,11 @@ Type objective_function<Type>::operator() ()
   // Distribution for data
   for(int i=0; i<n_i; i++){
   for(int j=0; j<n_j; j++){
-    if( !isNA(y_ij(i,j)) ){
-      jnll_ij(i,j) -= dnorm( y_ij(i,j), x_vj(i,j), sigma_j(j), true );
+    // Don't  include likelihood for tips when measurement_error=TRUE
+    if( (measurement_error==1) | (i>=n_tip) ){
+      if( !isNA(y_ij(i,j)) ){
+        jnll_ij(i,j) -= dnorm( y_ij(i,j), x_vj(i,j), sigma_j(j), true );
+      }
     }
   }}
   jnll += jnll_ij.sum();
@@ -201,5 +219,6 @@ Type objective_function<Type>::operator() ()
   REPORT( jnll_v );
   REPORT( jnll_ij );
   REPORT( theta );
+  REPORT( x_vj );
   return jnll;
 }

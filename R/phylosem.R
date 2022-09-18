@@ -5,14 +5,16 @@
 #' @useDynLib phylosem
 #' @export
 phylosem <-
-function( text,
+function( model,
           tree,
+          equations,
           data,
           measurement_error = FALSE,
           estimate_theta = TRUE,
           estimate_lambda = FALSE,
           estimate_kappa = FALSE,
           ... ){
+
 
   # Function that converts SEM model to a RAM, see `?sem` for more context
   build_ram = function( model, vars ){
@@ -50,8 +52,22 @@ function( text,
     return(ram)
   }
 
+  # Errors / warnings
+  #if( estimate_theta==FALSE & fixed_root==TRUE ){
+  #  stop("`fixed_root=TRUE` is only applicable when `estimate_theta=TRUE`")
+  #}
+  if( measurement_error==TRUE & estimate_lambda==TRUE ){
+    stop("measurement errors using `measurement_error=TRUE` are confounded with `estimate_lambda=TRUE`")
+  }
+
   #
-  SEM_model = sem::specifyModel( text=text, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) )
+  if(!missing(model)){
+    SEM_model = sem::specifyModel( text=model, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) )
+  }else if(!missing(equations)){
+    SEM_model = sem::specifyEquations( text=equations, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) )
+  }else{
+    stop("Must supply either `model` or `equations`")
+  }
   RAM = build_ram( SEM_model, colnames(data) )
 
   #
@@ -67,6 +83,8 @@ function( text,
                     "edge_ez" = edge_ez - 1,
                     "length_e" = length_e,
                     "RAM" = as.matrix(RAM[,1:4]),
+                    "RAMstart" = as.numeric(RAM[,5]),
+                    "measurement_error" = measurement_error,
                     "estimate_theta" = estimate_theta,
                     "estimate_lambda" = estimate_lambda,
                     "estimate_kappa" = estimate_kappa,
@@ -84,18 +102,29 @@ function( text,
                           "xbar_j" = rep(0,ncol(data)) )
   # Build map
   map_list = list()
+  # Start off map_list$x_vj, which has multiple constraints
+  map_list$x_vj = array( 1:prod(dim(parameters_list$x_vj)), dim=dim(parameters_list$x_vj) )
+  map_list$x_vj[data_list$n_tip+1,] = ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data))
 
   # Build random
   random = c("x_vj")
 
   # Settings
   if( measurement_error==FALSE ){
-    map_list$lnsigma_j = factor(rep( NA, length(parameters_list$lnsigma_j) ))
+    # Turn off SD of measurement error
     parameters_list$lnsigma_j = rep( log(0.001), length(parameters_list$lnsigma_j) )
+    map_list$lnsigma_j = factor(rep( NA, length(parameters_list$lnsigma_j) ))
+    # Fix random-effects for tips at their observed values
+    parameters_list$x_vj[1:n_tip,] = ifelse( is.na(data_list$y_ij), parameters_list$x_vj[1:n_tip,], data_list$y_ij )
+    map_list$x_vj[1:n_tip,] = ifelse( is.na(data_list$y_ij), map_list$x_vj[1:n_tip,], NA )
   }
   if( estimate_theta==FALSE ){
     map_list$lntheta = factor(NA)
+  }
+  if( estimate_theta==FALSE ){
     map_list$xbar_j = factor(rep( NA, length(parameters_list$xbar_j) ))
+  }else{
+    map_list$xbar_j = factor( ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data)) )
   }
   if( estimate_lambda==FALSE ){
     map_list$logitlambda = factor(NA)
@@ -103,6 +132,9 @@ function( text,
   if( estimate_kappa==FALSE ){
     map_list$lnkappa = factor(NA)
   }
+
+  # wrap up map_list$x_vj
+  map_list$x_vj = factor(map_list$x_vj)
 
   # Compile TMB
   if( TRUE ){
@@ -113,18 +145,64 @@ function( text,
   }
 
   # Build TMB object
-  Obj = TMB::MakeADFun( data = data_list,
+  obj = TMB::MakeADFun( data = data_list,
                         parameters = parameters_list,
                         map = map_list,
                         random = random,
                         DLL = "phylosem" )
-  ThorsonUtilities::list_parameters(Obj)
-  Obj$env$beSilent()       # if(!is.null(Random))
+  ThorsonUtilities::list_parameters(obj)
+  obj$env$beSilent()       # if(!is.null(Random))
+  results = list( data=data, SEM_model=SEM_model, obj=obj, call=match.call(),
+                  map_list=map_list, parameters_list=parameters_list, data_list=data_list )
+  #return(results)
 
   #
-  Opt = TMBhelper::fit_tmb( Obj, ... )
-  Report = Obj$report()
-  ParHat = Obj$env$parList()
+  results$opt = TMBhelper::fit_tmb( obj, ... )
+  results$report = obj$report()
+  results$parhat = obj$env$parList()
+  class(results) = "phylosem"
+  return( results )
+}
 
-  return( list(data=data, SEM_model=SEM_model, Opt=Opt, Report=Report, ParHat=ParHat) )
+#' Print parameter estimates and standard errors.
+#'
+#' @title Print parameter estimates
+#' @param x Output from \code{\link{phylosem}}
+#' @param ... Not used
+#' @return NULL
+#' @method print phylosem
+#' @export
+print.phylosem <- function(x, ...)
+{
+  cat("phylosem(.) result\n")
+  if( "opt" %in% names(x) ){
+    print( x$opt )
+  }else{
+    cat("`parameter_estimates` not available in `phylosem`\n")
+  }
+  invisible(x$opt)
+}
+
+#' Extract path coefficients.
+#'
+#' @title Extract path coefficients
+#' @param x Output from \code{\link{phylosem}}
+#' @param standardize Whether to standardize regression coefficients
+#' @param ... Not used
+#' @return NULL
+#' @method coef phylosem
+#' @export
+coef.phylosem = function( x, standardized=FALSE ){
+  beta_z = x$opt$par[names(x$opt$par)=="beta_z"]
+  RAM = x$obj$env$data$RAM
+  if(nrow(RAM) != nrow(x$SEM_model)) stop("Check assumptions")
+  SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
+  SEM_params = ifelse( is.na(SEM_params), as.numeric(x$SEM_model[,3]), SEM_params )
+  if( standardized==TRUE ){
+    for( i in which(RAM[,1]==1) ){
+      beta_z[i] = beta_z[i] * abs(beta_z[which( RAM[,'from']==RAM[i,'from'] & RAM[,'to']==RAM[i,'from'] )])
+      beta_z[i] = beta_z[i] / abs(beta_z[which( RAM[,'from']==RAM[i,'to'] & RAM[,'to']==RAM[i,'to'] )])
+    }
+  }
+  return( data.frame(Path=x$SEM_model[,1], Parameter=x$SEM_model[,2], Estimate=SEM_params ) )
 }
