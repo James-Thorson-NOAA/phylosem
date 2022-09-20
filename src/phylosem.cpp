@@ -109,12 +109,12 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR( length_e );
   DATA_IMATRIX( RAM );
   DATA_VECTOR( RAMstart );
-  DATA_INTEGER( measurement_error );
   DATA_INTEGER( estimate_theta );
   DATA_INTEGER( estimate_lambda );
   DATA_INTEGER( estimate_kappa );
   DATA_VECTOR( height_v );
   DATA_MATRIX( y_ij );
+  DATA_IVECTOR( familycode_j );
 
   // Parameters
   PARAMETER_VECTOR( beta_z );
@@ -202,10 +202,19 @@ Type objective_function<Type>::operator() ()
   // Distribution for data
   for(int i=0; i<n_i; i++){
   for(int j=0; j<n_j; j++){
-    // Don't  include likelihood for tips when measurement_error=TRUE
-    if( (measurement_error==1) | (i>=n_tip) ){
-      if( !isNA(y_ij(i,j)) ){
+    if( !isNA(y_ij(i,j)) ){
+      // familycode = 0 :  don't include likelihood
+      // familycode = 1 :  normal
+      if( familycode_j(j)==1 ){
         jnll_ij(i,j) -= dnorm( y_ij(i,j), x_vj(i,j), sigma_j(j), true );
+      }
+      // familycode = 2 :  binomial
+      if( familycode_j(j)==2 ){
+        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), invlogit(x_vj(i,j)), true );
+      }
+      // familycode = 3 :  Poisson
+      if( familycode_j(j)==3 ){
+        jnll_ij(i,j) -= dpois( y_ij(i,j), exp(x_vj(i,j)), true );
       }
     }
   }}

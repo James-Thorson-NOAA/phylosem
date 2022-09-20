@@ -9,7 +9,8 @@
 #' @param data data-frame providing variables being modeled.  Missing values are inputted
 #'        as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
 #'        then it still must be inputted as a column of \code{data} with entirely NA values.
-#' @param measurement_error Boolean indicating whether to estimate measurement errors
+#' @param family Character-vector listing the distribution used for each column of \code{data}, where
+#'        each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
 #' @param estimate_theta Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 #'        process
 #' @param estimate_lambda Boolean indicating whether to estimate additional branch lengths for
@@ -23,12 +24,11 @@ phylosem <-
 function( sem,
           tree,
           data,
-          measurement_error = FALSE,
+          family = rep("fixed", ncol(data)),
           estimate_theta = FALSE,
           estimate_lambda = FALSE,
           estimate_kappa = FALSE,
           ... ){
-
 
   # Function that converts SEM model to a RAM, see `?sem` for more context
   build_ram = function( model, vars ){
@@ -70,12 +70,14 @@ function( sem,
   #if( estimate_theta==FALSE & fixed_root==TRUE ){
   #  stop("`fixed_root=TRUE` is only applicable when `estimate_theta=TRUE`")
   #}
-  if( measurement_error==TRUE & estimate_lambda==TRUE ){
-    stop("measurement errors using `measurement_error=TRUE` are confounded with `estimate_lambda=TRUE`")
-  }
+  #if( measurement_error==TRUE & estimate_lambda==TRUE ){
+  #  stop("measurement errors using `measurement_error=TRUE` are confounded with `estimate_lambda=TRUE`")
+  #}
   if( isFALSE("phylo" %in% class(tree)) ){
     stop("Check `tree` input")
   }
+  familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, NA )
+  if( any(is.na(familycode_j)) ) stop("Check `family`")
 
   #
   SEM_model = tryCatch(
@@ -107,12 +109,12 @@ function( sem,
                     "length_e" = length_e,
                     "RAM" = as.matrix(RAM[,1:4]),
                     "RAMstart" = as.numeric(RAM[,5]),
-                    "measurement_error" = measurement_error,
                     "estimate_theta" = estimate_theta,
                     "estimate_lambda" = estimate_lambda,
                     "estimate_kappa" = estimate_kappa,
                     "height_v" = height_v,
-                    "y_ij" = as.matrix(data) )
+                    "y_ij" = as.matrix(data),
+                    "familycode_j" = familycode_j )
 
   # Build parameters
   rmatrix = function(nrow, ncol) matrix(rnorm(nrow*ncol),nrow=nrow,ncol=ncol)
@@ -133,13 +135,17 @@ function( sem,
   random = c("x_vj")
 
   # Settings
-  if( measurement_error==FALSE ){
+  map_list$lnsigma_j = 1:length(parameters_list$lnsigma_j)
+  for( j in 1:ncol(data)){
     # Turn off SD of measurement error
-    parameters_list$lnsigma_j = rep( log(0.001), length(parameters_list$lnsigma_j) )
-    map_list$lnsigma_j = factor(rep( NA, length(parameters_list$lnsigma_j) ))
-    # Fix random-effects for tips at their observed values
-    parameters_list$x_vj[1:n_tip,] = ifelse( is.na(data_list$y_ij), parameters_list$x_vj[1:n_tip,], data_list$y_ij )
-    map_list$x_vj[1:n_tip,] = ifelse( is.na(data_list$y_ij), map_list$x_vj[1:n_tip,], NA )
+    if( familycode_j[j] %in% c(0,2,3) ){
+      map_list$lnsigma_j[j] = NA
+    }
+    if( familycode_j[j] == 0 ){
+      # Fix random-effects for tips at their observed values
+      parameters_list$x_vj[1:n_tip,j] = ifelse( is.na(data_list$y_ij[,j]), parameters_list$x_vj[1:n_tip,j], data_list$y_ij[,j] )
+      map_list$x_vj[1:n_tip,j] = ifelse( is.na(data_list$y_ij[,j]), map_list$x_vj[1:n_tip,j], NA )
+    }
   }
   if( estimate_theta==FALSE ){
     map_list$lntheta = factor(NA)
@@ -158,14 +164,15 @@ function( sem,
 
   # wrap up map_list$x_vj
   map_list$x_vj = factor(map_list$x_vj)
+  map_list$lnsigma_j = factor(map_list$lnsigma_j)
 
   # Hardwire TMB using local path
-  #if( TRUE ){
+  if( FALSE ){
     #dyn.unload( TMB::dynlib("phylosem") )          #
-  #  setwd( "C:/Users/James.Thorson/Desktop/Git/phylosem/src/" )
-  #  TMB::compile( "phylosem.cpp", flags="-Wno-ignored-attributes -O2 -mfpmath=sse -msse2 -mstackrealign" )
-  #  dyn.load( TMB::dynlib("phylosem") )          #
-  #}
+    setwd( "C:/Users/James.Thorson/Desktop/Git/phylosem/src/" )
+    TMB::compile( "phylosem.cpp", flags="-Wno-ignored-attributes -O2 -mfpmath=sse -msse2 -mstackrealign" )
+    dyn.load( TMB::dynlib("phylosem") )          #
+  }
 
   # Build TMB object
   obj = TMB::MakeADFun( data = data_list,
@@ -219,10 +226,16 @@ coef.phylosem = function( x, standardized=FALSE ){
   beta_z = x$opt$par[names(x$opt$par)=="beta_z"]
   RAM = x$obj$env$data$RAM
   if(nrow(RAM) != nrow(x$SEM_model)) stop("Check assumptions")
-  if( standardized==TRUE ){
-    for( i in which(RAM[,1]==1) ){
+  for( i in which(RAM[,1]==1) ){
+    if( standardized==TRUE ){
       beta_z[i] = beta_z[i] * abs(beta_z[which( RAM[,'from']==RAM[i,'from'] & RAM[,'to']==RAM[i,'from'] )])
       beta_z[i] = beta_z[i] / abs(beta_z[which( RAM[,'from']==RAM[i,'to'] & RAM[,'to']==RAM[i,'to'] )])
+    }
+  }
+  # Report variances
+  for( i in which(RAM[,1]==2) ){
+    if( RAM[i,'from'] == RAM[i,'to'] ){
+      beta_z[i] = beta_z[i]^2
     }
   }
   SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
