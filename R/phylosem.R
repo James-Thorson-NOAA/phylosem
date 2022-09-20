@@ -2,15 +2,29 @@
 #'
 #' Fits a phylogenetic structural equation model
 #'
+#' @param sem structural equation model structure, passed to either \code{\link[sem]{specifyModel}}
+#'        or \code{\link[sem]{specifyEquations}} and then parsed to control
+#'        the set of path coefficients and variance-covariance parameters
+#' @param tree phylogenetic structure, using class \code{\link[ape]{as.phylo}}
+#' @param data data-frame providing variables being modeled.  Missing values are inputted
+#'        as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
+#'        then it still must be inputted as a column of \code{data} with entirely NA values.
+#' @param measurement_error Boolean indicating whether to estimate measurement errors
+#' @param estimate_theta Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
+#'        process
+#' @param estimate_lambda Boolean indicating whether to estimate additional branch lengths for
+#'        phylogenetic tips (a.k.a. the Pagel-lambda term)
+#' @param estimate_kappa Boolean indicating whether to estimate a nonlinear scaling of branch
+#'        lengths (a.k.a. the Pagel-kappa term)
+#'
 #' @useDynLib phylosem
 #' @export
 phylosem <-
-function( model,
+function( sem,
           tree,
-          equations,
           data,
           measurement_error = FALSE,
-          estimate_theta = TRUE,
+          estimate_theta = FALSE,
           estimate_lambda = FALSE,
           estimate_kappa = FALSE,
           ... ){
@@ -52,21 +66,30 @@ function( model,
     return(ram)
   }
 
-  # Errors / warnings
+  # Errors / warnings;  not using `assertthat::assert_that` to avoid dependency
   #if( estimate_theta==FALSE & fixed_root==TRUE ){
   #  stop("`fixed_root=TRUE` is only applicable when `estimate_theta=TRUE`")
   #}
   if( measurement_error==TRUE & estimate_lambda==TRUE ){
     stop("measurement errors using `measurement_error=TRUE` are confounded with `estimate_lambda=TRUE`")
   }
+  if( isFALSE("phylo" %in% class(tree)) ){
+    stop("Check `tree` input")
+  }
 
   #
-  if(!missing(model)){
-    SEM_model = sem::specifyModel( text=model, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) )
-  }else if(!missing(equations)){
-    SEM_model = sem::specifyEquations( text=equations, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) )
-  }else{
-    stop("Must supply either `model` or `equations`")
+  SEM_model = tryCatch(
+    sem::specifyModel( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) ),
+    error = function(e) e
+  )
+  if( isFALSE("semmod" %in% class(SEM_model)) ){
+    SEM_model = tryCatch(
+      sem::specifyEquations( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) ),
+      error = function(e) e
+    )
+  }
+  if( isFALSE("semmod" %in% class(SEM_model)) ){
+    stop("Must supply either input for `sem::specifyModel` or `sem::specifyEquations`")
   }
   RAM = build_ram( SEM_model, colnames(data) )
 
@@ -136,13 +159,13 @@ function( model,
   # wrap up map_list$x_vj
   map_list$x_vj = factor(map_list$x_vj)
 
-  # Compile TMB
-  if( TRUE ){
+  # Hardwire TMB using local path
+  #if( TRUE ){
     #dyn.unload( TMB::dynlib("phylosem") )          #
-    setwd( "C:/Users/James.Thorson/Desktop/Git/phylosem/src/" )
-    TMB::compile( "phylosem.cpp", flags="-Wno-ignored-attributes -O2 -mfpmath=sse -msse2 -mstackrealign" )
-    dyn.load( TMB::dynlib("phylosem") )          #
-  }
+  #  setwd( "C:/Users/James.Thorson/Desktop/Git/phylosem/src/" )
+  #  TMB::compile( "phylosem.cpp", flags="-Wno-ignored-attributes -O2 -mfpmath=sse -msse2 -mstackrealign" )
+  #  dyn.load( TMB::dynlib("phylosem") )          #
+  #}
 
   # Build TMB object
   obj = TMB::MakeADFun( data = data_list,
@@ -150,7 +173,7 @@ function( model,
                         map = map_list,
                         random = random,
                         DLL = "phylosem" )
-  ThorsonUtilities::list_parameters(obj)
+  list_parameters(obj)
   obj$env$beSilent()       # if(!is.null(Random))
   results = list( data=data, SEM_model=SEM_model, obj=obj, call=match.call(),
                   map_list=map_list, parameters_list=parameters_list, data_list=data_list )
@@ -196,13 +219,13 @@ coef.phylosem = function( x, standardized=FALSE ){
   beta_z = x$opt$par[names(x$opt$par)=="beta_z"]
   RAM = x$obj$env$data$RAM
   if(nrow(RAM) != nrow(x$SEM_model)) stop("Check assumptions")
-  SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
-  SEM_params = ifelse( is.na(SEM_params), as.numeric(x$SEM_model[,3]), SEM_params )
   if( standardized==TRUE ){
     for( i in which(RAM[,1]==1) ){
       beta_z[i] = beta_z[i] * abs(beta_z[which( RAM[,'from']==RAM[i,'from'] & RAM[,'to']==RAM[i,'from'] )])
       beta_z[i] = beta_z[i] / abs(beta_z[which( RAM[,'from']==RAM[i,'to'] & RAM[,'to']==RAM[i,'to'] )])
     }
   }
+  SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
+  SEM_params = ifelse( is.na(SEM_params), as.numeric(x$SEM_model[,3]), SEM_params )
   return( data.frame(Path=x$SEM_model[,1], Parameter=x$SEM_model[,2], Estimate=SEM_params ) )
 }

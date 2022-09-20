@@ -2,5 +2,6 @@
 
 S3method(coef,phylosem)
 S3method(print,phylosem)
+export(list_parameters)
 export(phylosem)
 useDynLib(phylosem)

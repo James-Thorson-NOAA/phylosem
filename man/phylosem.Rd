@@ -5,15 +5,37 @@
 \title{Fit phylogenetic structural equation model}
 \usage{
 phylosem(
-  text,
+  sem,
   tree,
   data,
   measurement_error = FALSE,
-  estimate_theta = TRUE,
+  estimate_theta = FALSE,
   estimate_lambda = FALSE,
   estimate_kappa = FALSE,
   ...
 )
+}
+\arguments{
+\item{sem}{structural equation model structure, passed to either \code{\link[sem]{specifyModel}}
+or \code{\link[sem]{specifyEquations}} and then parsed to control
+the set of path coefficients and variance-covariance parameters}
+
+\item{tree}{phylogenetic structure, using class \code{\link[ape]{as.phylo}}}
+
+\item{data}{data-frame providing variables being modeled.  Missing values are inputted
+as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
+then it still must be inputted as a column of \code{data} with entirely NA values.}
+
+\item{measurement_error}{Boolean indicating whether to estimate measurement errors}
+
+\item{estimate_theta}{Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
+process}
+
+\item{estimate_lambda}{Boolean indicating whether to estimate additional branch lengths for
+phylogenetic tips (a.k.a. the Pagel-lambda term)}
+
+\item{estimate_kappa}{Boolean indicating whether to estimate a nonlinear scaling of branch
+lengths (a.k.a. the Pagel-kappa term)}
 }
 \description{
 Fits a phylogenetic structural equation model
