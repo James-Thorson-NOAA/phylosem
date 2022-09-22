@@ -103,6 +103,9 @@ function( sem,
   height_v = ape::node.depth.edgelength(tree)
   if(vroot %in% edge_ez[,2]) stop("Check for problems")
 
+  # associate each datum with tree
+  v_i = match( rownames(data), c(tree$tip.label,tree$node.label) )
+
   # Build data
   data_list = list( "n_tip" = n_tip,
                     "edge_ez" = edge_ez - 1,
@@ -114,6 +117,7 @@ function( sem,
                     "estimate_kappa" = estimate_kappa,
                     "height_v" = height_v,
                     "y_ij" = as.matrix(data),
+                    "v_i" = v_i - 1,
                     "familycode_j" = familycode_j )
 
   # Build parameters
@@ -143,8 +147,8 @@ function( sem,
     }
     if( familycode_j[j] == 0 ){
       # Fix random-effects for tips at their observed values
-      parameters_list$x_vj[1:n_tip,j] = ifelse( is.na(data_list$y_ij[,j]), parameters_list$x_vj[1:n_tip,j], data_list$y_ij[,j] )
-      map_list$x_vj[1:n_tip,j] = ifelse( is.na(data_list$y_ij[,j]), map_list$x_vj[1:n_tip,j], NA )
+      parameters_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), parameters_list$x_vj[v_i,j], data_list$y_ij[,j] )
+      map_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), map_list$x_vj[v_i,j], NA )
     }
   }
   if( estimate_theta==FALSE ){

@@ -114,6 +114,7 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER( estimate_kappa );
   DATA_VECTOR( height_v );
   DATA_MATRIX( y_ij );
+  DATA_IVECTOR( v_i );
   DATA_IVECTOR( familycode_j );
 
   // Parameters
@@ -206,15 +207,15 @@ Type objective_function<Type>::operator() ()
       // familycode = 0 :  don't include likelihood
       // familycode = 1 :  normal
       if( familycode_j(j)==1 ){
-        jnll_ij(i,j) -= dnorm( y_ij(i,j), x_vj(i,j), sigma_j(j), true );
+        jnll_ij(i,j) -= dnorm( y_ij(i,j), x_vj(v_i(i),j), sigma_j(j), true );
       }
       // familycode = 2 :  binomial
       if( familycode_j(j)==2 ){
-        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), invlogit(x_vj(i,j)), true );
+        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), invlogit(x_vj(v_i(i),j)), true );
       }
       // familycode = 3 :  Poisson
       if( familycode_j(j)==3 ){
-        jnll_ij(i,j) -= dpois( y_ij(i,j), exp(x_vj(i,j)), true );
+        jnll_ij(i,j) -= dpois( y_ij(i,j), exp(x_vj(v_i(i),j)), true );
       }
     }
   }}
