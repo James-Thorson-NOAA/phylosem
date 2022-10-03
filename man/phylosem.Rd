@@ -8,7 +8,7 @@ phylosem(
   sem,
   tree,
   data,
-  measurement_error = FALSE,
+  family = rep("fixed", ncol(data)),
   estimate_theta = FALSE,
   estimate_lambda = FALSE,
   estimate_kappa = FALSE,
@@ -26,7 +26,8 @@ the set of path coefficients and variance-covariance parameters}
 as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
 then it still must be inputted as a column of \code{data} with entirely NA values.}
 
-\item{measurement_error}{Boolean indicating whether to estimate measurement errors}
+\item{family}{Character-vector listing the distribution used for each column of \code{data}, where
+each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.}
 
 \item{estimate_theta}{Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 process}

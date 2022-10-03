@@ -7,7 +7,7 @@ bool isNA(Type x){
   return R_IsNA(asDouble(x));
 }
 
-// Needed for returning SparseMatrix for Ornstein-Uhlenbeck network correlations
+// SparseMatrix for Ornstein-Uhlenbeck network correlations
 //template<class Type>
 //Eigen::SparseMatrix<Type> Q_network( Type log_theta,
 //                                     int n_s,
@@ -30,6 +30,9 @@ bool isNA(Type x){
 //  }
 //  return Q;
 //}
+
+// ICAR for BM with sum-to-zero constraint
+//  See: C:\Users\James.Thorson\Desktop\Work files\AFSC\2022-09 -- ICAR specification
 
 // Precision of evolutionary covariance
 //template<class Type>

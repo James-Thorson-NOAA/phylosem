@@ -101,6 +101,7 @@ function( sem,
   edge_ez = tree$edge  # parent, child
   length_e = tree$edge.length
   height_v = ape::node.depth.edgelength(tree)
+  # seems like length_e + height_v should be equal in an ultrametric tree
   if(vroot %in% edge_ez[,2]) stop("Check for problems")
 
   # associate each datum with tree
@@ -246,3 +247,18 @@ coef.phylosem = function( x, standardized=FALSE ){
   SEM_params = ifelse( is.na(SEM_params), as.numeric(x$SEM_model[,3]), SEM_params )
   return( data.frame(Path=x$SEM_model[,1], Parameter=x$SEM_model[,2], Estimate=SEM_params ) )
 }
+
+#' Calculate AIC
+#'
+#' @title Calculate Akaike Information Criterion from marginal likelihood
+#'
+#' @param x Output from \code{\link{phylosem}}
+#' @param ... Not used
+#' @return NULL
+#' @method coef phylosem
+#' @export
+AIC.phylosem = function( x ){
+  return( TMBhelper::TMBAIC(x$opt) )
+}
+
+
