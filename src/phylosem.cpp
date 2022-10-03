@@ -62,43 +62,43 @@ bool isNA(Type x){
 //}
 
 // Evolutionary covariance
-template<class Type>
-matrix<Type> V_sem( vector<Type> beta_z,
-                                 matrix<int> RAM,
-                                 vector<Type> RAMstart,
-                                 int n_vars ){
-
-  // Define temporary objects
-  matrix<Type> V_vv(n_vars, n_vars);
-  // SEM
-  matrix<Type> L_vv(n_vars, n_vars);
-  matrix<Type> Rho_vv(n_vars, n_vars);
-  matrix<Type> Gamma_vv(n_vars, n_vars);
-  matrix<Type> I_vv( n_vars, n_vars );
-  Rho_vv.setZero();
-  Gamma_vv.setZero();
-  I_vv.setIdentity();
-  Type tmp;
-  for(int r=0; r<RAM.rows(); r++){
-    // Extract estimated or fixed value
-    if(RAM(r,3)>=1){
-      tmp = beta_z(RAM(r,3)-1);
-    }else{
-      tmp = RAMstart(r);
-    }
-    // Assign to proper matrix
-    if(RAM(r,0)==1){
-      Rho_vv( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
-    }else{
-      Gamma_vv( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
-    }
-  }
-  L_vv = I_vv - Rho_vv;
-  L_vv = atomic::matinv( L_vv );
-  L_vv = L_vv * Gamma_vv;
-  V_vv = L_vv * L_vv.transpose();
-  return V_vv;
-}
+//template<class Type>
+//matrix<Type> V_sem( vector<Type> beta_z,
+//                                 matrix<int> RAM,
+//                                 vector<Type> RAMstart,
+//                                 int n_vars ){
+//
+//  // Define temporary objects
+//  matrix<Type> V_vv(n_vars, n_vars);
+//  // SEM
+//  matrix<Type> L_vv(n_vars, n_vars);
+//  matrix<Type> Rho_vv(n_vars, n_vars);
+//  matrix<Type> Gamma_vv(n_vars, n_vars);
+//  matrix<Type> I_vv( n_vars, n_vars );
+//  Rho_vv.setZero();
+//  Gamma_vv.setZero();
+//  I_vv.setIdentity();
+//  Type tmp;
+//  for(int r=0; r<RAM.rows(); r++){
+//    // Extract estimated or fixed value
+//    if(RAM(r,3)>=1){
+//      tmp = beta_z(RAM(r,3)-1);
+//    }else{
+//      tmp = RAMstart(r);
+//    }
+//    // Assign to proper matrix
+//    if(RAM(r,0)==1){
+//      Rho_vv( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+//    }else{
+//      Gamma_vv( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+//    }
+//  }
+//  L_vv = I_vv - Rho_vv;
+//  L_vv = atomic::matinv( L_vv );
+//  L_vv = L_vv * Gamma_vv;
+//  V_vv = L_vv * L_vv.transpose();
+//  return V_vv;
+//}
 
 template<class Type>
 Type objective_function<Type>::operator() ()
@@ -156,8 +156,38 @@ Type objective_function<Type>::operator() ()
   vector<Type> xtmp_j( n_j );
 
   // Evolutionary inverse-covariance
-  matrix<Type> V( n_j, n_j );
-  V = V_sem( beta_z, RAM, RAMstart, n_j );
+  matrix<Type> V_jj( n_j, n_j );
+  // vector<Type> beta_z, matrix<int> RAM, vector<Type> RAMstart, int n_vars
+  //V_jj = V_sem( beta_z, RAM, RAMstart, n_j );
+
+  // Assemble covariance
+  // SEM
+  matrix<Type> L_jj(n_j, n_j);
+  matrix<Type> Rho_jj(n_j, n_j);
+  matrix<Type> Gamma_jj(n_j, n_j);
+  matrix<Type> I_jj( n_j, n_j );
+  Rho_jj.setZero();
+  Gamma_jj.setZero();
+  I_jj.setIdentity();
+  Type tmp;
+  for(int r=0; r<RAM.rows(); r++){
+    // Extract estimated or fixed value
+    if(RAM(r,3)>=1){
+      tmp = beta_z(RAM(r,3)-1);
+    }else{
+      tmp = RAMstart(r);
+    }
+    // Assign to proper matrix
+    if(RAM(r,0)==1){
+      Rho_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+    }else{
+      Gamma_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+    }
+  }
+  L_jj = I_jj - Rho_jj;
+  L_jj = atomic::matinv( L_jj );
+  L_jj = L_jj * Gamma_jj;
+  V_jj = L_jj * L_jj.transpose();
 
   // Distribution of OU evolution -- Root
   // Correlation between i and parent(i) as distance -> INF
@@ -166,7 +196,7 @@ Type objective_function<Type>::operator() ()
     // SD of Ornstein-Uhlenbeck process as distance -> INF
     var_v(vroot) = Type(1.0) / (2*theta);
     // conditional probability
-    Vtmp = V * var_v(vroot);
+    Vtmp = V_jj * var_v(vroot);
     //xtmp_j = x_vj.row(root).array() - xbar_j;
     for(int j=0; j<n_j; j++) xtmp_j(j) = x_vj(vroot,j) - xbar_j(j);
     jnll_v(vroot) = MVNORM(Vtmp)( xtmp_j );
@@ -189,7 +219,7 @@ Type objective_function<Type>::operator() ()
       var_v(vchild) = length_e(e);
     }
     // conditional probability
-    Vtmp = V * var_v(vchild);
+    Vtmp = V_jj * var_v(vchild);
     if( estimate_lambda==1 ){
       if( vchild < n_tip ){
         Vtmp = Vtmp * (lambda + (1-lambda)*height_v(vchild));
@@ -227,11 +257,14 @@ Type objective_function<Type>::operator() ()
   // Reporting
   REPORT( rho_v );
   REPORT( var_v );
-  REPORT( V );
+  REPORT( V_jj );
+  REPORT( Rho_jj );
+  REPORT( Gamma_jj );
   REPORT( jnll );
   REPORT( jnll_v );
   REPORT( jnll_ij );
   REPORT( theta );
   REPORT( x_vj );
+  ADREPORT( Rho_jj );
   return jnll;
 }
