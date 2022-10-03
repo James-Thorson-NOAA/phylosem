@@ -40,6 +40,7 @@ function( sem_set,
   }
 
   # pass out
+  class(out) = "compare_phylosem"
   return(out)
 }
 
