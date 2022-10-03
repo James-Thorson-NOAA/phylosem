@@ -255,7 +255,7 @@ coef.phylosem = function( x, standardized=FALSE ){
 #' @param x Output from \code{\link{phylosem}}
 #' @param ... Not used
 #' @return NULL
-#' @method coef phylosem
+#' @method AIC phylosem
 #' @export
 AIC.phylosem = function( x ){
   return( TMBhelper::TMBAIC(x$opt) )
