@@ -44,30 +44,39 @@ function( sem_set,
   return(out)
 }
 
+#' @export
+best <- function(x, best, ...) UseMethod('best')
 #' Extract best fitted model
 #'
+#' @method best compare_phylosem
 #' @export
-best <-
+best.compare_phylosem <-
 function( x ) {
 
   AICs <- vapply(x, AIC, 1)
   x[[which.min(AICs)]]
 }
 
+#' @export
+choice <- function(x, choice, ...) UseMethod('choice')
 #' Choose model
 #'
+#' @method choice compare_phylosem
 #' @export
-choice <-
+choice.compare_phylosem <-
 function( x,
           choice) {
 
   x[[choice]]
 }
 
+#' @export
+average <- function(x, average, ...) UseMethod('average')
 #' Choose model
 #'
+#' @method average compare_phylosem
 #' @export
-average <-
+average.compare_phylosem <-
 function( x,
           cut_off = 2,
           avg_method = "conditional") {

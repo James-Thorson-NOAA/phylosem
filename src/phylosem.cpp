@@ -254,6 +254,14 @@ Type objective_function<Type>::operator() ()
   }}
   jnll += jnll_ij.sum();
 
+  // Calculate intercept
+  vector<Type> root_j = x_vj.row(vroot);
+  vector<Type> intercept_j( n_j );
+  intercept_j = (I_jj - Rho_jj) * root_j.matrix();
+  REPORT( root_j );
+  REPORT( intercept_j );
+  ADREPORT( intercept_j );
+
   // Reporting
   REPORT( rho_v );
   REPORT( var_v );
