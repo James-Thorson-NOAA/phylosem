@@ -13,7 +13,7 @@ function( x ){
     coef = t(x$report$Rho_jj),
     se = t(as.list(x$opt$SD,what="Std. Error",report=TRUE)$Rho_jj)
   )
-  dimnames(out$coef) = dimnames(out$coef) = list( colnames(x$data), colnames(x$data) )
+  dimnames(out$coef) = dimnames(out$se) = list( colnames(x$data), colnames(x$data) )
 
   # pass out
   class(out) = "fitted_DAG"

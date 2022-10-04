@@ -10,5 +10,5 @@ phylosem2fitted_DAG(x)
 \item{x}{Output from \code{\link{phylosem}}}
 }
 \description{
-Convert output from package phylosem to package phylo_path
+Convert output from package phylosem to package phylopath
 }

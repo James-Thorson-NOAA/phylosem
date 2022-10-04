@@ -25,7 +25,7 @@ function( sem_set,
 
   # Loop through models
   for( modelI in seq_along(sem_set) ){
-    fit = tryCatch( phylosem( sem = sem_set[modelI],
+    fit = tryCatch( phylosem( sem = sem_set[[modelI]],
                               tree = tree,
                               data = data,
                               family = family,
@@ -44,3 +44,42 @@ function( sem_set,
   return(out)
 }
 
+#' Extract best fitted model
+#'
+#' @export
+best <-
+function( x ) {
+
+  AICs <- vapply(x, AIC, 1)
+  x[[which.min(AICs)]]
+}
+
+#' Choose model
+#'
+#' @export
+choice <-
+function( x,
+          choice) {
+
+  x[[choice]]
+}
+
+#' Choose model
+#'
+#' @export
+average <-
+function( x,
+          cut_off = 2,
+          avg_method = "conditional") {
+
+  AICs <- vapply(x, AIC, 1)
+  dAICs <- AICs - min(AICs)
+
+  # calculate Akaike weights
+  l <- exp(-0.5 * dAICs)
+  w <- l / sum(l)
+
+  selected <- x[dAICs < cut_off]
+  selected_DAGs <- lapply(selected, phylosem2fitted_DAG)
+  phylopath::average_DAGs(selected_DAGs, w[dAICs < cut_off], avg_method = avg_method)
+}
