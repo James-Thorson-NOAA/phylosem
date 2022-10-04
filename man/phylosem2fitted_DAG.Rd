@@ -12,3 +12,20 @@ phylosem2fitted_DAG(x)
 \description{
 Convert output from package phylosem to package phylopath
 }
+\examples{
+\dontrun{
+library(phylopath)
+model = "
+  DD -> RS, p1
+  BM -> LS, p2
+  BM -> NL, p3
+  NL -> DD, p4
+"
+psem = phylosem( sem = model,
+          data = rhino[,c("BM","NL","DD","RS","LS")],
+          tree = rhino_tree )
+coef_plot( phylosem2fitted_DAG(psem) )
+plot( phylosem2fitted_DAG(psem) )
+}
+
+}

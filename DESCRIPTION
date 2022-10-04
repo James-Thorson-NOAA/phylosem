@@ -17,6 +17,9 @@ Depends:
 Remotes: 
     kaskr/TMB_contrib_R/TMBhelper,
     kaskr/adcomp/TMB
+Suggests:
+    DiagrammeR,
+    semPlot
 LinkingTo:
     TMB, 
     RcppEigen

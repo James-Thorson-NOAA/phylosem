@@ -4,6 +4,22 @@
 #'
 #' @param x Output from \code{\link{phylosem}}
 #'
+#' @examples
+#' \dontrun{
+#' library(phylopath)
+#' model = "
+#'   DD -> RS, p1
+#'   BM -> LS, p2
+#'   BM -> NL, p3
+#'   NL -> DD, p4
+#' "
+#' psem = phylosem( sem = model,
+#'           data = rhino[,c("BM","NL","DD","RS","LS")],
+#'           tree = rhino_tree )
+#' coef_plot( phylosem2fitted_DAG(psem) )
+#' plot( phylosem2fitted_DAG(psem) )
+#' }
+#'
 #' @export
 phylosem2fitted_DAG <-
 function( x ){
