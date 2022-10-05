@@ -261,4 +261,23 @@ AIC.phylosem = function( x ){
   return( TMBhelper::TMBAIC(x$opt) )
 }
 
+#' summarize phylosem
+#'
+#' @title Summarize phylosem
+#'
+#' @param x Output from \code{\link{phylosem}}
+#' @param ... Not used
+#' @return NULL
+#' @method summary phylosem
+#' @export
+summary.phylosem = function( x ){
+  out = list(
+
+  )
+
+  # Return stuff
+  class(out) = "summary.phylosem"
+  return(out)
+}
+
 
