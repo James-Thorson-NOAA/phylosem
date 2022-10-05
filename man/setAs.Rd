@@ -42,6 +42,13 @@ myplot = semPlot::semPlotModel( as(psem,"sem") )
 semPlot::semPaths( myplot,
                    nodeLabels = Plot@Vars$name )
 effects( as(psem,"sem") )
+
+# Convert and plot using phylobase / phylosignal
+library(phylobase)
+library(phylosignal)
+plot( as(psem,"phylo4d") )
+barplot( as(psem,"phylo4d") )
+dotplot( as(psem,"phylo4d") )
 }
 }
 \seealso{

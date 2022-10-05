@@ -187,7 +187,7 @@ function( sem,
                         DLL = "phylosem" )
   list_parameters(obj)
   obj$env$beSilent()       # if(!is.null(Random))
-  results = list( data=data, SEM_model=SEM_model, obj=obj, call=match.call(),
+  results = list( data=data, SEM_model=SEM_model, obj=obj, call=match.call(), tree=tree,
                   map_list=map_list, parameters_list=parameters_list, data_list=data_list )
   #return(results)
 

@@ -40,6 +40,13 @@
 #' semPlot::semPaths( myplot,
 #'                    nodeLabels = Plot@Vars$name )
 #' effects( as(psem,"sem") )
+#'
+#' # Convert and plot using phylobase / phylosignal
+#' library(phylobase)
+#' library(phylosignal)
+#' plot( as(psem,"phylo4d") )
+#' barplot( as(psem,"phylo4d") )
+#' dotplot( as(psem,"phylo4d") )
 #' }
 setAs("phylosem", "fitted_DAG", function(from, to) {
 
@@ -70,4 +77,13 @@ setAs("phylosem", "sem", function(from, to) {
 
 })
 
+setAs("phylosem", "phylo4d", function(from, to) {
+
+  #
+  out = phylobase::phylo4d( x=from$tree, all.data=from$report$x_vj )
+
+  # pass out
+  return(out)
+
+})
 

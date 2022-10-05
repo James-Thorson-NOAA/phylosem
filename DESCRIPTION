@@ -19,7 +19,9 @@ Remotes:
     kaskr/adcomp/TMB
 Suggests:
     DiagrammeR,
-    semPlot
+    semPlot,
+    phylobase,
+    phylosignal
 LinkingTo:
     TMB, 
     RcppEigen
