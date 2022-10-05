@@ -267,12 +267,33 @@ AIC.phylosem = function( x ){
 #'
 #' @param x Output from \code{\link{phylosem}}
 #' @param ... Not used
-#' @return NULL
 #' @method summary phylosem
 #' @export
 summary.phylosem = function( x ){
-  out = list(
 
+  # Intercepts
+  Intercepts = data.frame(
+    Estimate = as.list(x$opt$SD, "Estimate", report=TRUE)$intercept_j,
+    StdErr = as.list(x$opt$SD, "Std. Error", report=TRUE)$intercept_j
+  )
+  rownames(Intercepts) = paste0("Intercept_", colnames(x$data) )
+
+  # Slopes
+  RAM = x$obj$env$data$RAM
+  Slopes = data.frame(
+    Estimate = as.list(x$opt$SD, "Estimate")$beta_z[RAM[,1]==1],
+    StdErr = as.list(x$opt$SD, "Std. Error")$beta_z[RAM[,1]==1]
+  )
+  rownames( Slopes ) = x$SEM_model[which(RAM[,1]==1),2]
+
+  #
+  Coefs = rbind( Intercepts, Slopes )
+  Coefs = cbind( Coefs, "t.value"=abs(Coefs$Estimate)/Coefs$StdErr )
+  Coefs = cbind( Coefs, "p.value"=2*(1-pnorm(abs(Coefs$t.value))) )
+
+  out = list(
+    call = x$call,
+    coefficients = Coefs
   )
 
   # Return stuff
