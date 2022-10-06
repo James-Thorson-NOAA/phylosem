@@ -18,6 +18,10 @@ Convert output from package phylosem to package-phylopath or package-sem
 
 \examples{
 \dontrun{
+# Load data set
+library(phylopath)
+
+# Run phylosem
 model = "
   DD -> RS, p1
   BM -> LS, p2
@@ -29,7 +33,6 @@ psem = phylosem( sem = model,
           tree = rhino_tree )
 
 # Convert and plot using phylopath
-library(phylopath)
 coef_plot( as(psem,"fitted_DAG") )
 plot( as(psem,"fitted_DAG") )
 

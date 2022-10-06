@@ -16,6 +16,10 @@
 #'
 #' @examples
 #' \dontrun{
+#' # Load data set
+#' library(phylopath)
+#'
+#' # Run phylosem
 #' model = "
 #'   DD -> RS, p1
 #'   BM -> LS, p2
@@ -27,7 +31,6 @@
 #'           tree = rhino_tree )
 #'
 #' # Convert and plot using phylopath
-#' library(phylopath)
 #' coef_plot( as(psem,"fitted_DAG") )
 #' plot( as(psem,"fitted_DAG") )
 #'
@@ -47,6 +50,14 @@
 #' plot( as(psem,"phylo4d") )
 #' barplot( as(psem,"phylo4d") )
 #' dotplot( as(psem,"phylo4d") )
+#' gridplot( as(psem,"phylo4d") )
+#'
+#' # Cluster based on phylogeny and traits
+#' gC = graphClust( as(psem,"phylo4d"),
+#'                  lim.phylo = 5,
+#'                  lim.trait = 5,
+#'                  scale.lim = FALSE)
+#' plot(gC, which = "graph", ask = FALSE)
 #' }
 setAs("phylosem", "fitted_DAG", function(from, to) {
 
@@ -80,7 +91,9 @@ setAs("phylosem", "sem", function(from, to) {
 setAs("phylosem", "phylo4d", function(from, to) {
 
   #
-  out = phylobase::phylo4d( x=from$tree, all.data=from$report$x_vj )
+  traits = from$report$x_vj
+  colnames(traits) = colnames(from$data)
+  out = phylobase::phylo4d( x=from$tree, all.data=traits )
 
   # pass out
   return(out)
