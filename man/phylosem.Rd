@@ -12,6 +12,7 @@ phylosem(
   estimate_theta = FALSE,
   estimate_lambda = FALSE,
   estimate_kappa = FALSE,
+  quiet = FALSE,
   ...
 )
 }

@@ -13,7 +13,8 @@ Authors@R:
 Depends:
     R (>= 4.0.0),
     TMB,
-    ape
+    ape,
+    phytools
 Remotes: 
     kaskr/TMB_contrib_R/TMBhelper,
     kaskr/adcomp/TMB

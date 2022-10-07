@@ -28,6 +28,7 @@ function( sem,
           estimate_theta = FALSE,
           estimate_lambda = FALSE,
           estimate_kappa = FALSE,
+          quiet = FALSE,
           ... ){
 
   # Function that converts SEM model to a RAM, see `?sem` for more context
@@ -76,17 +77,20 @@ function( sem,
   if( isFALSE("phylo" %in% class(tree)) ){
     stop("Check `tree` input")
   }
+  if( !("edge.length" %in% names(tree)) ){
+    stop("`tree` must include `edge.length` slot")
+  }
   familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, NA )
   if( any(is.na(familycode_j)) ) stop("Check `family`")
 
   #
   SEM_model = tryCatch(
-    sem::specifyModel( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) ),
+    sem::specifyModel( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data), quiet=quiet ),
     error = function(e) e
   )
   if( isFALSE("semmod" %in% class(SEM_model)) ){
     SEM_model = tryCatch(
-      sem::specifyEquations( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data) ),
+      sem::specifyEquations( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data), quiet=quiet ),
       error = function(e) e
     )
   }
@@ -106,6 +110,9 @@ function( sem,
 
   # associate each datum with tree
   v_i = match( rownames(data), c(tree$tip.label,tree$node.label) )
+  if(any(is.na(v_i))){
+    stop("Check that all `rownames(data)` are present in `c(tree$tip.label,tree$node.label)`")
+  }
 
   # Build data
   data_list = list( "n_tip" = n_tip,
@@ -185,14 +192,17 @@ function( sem,
                         map = map_list,
                         random = random,
                         DLL = "phylosem" )
-  list_parameters(obj)
+  if(quiet==FALSE) list_parameters(obj)
   obj$env$beSilent()       # if(!is.null(Random))
   results = list( data=data, SEM_model=SEM_model, obj=obj, call=match.call(), tree=tree,
                   map_list=map_list, parameters_list=parameters_list, data_list=data_list )
   #return(results)
 
   #
-  results$opt = TMBhelper::fit_tmb( obj, ... )
+  results$opt = TMBhelper::fit_tmb( obj,
+                                    quiet = quiet,
+                                    control = list(eval.max=10000, iter.max=10000, trace=ifelse(quiet==TRUE,0,1) ),
+                                    ... )
   results$report = obj$report()
   results$parhat = obj$env$parList()
   class(results) = "phylosem"
@@ -302,3 +312,66 @@ summary.phylosem = function( x ){
 }
 
 
+#' predict values for new tip
+#'
+#' @title Predict phylosem
+#'
+#' @inheritParams phytools::bind.tip
+#'
+#' @param x Output from \code{\link{phylosem}}
+#' @param ... passed to \code{\link[phytools]{bind.tip}}
+#' @method predict phylosem
+#' @export
+predict.phylosem <-
+function( x,
+          tip.label = "new_tip",
+          edge.length = NULL,
+          where = NULL,
+          ... ){
+
+  if( is.character(where) ){
+    where = which( c(x$tree$tip.label,x$tree$node.label) == where )
+    if(length(where)!=1) stop("`where` not found in `tree$tip.label` or `tree$node.label`")
+  }
+
+  # Return existing prediction OR rebuild
+  if( where <= Ntip(x$tree) ){
+    out = x$report$x_vj[where,]
+  }else{
+    # Add default edge.length
+    if(is.null(edge.length)){
+      if(is.ultrametric(x$tree)){
+        # node.depth, node.height, node.depth.edgelength
+        node_depth = node.depth.edgelength(x$tree)
+        edge_length = x$tree$edge.length
+        node_edgeout_length = edge_length[ match(1:(Ntip(x$tree)+Nnode(x$tree)),x$tree$edge[,1]) ]
+        node_and_edgeout_depth = node_depth + ifelse( is.na(node_edgeout_length), 0, node_edgeout_length )
+        tree_depth = max(node_and_edgeout_depth)
+        edge.length = tree_depth - node_depth[where]
+      }else{
+        stop("Must supply `edge.length`")
+      }
+    }
+
+    # build new tree
+    tree_new = phytools::bind.tip( x$tree,
+                                   tip.label = tip.label,
+                                   edge.length = edge.length,
+                                   where = where,
+                                   position = 0,
+                                   ... )
+
+    # refit
+    Args = as.list(x$call[-1])
+    Args$tree = tree_new
+    Args$startpar = x$opt$par
+    Args$quiet = TRUE
+    psem_new = do.call("phylosem", Args )
+
+    # extract
+    out = psem_new$report$x_vj[ which(psem_new$tree$tip.label == tip.label), ]
+  }
+
+  names(out) = colnames(x$data)
+  return( out )
+}

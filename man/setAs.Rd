@@ -52,6 +52,14 @@ library(phylosignal)
 plot( as(psem,"phylo4d") )
 barplot( as(psem,"phylo4d") )
 dotplot( as(psem,"phylo4d") )
+gridplot( as(psem,"phylo4d") )
+
+# Cluster based on phylogeny and traits
+gC = graphClust( as(psem,"phylo4d"),
+                 lim.phylo = 5,
+                 lim.trait = 5,
+                 scale.lim = FALSE)
+plot(gC, which = "graph", ask = FALSE)
 }
 }
 \seealso{
