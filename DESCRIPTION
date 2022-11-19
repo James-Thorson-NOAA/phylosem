@@ -10,22 +10,24 @@ Authors@R:
              email = "James.Thorson@noaa.gov",
              comment = c(ORCID = "0000-0001-7415-1010"))
     )
+Imports:
+    phylopath,
+    phylobase
 Depends:
     R (>= 4.0.0),
     TMB,
-    ape,
-    phytools
+    ape
 Remotes: 
     kaskr/TMB_contrib_R/TMBhelper,
     kaskr/adcomp/TMB
 Suggests:
+    phylosignal,
     DiagrammeR,
     semPlot,
-    phylobase,
-    phylosignal
+    phytools
 LinkingTo:
     TMB, 
     RcppEigen
 Description: More about what it does (maybe more than one line)
 License: file LICENSE
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2

@@ -20,6 +20,52 @@
 #' @param estimate_kappa Boolean indicating whether to estimate a nonlinear scaling of branch
 #'        lengths (a.k.a. the Pagel-kappa term)
 #'
+#' @examples
+#' \dontrun{
+#' # Load data set
+#' library(phylopath)
+#'
+#' # Run phylosem
+#' model = "
+#'   DD -> RS, p1
+#'   BM -> LS, p2
+#'   BM -> NL, p3
+#'   NL -> DD, p4
+#' "
+#' psem = phylosem( sem = model,
+#'           data = rhino[,c("BM","NL","DD","RS","LS")],
+#'           tree = rhino_tree )
+#'
+#' # Convert and plot using phylopath
+#' coef_plot( as(psem,"fitted_DAG") )
+#' plot( as(psem,"fitted_DAG") )
+#'
+#' # Convet and plot using sem
+#' mysem = as(psem,"sem")
+#' sem::pathDiagram( model = mysem,
+#'                   style = "traditional",
+#'                   edge.labels = "values" )
+#' myplot = semPlot::semPlotModel( as(psem,"sem") )
+#' semPlot::semPaths( myplot,
+#'                    nodeLabels = Plot@Vars$name )
+#' effects( as(psem,"sem") )
+#'
+#' # Convert and plot using phylobase / phylosignal
+#' library(phylobase)
+#' library(phylosignal)
+#' plot( as(psem,"phylo4d") )
+#' barplot( as(psem,"phylo4d") )
+#' dotplot( as(psem,"phylo4d") )
+#' gridplot( as(psem,"phylo4d") )
+#'
+#' # Cluster based on phylogeny and traits
+#' gC = graphClust( as(psem,"phylo4d"),
+#'                  lim.phylo = 5,
+#'                  lim.trait = 5,
+#'                  scale.lim = FALSE)
+#' plot(gC, which = "graph", ask = FALSE)
+#' }
+#'
 #' @useDynLib phylosem
 #' @export
 phylosem <-
@@ -30,7 +76,7 @@ function( sem,
           covs = colnames(data),
           estimate_theta = FALSE,
           estimate_lambda = FALSE,
-          #estimate_kappa = FALSE,
+          estimate_kappa = FALSE,
           quiet = FALSE,
           ... ){
 
@@ -125,7 +171,7 @@ function( sem,
                     "RAMstart" = as.numeric(RAM[,5]),
                     "estimate_theta" = estimate_theta,
                     "estimate_lambda" = estimate_lambda,
-                    #"estimate_kappa" = estimate_kappa,
+                    "estimate_kappa" = estimate_kappa,
                     "height_v" = height_v,
                     "y_ij" = as.matrix(data),
                     "v_i" = v_i - 1,
@@ -173,9 +219,9 @@ function( sem,
   if( estimate_lambda==FALSE ){
     map_list$logitlambda = factor(NA)
   }
-  #if( estimate_kappa==FALSE ){
-  #  map_list$lnkappa = factor(NA)
-  #}
+  if( estimate_kappa==FALSE ){
+    map_list$lnkappa = factor(NA)
+  }
 
   # wrap up map_list$x_vj
   map_list$x_vj = factor(map_list$x_vj)
@@ -184,7 +230,8 @@ function( sem,
   # Hardwire TMB using local path
   if( FALSE ){
     #dyn.unload( TMB::dynlib("phylosem") )          #
-    setwd( "C:/Users/James.Thorson/Desktop/Git/phylosem/src/" )
+    #setwd( "C:/Users/James.Thorson/Desktop/Git/phylosem/src/" )
+    setwd( system.file("executables", package = "phylosem") )
     TMB::compile( "phylosem.cpp", flags="-Wno-ignored-attributes -O2 -mfpmath=sse -msse2 -mstackrealign" )
     dyn.load( TMB::dynlib("phylosem") )          #
   }
@@ -325,56 +372,56 @@ summary.phylosem = function( x ){
 #' @param ... passed to \code{\link[phytools]{bind.tip}}
 #' @method predict phylosem
 #' @export
-predict.phylosem <-
-function( x,
-          tip.label = "new_tip",
-          edge.length = NULL,
-          where = NULL,
-          ... ){
-
-  if( is.character(where) ){
-    where = which( c(x$tree$tip.label,x$tree$node.label) == where )
-    if(length(where)!=1) stop("`where` not found in `tree$tip.label` or `tree$node.label`")
-  }
-
-  # Return existing prediction OR rebuild
-  if( where <= Ntip(x$tree) ){
-    out = x$report$x_vj[where,]
-  }else{
-    # Add default edge.length
-    if(is.null(edge.length)){
-      if(is.ultrametric(x$tree)){
-        # node.depth, node.height, node.depth.edgelength
-        node_depth = node.depth.edgelength(x$tree)
-        edge_length = x$tree$edge.length
-        node_edgeout_length = edge_length[ match(1:(Ntip(x$tree)+Nnode(x$tree)),x$tree$edge[,1]) ]
-        node_and_edgeout_depth = node_depth + ifelse( is.na(node_edgeout_length), 0, node_edgeout_length )
-        tree_depth = max(node_and_edgeout_depth)
-        edge.length = tree_depth - node_depth[where]
-      }else{
-        stop("Must supply `edge.length`")
-      }
-    }
-
-    # build new tree
-    tree_new = phytools::bind.tip( x$tree,
-                                   tip.label = tip.label,
-                                   edge.length = edge.length,
-                                   where = where,
-                                   position = 0,
-                                   ... )
-
-    # refit
-    Args = as.list(x$call[-1])
-    Args$tree = tree_new
-    Args$startpar = x$opt$par
-    Args$quiet = TRUE
-    psem_new = do.call("phylosem", Args )
-
-    # extract
-    out = psem_new$report$x_vj[ which(psem_new$tree$tip.label == tip.label), ]
-  }
-
-  names(out) = colnames(x$data)
-  return( out )
-}
+#predict.phylosem <-
+#function( x,
+#          tip.label = "new_tip",
+#          edge.length = NULL,
+#          where = NULL,
+#          ... ){
+#
+#  if( is.character(where) ){
+#    where = which( c(x$tree$tip.label,x$tree$node.label) == where )
+#    if(length(where)!=1) stop("`where` not found in `tree$tip.label` or `tree$node.label`")
+#  }
+#
+#  # Return existing prediction OR rebuild
+#  if( where <= Ntip(x$tree) ){
+#    out = x$report$x_vj[where,]
+#  }else{
+#    # Add default edge.length
+#    if(is.null(edge.length)){
+#      if(is.ultrametric(x$tree)){
+#        # node.depth, node.height, node.depth.edgelength
+#        node_depth = node.depth.edgelength(x$tree)
+#        edge_length = x$tree$edge.length
+#        node_edgeout_length = edge_length[ match(1:(Ntip(x$tree)+Nnode(x$tree)),x$tree$edge[,1]) ]
+#        node_and_edgeout_depth = node_depth + ifelse( is.na(node_edgeout_length), 0, node_edgeout_length )
+#        tree_depth = max(node_and_edgeout_depth)
+#        edge.length = tree_depth - node_depth[where]
+#      }else{
+#        stop("Must supply `edge.length`")
+#      }
+#    }
+#
+#    # build new tree
+#    tree_new = phytools::bind.tip( x$tree,
+#                                   tip.label = tip.label,
+#                                   edge.length = edge.length,
+#                                   where = where,
+#                                   position = 0,
+#                                   ... )
+#
+#    # refit
+#    Args = as.list(x$call[-1])
+#    Args$tree = tree_new
+#    Args$startpar = x$opt$par
+#    Args$quiet = TRUE
+#    psem_new = do.call("phylosem", Args )
+#
+#    # extract
+#    out = psem_new$report$x_vj[ which(psem_new$tree$tip.label == tip.label), ]
+#  }
+#
+#  names(out) = colnames(x$data)
+#  return( out )
+#}
