@@ -2,6 +2,8 @@
 #'
 #' Fits a phylogenetic structural equation model
 #'
+#' @inheritParams sem::specifyModel
+#'
 #' @param sem structural equation model structure, passed to either \code{\link[sem]{specifyModel}}
 #'        or \code{\link[sem]{specifyEquations}} and then parsed to control
 #'        the set of path coefficients and variance-covariance parameters
@@ -25,9 +27,10 @@ function( sem,
           tree,
           data,
           family = rep("fixed", ncol(data)),
+          covs = colnames(data),
           estimate_theta = FALSE,
           estimate_lambda = FALSE,
-          estimate_kappa = FALSE,
+          #estimate_kappa = FALSE,
           quiet = FALSE,
           ... ){
 
@@ -85,12 +88,12 @@ function( sem,
 
   #
   SEM_model = tryCatch(
-    sem::specifyModel( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data), quiet=quiet ),
+    sem::specifyModel( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=covs, quiet=quiet ),
     error = function(e) e
   )
   if( isFALSE("semmod" %in% class(SEM_model)) ){
     SEM_model = tryCatch(
-      sem::specifyEquations( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=colnames(data), quiet=quiet ),
+      sem::specifyEquations( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=covs ),
       error = function(e) e
     )
   }
@@ -122,7 +125,7 @@ function( sem,
                     "RAMstart" = as.numeric(RAM[,5]),
                     "estimate_theta" = estimate_theta,
                     "estimate_lambda" = estimate_lambda,
-                    "estimate_kappa" = estimate_kappa,
+                    #"estimate_kappa" = estimate_kappa,
                     "height_v" = height_v,
                     "y_ij" = as.matrix(data),
                     "v_i" = v_i - 1,
@@ -170,9 +173,9 @@ function( sem,
   if( estimate_lambda==FALSE ){
     map_list$logitlambda = factor(NA)
   }
-  if( estimate_kappa==FALSE ){
-    map_list$lnkappa = factor(NA)
-  }
+  #if( estimate_kappa==FALSE ){
+  #  map_list$lnkappa = factor(NA)
+  #}
 
   # wrap up map_list$x_vj
   map_list$x_vj = factor(map_list$x_vj)

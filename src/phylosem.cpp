@@ -114,7 +114,7 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR( RAMstart );
   DATA_INTEGER( estimate_theta );
   DATA_INTEGER( estimate_lambda );
-  DATA_INTEGER( estimate_kappa );
+  //DATA_INTEGER( estimate_kappa );
   DATA_VECTOR( height_v );
   DATA_MATRIX( y_ij );
   DATA_IVECTOR( v_i );
