@@ -129,7 +129,7 @@ function( sem,
   if( !("edge.length" %in% names(tree)) ){
     stop("`tree` must include `edge.length` slot")
   }
-  familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, NA )
+  familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, "gamma"=4, NA )
   if( any(is.na(familycode_j)) ) stop("Check `family`")
 
   #

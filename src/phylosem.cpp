@@ -250,6 +250,10 @@ Type objective_function<Type>::operator() ()
       if( familycode_j(j)==3 ){
         jnll_ij(i,j) -= dpois( y_ij(i,j), exp(x_vj(v_i(i),j)), true );
       }
+      // familycode = 4 :  Gamma:   shape = 1/CV^2; scale = mean*CV^2
+      if( familycode_j(j)==4 ){
+        jnll_ij(i,j) -= dgamma( y_ij(i,j), pow(sigma_j(j),-2), exp(x_vj(v_i(i),j))*pow(sigma_j(j),2), true );
+      }
     }
   }}
   jnll += jnll_ij.sum();
