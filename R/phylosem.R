@@ -32,7 +32,7 @@
 #'        Other options correspond to different specifications of measurement error.
 #' @param estimate_ou Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 #'        process using additional parameter \code{lnalpha},
-#'        corresponding to the \code{model="OUrandomRoot"}} parameterization from \pkg{phylolm}
+#'        corresponding to the \code{model="OUrandomRoot"} parameterization from \pkg{phylolm}
 #'        as listed in \url{https://doi.org/10.1093/sysbio/syu005}
 #' @param estimate_lambda Boolean indicating whether to estimate additional branch lengths for
 #'        phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}

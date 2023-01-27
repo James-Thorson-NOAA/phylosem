@@ -1,8 +1,8 @@
 ---
-title: "Comparison with other packages"
+title: "comparisons"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{comparisons}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 # use devtools::build_rmd("vignettes/comparison.Rmd") to test build
 ```
 
-```{r setup}
+```{r setup, echo=FALSE}
 library(phylosem)
 ```
 
