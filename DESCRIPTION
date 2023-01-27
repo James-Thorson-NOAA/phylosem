@@ -24,10 +24,13 @@ Suggests:
     phylosignal,
     DiagrammeR,
     semPlot,
-    phytools
+    phytools,
+    knitr,
+    rmarkdown
 LinkingTo:
     TMB, 
     RcppEigen
 Description: More about what it does (maybe more than one line)
 License: file LICENSE
 RoxygenNote: 7.2.3
+VignetteBuilder: knitr
