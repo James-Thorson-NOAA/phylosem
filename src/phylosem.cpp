@@ -9,23 +9,23 @@ bool isNA(Type x){
 
 // SparseMatrix for Ornstein-Uhlenbeck network correlations
 //template<class Type>
-//Eigen::SparseMatrix<Type> Q_network( Type log_theta,
+//Eigen::SparseMatrix<Type> Q_network( Type log_alpha,
 //                                     int n_s,
 //                                     vector<int> parent_s,
 //                                     vector<int> child_s,
 //                                     vector<Type> dist_s ){
 //
 //  Eigen::SparseMatrix<Type> Q( n_s, n_s );
-//  Type theta = exp( log_theta );
+//  Type alpha = exp( log_alpha );
 //  for(int s=0; s<n_s; s++){
 //    Q.coeffRef( s, s ) = Type(1.0);
 //  }
 //  for(int s=1; s<parent_s.size(); s++){
 //    if( exp(-dist_s(s))!=0 ){
-//      Q.coeffRef( parent_s(s), child_s(s) ) = -exp(-theta*dist_s(s)) / (1-exp(-2*theta*dist_s(s)));
+//      Q.coeffRef( parent_s(s), child_s(s) ) = -exp(-alpha*dist_s(s)) / (1-exp(-2*alpha*dist_s(s)));
 //      Q.coeffRef( child_s(s), parent_s(s) ) = Q.coeffRef( parent_s(s), child_s(s) );
-//      Q.coeffRef( parent_s(s), parent_s(s) ) += exp(-2*theta*dist_s(s)) / (1-exp(-2*theta*dist_s(s)));
-//      Q.coeffRef( child_s(s), child_s(s) ) += exp(-2*theta*dist_s(s)) / (1-exp(-2*theta*dist_s(s)));
+//      Q.coeffRef( parent_s(s), parent_s(s) ) += exp(-2*alpha*dist_s(s)) / (1-exp(-2*alpha*dist_s(s)));
+//      Q.coeffRef( child_s(s), child_s(s) ) += exp(-2*alpha*dist_s(s)) / (1-exp(-2*alpha*dist_s(s)));
 //    }
 //  }
 //  return Q;
@@ -112,7 +112,7 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR( length_e );
   DATA_IMATRIX( RAM );
   DATA_VECTOR( RAMstart );
-  DATA_INTEGER( estimate_theta );
+  DATA_INTEGER( estimate_ou );
   DATA_INTEGER( estimate_lambda );
   //DATA_INTEGER( estimate_kappa );
   DATA_VECTOR( height_v );
@@ -123,7 +123,7 @@ Type objective_function<Type>::operator() ()
   // Parameters
   PARAMETER_VECTOR( beta_z );
   PARAMETER_VECTOR( lnsigma_j );
-  PARAMETER( lntheta );
+  PARAMETER( lnalpha );
   PARAMETER( logitlambda );
   PARAMETER( lnkappa );
   PARAMETER_MATRIX( x_vj );
@@ -145,7 +145,7 @@ Type objective_function<Type>::operator() ()
   jnll_v.setZero();
 
   // Global vars
-  Type theta = exp( lntheta );
+  Type alpha = exp( lnalpha );
   Type lambda = invlogit( logitlambda );
   Type kappa = exp( lnkappa );
   vector<Type> rho_v( n_v );
@@ -191,10 +191,10 @@ Type objective_function<Type>::operator() ()
 
   // Distribution of OU evolution -- Root
   // Correlation between i and parent(i) as distance -> INF
-  if( estimate_theta==1 ){
+  if( estimate_ou==1 ){
     rho_v(vroot) = 0;
     // SD of Ornstein-Uhlenbeck process as distance -> INF
-    var_v(vroot) = Type(1.0) / (2*theta);
+    var_v(vroot) = Type(1.0) / (2*alpha);
     // conditional probability
     Vtmp = V_jj * var_v(vroot);
     //xtmp_j = x_vj.row(root).array() - xbar_j;
@@ -209,23 +209,24 @@ Type objective_function<Type>::operator() ()
   for(int e=0; e<n_e; e++){
     vchild = edge_ez(e,1);
     vparent = edge_ez(e,0);
-    if( estimate_theta==1 ){
+    if( estimate_ou==1 ){
       // Correlation between i and parent(i)
-      rho_v(vchild) = exp( -theta * pow(length_e(e),kappa) );
+      rho_v(vchild) = exp( -alpha * pow(length_e(e),kappa) );
       // SD of O-U process
-      var_v(vchild) = Type(1.0)/(2*theta) * (Type(1.0)-exp( -2 * theta * pow(length_e(e),kappa) ));
+      var_v(vchild) = Type(1.0)/(2*alpha) * (Type(1.0)-exp( -2 * alpha * pow(length_e(e),kappa) ));
     }else{
       rho_v(vchild) = Type(1.0);
-      var_v(vchild) = length_e(e);
+      var_v(vchild) = pow(length_e(e),kappa);
     }
     // conditional probability
-    Vtmp = V_jj * var_v(vchild);
     if( estimate_lambda==1 ){
       if( vchild < n_tip ){
-        Vtmp = Vtmp * (lambda + (1-lambda)*height_v(vchild));
+        Vtmp = V_jj * ( lambda*var_v(vchild) + (1-lambda)*height_v(vchild) );
       }else{
-        Vtmp = Vtmp * lambda;
+        Vtmp = V_jj * ( lambda*var_v(vchild) );
       }
+    }else{
+      Vtmp = V_jj * var_v(vchild);
     }
     //xtmp_j = (x_vj.row(vchild).array()-xbar_j) - rho_v(vchild)*(x_vj.row(vparent).array()-xbar_j);
     for(int j=0; j<n_j; j++) xtmp_j(j) = (x_vj(vchild,j)-xbar_j(j)) - rho_v(vchild)*(x_vj(vparent,j)-xbar_j(j));
@@ -275,7 +276,7 @@ Type objective_function<Type>::operator() ()
   REPORT( jnll );
   REPORT( jnll_v );
   REPORT( jnll_ij );
-  REPORT( theta );
+  REPORT( alpha );
   REPORT( x_vj );
   ADREPORT( Rho_jj );
   return jnll;

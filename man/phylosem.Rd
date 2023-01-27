@@ -9,10 +9,12 @@ phylosem(
   tree,
   data,
   family = rep("fixed", ncol(data)),
-  estimate_theta = FALSE,
+  covs = colnames(data),
+  estimate_ou = FALSE,
   estimate_lambda = FALSE,
   estimate_kappa = FALSE,
   quiet = FALSE,
+  newtonsteps = 1,
   ...
 )
 }
@@ -28,17 +30,103 @@ as NA.  If an SEM includes a latent variable (i.e., variable with no available m
 then it still must be inputted as a column of \code{data} with entirely NA values.}
 
 \item{family}{Character-vector listing the distribution used for each column of \code{data}, where
-each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.}
+each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
+\code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
+Other options correspond to different specifications of measurement error.}
 
-\item{estimate_theta}{Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
-process}
+\item{covs}{optional: a character vector of one or more elements, with each element
+  	giving a string of variable names, separated by commas. Variances and covariances
+  	among all variables in each such string are added to the model. For confirmatory
+  	factor analysis models specified via \code{cfa}, \code{covs} defaults to all of
+  	the factors in the model, thus specifying all variances and covariances among these factors.
+  	\emph{Warning}: \code{covs="x1, x2"} and \code{covs=c("x1", "x2")} are \emph{not}
+  	equivalent: \code{covs="x1, x2"} specifies the variance of \code{x1}, the variance
+  	of \code{x2}, \emph{and} their covariance, while \code{covs=c("x1", "x2")} specifies
+  	the variance of \code{x1} and the variance of \code{x2} \emph{but not} their covariance.}
 
 \item{estimate_lambda}{Boolean indicating whether to estimate additional branch lengths for
-phylogenetic tips (a.k.a. the Pagel-lambda term)}
+phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}}
 
 \item{estimate_kappa}{Boolean indicating whether to estimate a nonlinear scaling of branch
-lengths (a.k.a. the Pagel-kappa term)}
+lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}}
+
+\item{quiet}{if \code{FALSE}, the default, then the number of input lines is reported and
+    a message is printed suggesting that \code{specifyEquations} or \code{cfa} be used.}
+
+\item{newtonsteps}{Integer specifying the number of extra newton steps to take
+after optimization (alternative to \code{loopnum}).
+Each newtonstep requires calculating the Hessian matrix and is therefore slow.
+But for well-behaved models, each Newton step will typically
+decrease the maximum gradient of the loglikelihood with respect to each fixed effect,
+and therefore this option can be used to achieve an arbitrarily low final gradient
+given sufficient time for well-behaved models.  However, this option will also
+perform strangely or have unexpected consequences for poorly-behaved models, e.g.,
+when fixed effects are at upper or lower bounds.}
+
+\item{...}{Additional parameters passed to \code{\link[TMBhelper]{fit_tmb}}}
 }
 \description{
 Fits a phylogenetic structural equation model
+}
+\details{
+Note that parameters \code{logitlambda}, \code{lnkappa}, and \code{lnalpha} if estimated are each estimated as having a single value
+     that applies to all modeled variables.
+     This differs from default behavior in \pkg{phylolm}, where these parameters only apply to the "response" and not "predictor" variables.
+     This also differs from default behavior in \pkg{phylopath}, where a different value is estimated
+     in each call to \pkg{phylolm} during the d-separation estimate of path coefficients. However, it is
+     consistent with default behavior in \pkg{Rphylopars}, and estimates should be comparable in that case.
+     These additional parameters are estimated with unbounded support, which differs somewhat from default
+     bounded estimates in \pkg{phylolm}, although parameters should match if overriding \pkg{phylolm} defaults
+     to use unbounded support.  Finally, \code{phylosem} allows these three parameters to be estimated in any
+     combination, which is expanded functionality relative to the single-option functionality in \pkg{phylolm}.
+
+Also note that \pkg{phylopath} by default uses standardized coefficients.  To achieve matching parameter estimates between
+     \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
+}
+\examples{
+\dontrun{
+# Load data set
+library(phylopath)
+
+# Run phylosem
+model = "
+  DD -> RS, p1
+  BM -> LS, p2
+  BM -> NL, p3
+  NL -> DD, p4
+"
+psem = phylosem( sem = model,
+          data = rhino[,c("BM","NL","DD","RS","LS")],
+          tree = rhino_tree )
+
+# Convert and plot using phylopath
+coef_plot( as(psem,"fitted_DAG") )
+plot( as(psem,"fitted_DAG") )
+
+# Convet and plot using sem
+mysem = as(psem,"sem")
+sem::pathDiagram( model = mysem,
+                  style = "traditional",
+                  edge.labels = "values" )
+myplot = semPlot::semPlotModel( as(psem,"sem") )
+semPlot::semPaths( myplot,
+                   nodeLabels = Plot@Vars$name )
+effects( as(psem,"sem") )
+
+# Convert and plot using phylobase / phylosignal
+library(phylobase)
+library(phylosignal)
+plot( as(psem,"phylo4d") )
+barplot( as(psem,"phylo4d") )
+dotplot( as(psem,"phylo4d") )
+gridplot( as(psem,"phylo4d") )
+
+# Cluster based on phylogeny and traits
+gC = graphClust( as(psem,"phylo4d"),
+                 lim.phylo = 5,
+                 lim.trait = 5,
+                 scale.lim = FALSE)
+plot(gC, which = "graph", ask = FALSE)
+}
+
 }

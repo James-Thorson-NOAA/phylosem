@@ -14,4 +14,3 @@ export(compare_phylosem)
 export(list_parameters)
 export(phylosem)
 useDynLib(phylosem)
-

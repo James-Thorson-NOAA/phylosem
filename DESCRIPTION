@@ -30,4 +30,4 @@ LinkingTo:
     RcppEigen
 Description: More about what it does (maybe more than one line)
 License: file LICENSE
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3

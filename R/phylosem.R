@@ -2,7 +2,22 @@
 #'
 #' Fits a phylogenetic structural equation model
 #'
+#' Note that parameters \code{logitlambda}, \code{lnkappa}, and \code{lnalpha} if estimated are each estimated as having a single value
+#'      that applies to all modeled variables.
+#'      This differs from default behavior in \pkg{phylolm}, where these parameters only apply to the "response" and not "predictor" variables.
+#'      This also differs from default behavior in \pkg{phylopath}, where a different value is estimated
+#'      in each call to \pkg{phylolm} during the d-separation estimate of path coefficients. However, it is
+#'      consistent with default behavior in \pkg{Rphylopars}, and estimates should be comparable in that case.
+#'      These additional parameters are estimated with unbounded support, which differs somewhat from default
+#'      bounded estimates in \pkg{phylolm}, although parameters should match if overriding \pkg{phylolm} defaults
+#'      to use unbounded support.  Finally, \code{phylosem} allows these three parameters to be estimated in any
+#'      combination, which is expanded functionality relative to the single-option functionality in \pkg{phylolm}.
+#'
+#' Also note that \pkg{phylopath} by default uses standardized coefficients.  To achieve matching parameter estimates between
+#'      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
+#'
 #' @inheritParams sem::specifyModel
+#' @inheritParams TMBhelper::fit_tmb
 #'
 #' @param sem structural equation model structure, passed to either \code{\link[sem]{specifyModel}}
 #'        or \code{\link[sem]{specifyEquations}} and then parsed to control
@@ -13,12 +28,17 @@
 #'        then it still must be inputted as a column of \code{data} with entirely NA values.
 #' @param family Character-vector listing the distribution used for each column of \code{data}, where
 #'        each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
-#' @param estimate_theta Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
-#'        process
+#'        \code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
+#'        Other options correspond to different specifications of measurement error.
+#' @param estimate_ou Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
+#'        process using additional parameter \code{lnalpha},
+#'        corresponding to the \code{model="OUrandomRoot"}} parameterization from \pkg{phylolm}
+#'        as listed in \url{https://doi.org/10.1093/sysbio/syu005}
 #' @param estimate_lambda Boolean indicating whether to estimate additional branch lengths for
-#'        phylogenetic tips (a.k.a. the Pagel-lambda term)
+#'        phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}
 #' @param estimate_kappa Boolean indicating whether to estimate a nonlinear scaling of branch
-#'        lengths (a.k.a. the Pagel-kappa term)
+#'        lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}
+#' @param ... Additional parameters passed to \code{\link[TMBhelper]{fit_tmb}}
 #'
 #' @examples
 #' \dontrun{
@@ -74,10 +94,11 @@ function( sem,
           data,
           family = rep("fixed", ncol(data)),
           covs = colnames(data),
-          estimate_theta = FALSE,
+          estimate_ou = FALSE,
           estimate_lambda = FALSE,
           estimate_kappa = FALSE,
           quiet = FALSE,
+          newtonsteps = 1,
           ... ){
 
   # Function that converts SEM model to a RAM, see `?sem` for more context
@@ -117,8 +138,8 @@ function( sem,
   }
 
   # Errors / warnings;  not using `assertthat::assert_that` to avoid dependency
-  #if( estimate_theta==FALSE & fixed_root==TRUE ){
-  #  stop("`fixed_root=TRUE` is only applicable when `estimate_theta=TRUE`")
+  #if( estimate_ou==FALSE & fixed_root==TRUE ){
+  #  stop("`fixed_root=TRUE` is only applicable when `estimate_ou=TRUE`")
   #}
   #if( measurement_error==TRUE & estimate_lambda==TRUE ){
   #  stop("measurement errors using `measurement_error=TRUE` are confounded with `estimate_lambda=TRUE`")
@@ -169,7 +190,7 @@ function( sem,
                     "length_e" = length_e,
                     "RAM" = as.matrix(RAM[,1:4]),
                     "RAMstart" = as.numeric(RAM[,5]),
-                    "estimate_theta" = estimate_theta,
+                    "estimate_ou" = estimate_ou,
                     "estimate_lambda" = estimate_lambda,
                     "estimate_kappa" = estimate_kappa,
                     "height_v" = height_v,
@@ -181,7 +202,7 @@ function( sem,
   rmatrix = function(nrow, ncol) matrix(rnorm(nrow*ncol),nrow=nrow,ncol=ncol)
   parameters_list = list( "beta_z" = rep(0.1, max(RAM[,4])),
                           "lnsigma_j" = rep(0,ncol(data)),
-                          "lntheta" = log(1),
+                          "lnalpha" = log(1),
                           "logitlambda" = plogis(2),
                           "lnkappa" = log(1),
                           "x_vj" = 0.1 * rmatrix( nrow=nrow(edge_ez)+1, ncol=ncol(data) ),
@@ -208,10 +229,10 @@ function( sem,
       map_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), map_list$x_vj[v_i,j], NA )
     }
   }
-  if( estimate_theta==FALSE ){
-    map_list$lntheta = factor(NA)
+  if( estimate_ou==FALSE ){
+    map_list$lnalpha = factor(NA)
   }
-  if( estimate_theta==FALSE ){
+  if( estimate_ou==FALSE ){
     map_list$xbar_j = factor(rep( NA, length(parameters_list$xbar_j) ))
   }else{
     map_list$xbar_j = factor( ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data)) )
@@ -252,6 +273,7 @@ function( sem,
   results$opt = TMBhelper::fit_tmb( obj,
                                     quiet = quiet,
                                     control = list(eval.max=10000, iter.max=10000, trace=ifelse(quiet==TRUE,0,1) ),
+                                    newtonsteps = newtonsteps,
                                     ... )
   results$report = obj$report()
   results$parhat = obj$env$parList()

@@ -9,6 +9,7 @@ compare_phylosem(
   tree,
   data,
   family = rep("fixed", ncol(data)),
+  covs,
   estimate_theta = FALSE,
   estimate_lambda = FALSE,
   estimate_kappa = FALSE,
@@ -27,16 +28,27 @@ as NA.  If an SEM includes a latent variable (i.e., variable with no available m
 then it still must be inputted as a column of \code{data} with entirely NA values.}
 
 \item{family}{Character-vector listing the distribution used for each column of \code{data}, where
-each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.}
+each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
+\code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
+Other options correspond to different specifications of measurement error.}
 
-\item{estimate_theta}{Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
-process}
+\item{covs}{optional: a character vector of one or more elements, with each element
+  	giving a string of variable names, separated by commas. Variances and covariances
+  	among all variables in each such string are added to the model. For confirmatory
+  	factor analysis models specified via \code{cfa}, \code{covs} defaults to all of
+  	the factors in the model, thus specifying all variances and covariances among these factors.
+  	\emph{Warning}: \code{covs="x1, x2"} and \code{covs=c("x1", "x2")} are \emph{not}
+  	equivalent: \code{covs="x1, x2"} specifies the variance of \code{x1}, the variance
+  	of \code{x2}, \emph{and} their covariance, while \code{covs=c("x1", "x2")} specifies
+  	the variance of \code{x1} and the variance of \code{x2} \emph{but not} their covariance.}
 
 \item{estimate_lambda}{Boolean indicating whether to estimate additional branch lengths for
-phylogenetic tips (a.k.a. the Pagel-lambda term)}
+phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}}
 
 \item{estimate_kappa}{Boolean indicating whether to estimate a nonlinear scaling of branch
-lengths (a.k.a. the Pagel-kappa term)}
+lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}}
+
+\item{...}{Additional parameters passed to \code{\link[TMBhelper]{fit_tmb}}}
 }
 \description{
 Fits several phylogenetic structural equation model for further comparison
