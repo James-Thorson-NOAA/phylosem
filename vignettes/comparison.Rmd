@@ -15,23 +15,39 @@ knitr::opts_chunk$set(
 # use devtools::build_rmd("vignettes/comparison.Rmd") to test build
 ```
 
-```{r setup, echo=FALSE}
+```{r setup, echo=TRUE}
 library(phylosem)
 ```
 
-`phylosem` is an R package for fitting phylogenetic structural equation models.  The package generalizes:
+`phylosem` is an R package for fitting phylogenetic structural equation models (PSEMs).   The package generalizes features in existing R packages:
 
-* package sem for structural equation models
-* package phylosem for model comparison
-* package phylolm for large linear models, which arise as a submodel from SEM
-* Rphylopars, which arises as a submodel using unstructured covariance among variables
+* `sem` for structural equation models (SEMs);
+* `phylosem` for comparison among alternative path models;
+* `phylolm` for fitting large linear models that arise as when specifying a SEM with one endogenous variable and multiple exogenous and independent variables;
+* `Rphylopars` for interpolating missing values when specifying a SEM with an unstructured (full rank) covariance among variables;
+
+In model configurations that can be fitted by both `phylosem` and these other packages, we have confirmed that results are nearly identical or otherwise identified reasons that results differ.
+
+`phylosem` involves a simple user-interface that specifies the SEM using notation from package `sem` and the phylogenetic tree using package `ape`.  It allows uers to specify common models for the covariance including:
+
+* Brownian motion (BM);
+* Ornstein-Uhlenbeck (OU);
+* Pagel's lambda;
+* Pagel's kappa;
+
+Output can be coerced to standard formats so that `phylosem` can use plotting and summary functions form other packages.  Available output formats include:
+
+* `sem`, for plotting the estimated SEM and summarizing direct and indirect effects;
+* `phylopath`, for plotting and model comparison;
+* `phylo4d` in R-package `phylobase` for plotting estimated traits;
+
+Below, we specifically highlight the syntax, runtime, and output resulting from `phylosem` and other packages.
 
 ## Comparison with phylolm
 
-We first compare syntax and run-times using simulated data against phylolm:
+We first compare syntax and run-times using simulated data against `phylolm`.  This confirms that runtimes from `phylosem` are within an order of magnitude and that results are nearly identical for BM, OU, delta, and kappa models.
 
-
-```{r, echo=TRUE, message=FALSE, fig.width=8, fig.height=8}
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 # Settings
 Ntree = 100
 sd_x = 0.3
@@ -81,7 +97,8 @@ Sys.time() - start_time
 
 knitr::kable(summary(psem_ou)$coefficients, digits=3)
 knitr::kable(summary(plm_ou)$coefficients, digits=3)
-knitr::kable(c( "phylolm_alpha"=plm_ou$optpar, "phylosem_alpha"=exp(psem_ou$parhat$lnalpha) ), digits=3)
+knitr::kable(c( "phylolm_alpha"=plm_ou$optpar, 
+                "phylosem_alpha"=exp(psem_ou$parhat$lnalpha) ), digits=3)
 
 # Compare using Pagel's lambda
 start_time = Sys.time()
@@ -98,7 +115,8 @@ Sys.time() - start_time
 
 knitr::kable(summary(psem_lambda)$coefficients, digits=3)
 knitr::kable(summary(plm_lambda)$coefficients, digits=3)
-knitr::kable(c( "phylolm_lambda"=plm_lambda$optpar, "phylosem_lambda"=plogis(psem_lambda$parhat$logitlambda) ), digits=3)
+knitr::kable(c( "phylolm_lambda"=plm_lambda$optpar, 
+                "phylosem_lambda"=plogis(psem_lambda$parhat$logitlambda) ), digits=3)
 
 # Compare using Pagel's kappa
 start_time = Sys.time()
@@ -115,22 +133,24 @@ Sys.time() - start_time
 
 knitr::kable(summary(psem_kappa)$coefficients, digits=3)
 knitr::kable(summary(plm_kappa)$coefficients, digits=3)
-knitr::kable(c( "phylolm_kappa"=plm_kappa$optpar, "phylosem_kappa"=exp(psem_kappa$parhat$lnkappa) ), digits=3)
+knitr::kable(c( "phylolm_kappa"=plm_kappa$optpar, 
+                "phylosem_kappa"=exp(psem_kappa$parhat$lnkappa) ), digits=3)
 ```
 
 
 ## Compare with phylopath
 
-We next compare with a single run of phylopath
+We next compare with a single run of `phylopath`.  This again confirms that runtimes are comparable and results are identical for standardized or unstandardized coefficients.
 
-```{r, echo=TRUE, message=FALSE, fig.width=8, fig.height=8}
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 library(phylopath)
 library(phylosem)
 
 # make copy of data that's rescaled
 rhino_scaled = rhino
-  rhino_scaled[sapply(rhino_scaled, is.numeric)] <- lapply(rhino_scaled[sapply(rhino_scaled, is.numeric)], scale)
+  rhino_scaled[,c("BM","NL","LS","DD","RS")] = scale(rhino_scaled[,c("BM","NL","LS","DD","RS")])
 
+# Fit and plot using phylopath
 dag <- DAG(RS ~ DD, LS ~ BM, NL ~ BM, DD ~ NL)
 start_time = Sys.time()
 result <- est_DAG( DAG = dag,
@@ -141,7 +161,7 @@ result <- est_DAG( DAG = dag,
 Sys.time() - start_time
 plot(result)
 
-#
+# Fit and plot using phylosem
 model = "
   DD -> RS, p1
   BM -> LS, p2
@@ -159,26 +179,31 @@ plot( as(psem,"fitted_DAG") )
 
 ## Comparison with sem
 
-We next compare syntax and runtime against R-package sem:
+We next compare syntax and runtime against R-package `sem`.  This confirms that runtimes are comparable when specifying a star-phylogeny in `phylosem` to match the assumed structure in `sem`
 
 
-```{r, echo=TRUE, message=FALSE, fig.width=8, fig.height=8}
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 library(sem)
 library(TreeTools)
 
-# Simulate data
+# Simulation parameters
 n_obs = 50
-s1 = 0.1
-s2 = 0.2
-s3 = 0.3
-s4 = 0.4
-b12 = 0.3
-b23 = 0
-b34 = 0.3
+# Intercepts
 a1 = 1
 a2 = 2
 a3 = 3
 a4 = 4
+# Slopes
+b12 = 0.3
+b23 = 0
+b34 = 0.3
+# Standard deviations
+s1 = 0.1
+s2 = 0.2
+s3 = 0.3
+s4 = 0.4
+
+# Simulate data
 E1 = rnorm(n_obs, sd=s1)
 E2 = rnorm(n_obs, sd=s2)
 E3 = rnorm(n_obs, sd=s3)
@@ -189,20 +214,24 @@ Y3 = a3 + b23*Y2 + E3
 Y4 = a4 + b34*Y3 + E4
 Data = data.frame(Y1=Y1, Y2=Y2, Y3=Y3, Y4=Y4)
 
+# Specify path diagram (in this case, using correct structure)
 equations = "
   Y2 = b12 * Y1
   Y4 = b34 * Y3
 "
 model <- specifyEquations(text=equations, exog.variances=TRUE, endog.variances=TRUE)
+
+# Fit using package:sem
 start_time = Sys.time()
 Sem <- sem(model, data=Data)
 Sys.time() - start_time
 
+# Specify star phylogeny
 tree_null = TreeTools::StarTree(n_obs)
   tree_null$edge.length = rep(1,nrow(tree_null$edge))
   rownames(Data) = tree_null$tip.label
 
-#
+# Fit using phylosem
 start_time = Sys.time()
 psem = phylosem( data = Data,
           sem = equations,
@@ -227,17 +256,19 @@ knitr::kable(coef(psem, standardized=FALSE), digits=3)
 
 ## Comparison with Rphylopars
 
-Finally, we compare syntax and runtime against R-package Rphylopars:
+Finally, we compare syntax and runtime against R-package `Rphylopars`.  This confirms that we can impute identical estimates using both packages, when specifying a full-rank covariance in `phylosem`
 
-```{r, echo=TRUE, message=FALSE, fig.width=8, fig.height=8}
+We note that `phylosem` also allows parsimonious representations of the trait covariance via the inputted SEM structure.
+
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 library(Rphylopars)
 
-#
+# Format data, within no values for species t1
 Data = rhino[,c("BM","NL","DD","RS","LS")]
   rownames(Data) = tree$tip.label
 Data['t1',] = NA
 
-# Phylopars
+# fit using phylopars
 start_time = Sys.time()
 pars <- phylopars( trait_data = cbind(species=rownames(Data),Data),
                   tree = tree,
@@ -249,7 +280,7 @@ Sys.time() - start_time
 # Display estimates for missing values
 knitr::kable(cbind( "Estimate"=pars$anc_recon["t1",], "Var"=pars$anc_var["t1",] ), digits=3)
 
-# phylosem
+# fit using phylosem
 start_time = Sys.time()
 psem = phylosem( data = Data,
                  tree = tree,
