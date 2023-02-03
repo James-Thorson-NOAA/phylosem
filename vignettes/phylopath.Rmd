@@ -1,0 +1,103 @@
+---
+title: "Comparison to `phylopath`"
+author: "Wouter van der Bijl"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparison to `phylopath`}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+[_phylopath_](https://doi.org/10.7717/peerj.4718) is a package that implements phylogentic path analysis, using the d-separation methodology described by [Von Hardenberg & Gonzalez-Voyer](https://doi.org/10.1111/j.1558-5646.2012.01790.x). The models that can be fit are essentially a subset of the models that can be fit using _phylosem_. This is a comparison between the two packages, based on the introduction vignette of _phylopath_, showing where the packages are similar and where they differ. This should also be useful for _phylopath_ users, that want to do the same kinds of analysis in _phylosem_.
+
+To clearly show from which package each function originates, I'll use the `package::function` notation. Make sure you have both packages installed.
+
+Let's start by loading the Rhinogrades example data and phylogeny:
+
+```{r setup}
+data(rhino, rhino_tree, package = 'phylopath')
+```
+
+Then define what causal models we want to compare. First in `phylopath`:
+
+```{r}
+models_pp <- phylopath::define_model_set(
+  one   = c(RS ~ DD),
+  two   = c(DD ~ NL, RS ~ LS + DD),
+  three = c(RS ~ NL),
+  four  = c(RS ~ BM + NL),
+  five  = c(RS ~ BM + NL + DD),
+  six   = c(NL ~ RS, RS ~ BM),
+  seven = c(NL ~ RS, RS ~ LS + BM),
+  eight = c(NL ~ RS),
+  nine  = c(NL ~ RS, RS ~ LS),
+  .common = c(LS ~ BM, NL ~ BM, DD ~ NL)
+)
+```
+
+And then in `phylosem`:
+
+```{r}
+models_ps <- list(
+  one   = 'RS = b1 * DD',
+  two   = 'DD = b1 * NL; RS = b2 * LS + b3 * DD',
+  three = 'RS = b1 * NL',
+  four  = 'RS = b * BM + b2 * NL',
+  five  = 'RS = b1 * BM + b2 * NL + b3 * DD',
+  six   = 'NL = b1 * RS; RS = b2 * BM',
+  seven = 'NL = b1 * RS; RS = b2 * LS + b3 * BM',
+  eight = 'NL = b1 * RS',
+  nine  = 'NL = b1 * RS; RS = b2 * LS'
+)
+# we add the .common paths, by pasting them at the end of each of the model strings, e.g.:
+models_ps <- lapply(
+  models_ps, 
+  \(x) paste(x, c('LS = b1_ * BM; NL = b2_ * BM; DD = b3_ * NL'), sep = '; ')
+)
+```
+
+We can now run the model comparison. _phylopath_ will use d-separation here, while _phylosem_ is fitting each structural equation model itself.
+
+```{r}
+result_pp <- phylopath::phylo_path(
+  models_pp, data = rhino, tree = rhino_tree, model = 'BM'
+)
+# this may take a few minutes
+result_ps <- phylosem::compare_phylosem(
+  models_ps, tree = rhino_tree, data = rhino[-1]
+)
+```
+
+Note that we `phylo_path` only consciders the columns of the data that are used in the models. But `compare_phylosem` does not. In this, our first column contains a copy of the species names, and so we need to exclude this column.
+
+How did our models perform? For _phylopath_ we can use `summary` to get a table with CICc values:
+
+```{r}
+summary(result_pp)
+```
+
+For _phylosem_, we can extract the AIC values for each model:
+
+```{r}
+vapply(result_ps, AIC, 1) |> sort()
+```
+
+Note that the 2 methods agree on what the worst models are (one, two, three and seven), but do not agree on what the best model is.
+
+To take the best model, a particular model, or to perform model averaging, _phylopath_ and _phylosem_ work in the same way:
+
+```{r}
+best_pp <- phylopath::best(result_pp)
+best_ps <- phylosem::best(result_ps)
+```
+
+How do the 
