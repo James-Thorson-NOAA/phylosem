@@ -1,5 +1,5 @@
 ---
-title: "comparisons"
+title: "Comparison with other packages"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{comparisons}
@@ -140,7 +140,7 @@ knitr::kable(c( "phylolm_kappa"=plm_kappa$optpar,
 
 ## Compare with phylopath
 
-We next compare with a single run of `phylopath`.  This again confirms that runtimes are comparable and results are identical for standardized or unstandardized coefficients.
+We next compare with a single run of `phylopath`.  This again confirms that runtimes are within an order of magnitude and results are identical for standardized or unstandardized coefficients.
 
 ```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 library(phylopath)
@@ -179,7 +179,7 @@ plot( as(psem,"fitted_DAG") )
 
 ## Comparison with sem
 
-We next compare syntax and runtime against R-package `sem`.  This confirms that runtimes are comparable when specifying a star-phylogeny in `phylosem` to match the assumed structure in `sem`
+We next compare syntax and runtime against R-package `sem`.  This confirms that runtimes are within an order of magnitude when specifying a star-phylogeny in `phylosem` to match the assumed structure in `sem`
 
 
 ```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
