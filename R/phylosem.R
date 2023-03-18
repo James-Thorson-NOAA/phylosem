@@ -356,23 +356,42 @@ summary.phylosem = function( x ){
   # Errors
   if(is.null(x$opt$SD)) stop("Please re-run with `getsd=TRUE`")
 
+  # Easy of use
+  RAM = x$obj$env$data$RAM
+
   # Intercepts
   Intercepts = data.frame(
+    Path = NA,
+    VarName = paste0("Intercept_", colnames(x$data) ),
     Estimate = as.list(x$opt$SD, "Estimate", report=TRUE)$intercept_j,
     StdErr = as.list(x$opt$SD, "Std. Error", report=TRUE)$intercept_j
   )
-  rownames(Intercepts) = paste0("Intercept_", colnames(x$data) )
+  #rownames(Intercepts) = paste0("Intercept_", colnames(x$data) )
 
   # Slopes
-  RAM = x$obj$env$data$RAM
   Slopes = data.frame(
+    Path = x$SEM_model[which(RAM[,1]==1),1],
+    VarName = x$SEM_model[which(RAM[,1]==1),2],
     Estimate = c(NA,as.list(x$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==1),4]+1],
     StdErr = c(NA,as.list(x$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==1),4]+1]
   )
-  rownames( Slopes ) = x$SEM_model[which(RAM[,1]==1),1]
+  Slopes$Estimate = ifelse( is.na(x$SEM_model[which(RAM[,1]==1),3]), Slopes$Estimate, as.numeric(x$SEM_model[which(RAM[,1]==1),3]) )
+  #rownames = x$SEM_model[which(RAM[,1]==1),2]
+  #rownames( Slopes ) = rownames # ifelse( is.na(rownames), "TURNED OFF", rownames )
+
+  # Covariances
+  Variances = data.frame(
+    Path = x$SEM_model[which(RAM[,1]==2),1],
+    VarName = x$SEM_model[which(RAM[,1]==2),2],
+    Estimate = c(NA,as.list(x$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==2),4]+1],
+    StdErr = c(NA,as.list(x$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==2),4]+1]
+  )
+  Variances$Estimate = ifelse( is.na(x$SEM_model[which(RAM[,1]==2),3]), Variances$Estimate, as.numeric(x$SEM_model[which(RAM[,1]==2),3]) )
+  #rownames = x$SEM_model[which(RAM[,1]==2),1]
+  #rownames( Variances ) = ifelse( is.na(rownames), "TURNED OFF", rownames )
 
   #
-  Coefs = rbind( Intercepts, Slopes )
+  Coefs = rbind( Intercepts, Slopes, Variances )
   Coefs = cbind( Coefs, "t.value"=abs(Coefs$Estimate)/Coefs$StdErr )
   Coefs = cbind( Coefs, "p.value"=2*(1-pnorm(abs(Coefs$t.value))) )
 
