@@ -10,7 +10,7 @@ compare_phylosem(
   data,
   family = rep("fixed", ncol(data)),
   covs,
-  estimate_theta = FALSE,
+  estimate_ou = FALSE,
   estimate_lambda = FALSE,
   estimate_kappa = FALSE,
   ...
@@ -41,6 +41,11 @@ Other options correspond to different specifications of measurement error.}
   	equivalent: \code{covs="x1, x2"} specifies the variance of \code{x1}, the variance
   	of \code{x2}, \emph{and} their covariance, while \code{covs=c("x1", "x2")} specifies
   	the variance of \code{x1} and the variance of \code{x2} \emph{but not} their covariance.}
+
+\item{estimate_ou}{Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
+process using additional parameter \code{lnalpha},
+corresponding to the \code{model="OUrandomRoot"} parameterization from \pkg{phylolm}
+as listed in \url{https://doi.org/10.1093/sysbio/syu005}}
 
 \item{estimate_lambda}{Boolean indicating whether to estimate additional branch lengths for
 phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}}

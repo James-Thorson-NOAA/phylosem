@@ -1,9 +1,9 @@
 ---
-title: "Comparison to `phylopath`"
+title: "Detailed comparison with `phylopath`"
 author: "Wouter van der Bijl"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Comparison to `phylopath`}
+  %\VignetteIndexEntry{Detailed comparison with `phylopath`}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -143,4 +143,4 @@ phylosem::phylosem(
 ) |> as("fitted_DAG") |> plot()
 ```
 
-The reason this happens is that _phylosem_ implements these additional parameters by estimating them as a single estimated parameter for the all variables in the model. _phylosem_, on the other hand, estimates a separate lambda on the residuals of each regression ran. For `est_DAG()` this means one lambda for each variable with a modelled cause, and for `phylo_path()` this means one lambda for each tested d-separation statement.
+The reason this happens is that _phylosem_ implements these additional parameters by estimating them as a single estimated parameter for the all variables in the model. _phylopath_, on the other hand, estimates a separate lambda on the residuals of each regression ran. For `est_DAG()` this means one lambda for each variable with a modelled cause, and for `phylo_path()` this means one lambda for each tested d-separation statement.

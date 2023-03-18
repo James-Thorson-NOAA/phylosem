@@ -353,6 +353,9 @@ AIC.phylosem = function( x ){
 #' @export
 summary.phylosem = function( x ){
 
+  # Errors
+  if(is.null(x$opt$SD)) stop("Please re-run with `getsd=TRUE`")
+
   # Intercepts
   Intercepts = data.frame(
     Estimate = as.list(x$opt$SD, "Estimate", report=TRUE)$intercept_j,
@@ -363,10 +366,10 @@ summary.phylosem = function( x ){
   # Slopes
   RAM = x$obj$env$data$RAM
   Slopes = data.frame(
-    Estimate = as.list(x$opt$SD, "Estimate")$beta_z[RAM[,1]==1],
-    StdErr = as.list(x$opt$SD, "Std. Error")$beta_z[RAM[,1]==1]
+    Estimate = c(NA,as.list(x$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==1),4]+1],
+    StdErr = c(NA,as.list(x$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==1),4]+1]
   )
-  rownames( Slopes ) = x$SEM_model[which(RAM[,1]==1),2]
+  rownames( Slopes ) = x$SEM_model[which(RAM[,1]==1),1]
 
   #
   Coefs = rbind( Intercepts, Slopes )
