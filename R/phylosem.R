@@ -38,6 +38,8 @@
 #'        phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}
 #' @param estimate_kappa Boolean indicating whether to estimate a nonlinear scaling of branch
 #'        lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}
+#' @param run_model Boolean indicating whether to estimate parameters (the default), or
+#'        instead to return the model inputs and compiled TMB object without running;
 #' @param ... Additional parameters passed to \code{\link[TMBhelper]{fit_tmb}}
 #'
 #' @examples
@@ -101,6 +103,7 @@ function( sem,
           quiet = FALSE,
           newtonsteps = 1,
           tmb_inputs = NULL,
+          run_model = TRUE,
           ... ){
 
   # Function that converts SEM model to a RAM, see `?sem` for more context
@@ -154,6 +157,7 @@ function( sem,
   }
   familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, "gamma"=4, NA )
   if( any(is.na(familycode_j)) ) stop("Check `family`")
+  if( any(is.nan(as.matrix(data))) ) stop("Please remove `NaN` values from data, presumably switching to `NA` values")
 
   #
   SEM_model = tryCatch(
@@ -277,12 +281,17 @@ function( sem,
                         random = tmb_inputs$random,
                         DLL = "phylosem" )
   if(quiet==FALSE) list_parameters(obj)
-  obj$env$beSilent()       # if(!is.null(Random))
   results = list( data=data, SEM_model=SEM_model, obj=obj, call=match.call(), tree=tree,
                   tmb_inputs=tmb_inputs )
   #return(results)
 
+  # Export stuff
+  if( run_model==FALSE ){
+    return( results )
+  }
+
   #
+  obj$env$beSilent()       # if(!is.null(Random))
   results$opt = TMBhelper::fit_tmb( obj,
                                     quiet = quiet,
                                     control = list(eval.max=10000, iter.max=10000, trace=ifelse(quiet==TRUE,0,1) ),
