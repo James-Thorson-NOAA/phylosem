@@ -67,7 +67,7 @@
 #'                   edge.labels = "values" )
 #' myplot = semPlot::semPlotModel( as(psem,"sem") )
 #' semPlot::semPaths( myplot,
-#'                    nodeLabels = Plot@Vars$name )
+#'                    nodeLabels = myplot@Vars$name )
 #' effects( as(psem,"sem") )
 #'
 #' # Convert and plot using phylobase / phylosignal
@@ -97,8 +97,10 @@ function( sem,
           estimate_ou = FALSE,
           estimate_lambda = FALSE,
           estimate_kappa = FALSE,
+          data_labels = rownames(data),
           quiet = FALSE,
           newtonsteps = 1,
+          tmb_inputs = NULL,
           ... ){
 
   # Function that converts SEM model to a RAM, see `?sem` for more context
@@ -177,76 +179,87 @@ function( sem,
   height_v = ape::node.depth.edgelength(tree)
   # seems like length_e + height_v should be equal in an ultrametric tree
   if(vroot %in% edge_ez[,2]) stop("Check for problems")
+  if(any(length_e==0)) stop("`tree` contains an edge with length of zero; please fix")
 
   # associate each datum with tree
-  v_i = match( rownames(data), c(tree$tip.label,tree$node.label) )
+  v_i = match( data_labels, c(tree$tip.label,tree$node.label) )
   if(any(is.na(v_i))){
-    stop("Check that all `rownames(data)` are present in `c(tree$tip.label,tree$node.label)`")
+    stop("Check that all `data_labels` are present in `c(tree$tip.label,tree$node.label)`")
   }
 
-  # Build data
-  data_list = list( "n_tip" = n_tip,
-                    "edge_ez" = edge_ez - 1,
-                    "length_e" = length_e,
-                    "RAM" = as.matrix(RAM[,1:4]),
-                    "RAMstart" = as.numeric(RAM[,5]),
-                    "estimate_ou" = estimate_ou,
-                    "estimate_lambda" = estimate_lambda,
-                    "estimate_kappa" = estimate_kappa,
-                    "height_v" = height_v,
-                    "y_ij" = as.matrix(data),
-                    "v_i" = v_i - 1,
-                    "familycode_j" = familycode_j )
+  #
+  if( is.null(tmb_inputs) ){
+    # Build data
+    data_list = list( "n_tip" = n_tip,
+                      "edge_ez" = edge_ez - 1,
+                      "length_e" = length_e,
+                      "RAM" = as.matrix(RAM[,1:4]),
+                      "RAMstart" = as.numeric(RAM[,5]),
+                      "estimate_ou" = estimate_ou,
+                      "estimate_lambda" = estimate_lambda,
+                      "estimate_kappa" = estimate_kappa,
+                      "height_v" = height_v,
+                      "y_ij" = as.matrix(data),
+                      "v_i" = v_i - 1,
+                      "familycode_j" = familycode_j )
 
-  # Build parameters
-  rmatrix = function(nrow, ncol) matrix(rnorm(nrow*ncol),nrow=nrow,ncol=ncol)
-  parameters_list = list( "beta_z" = rep(0.1, max(RAM[,4])),
-                          "lnsigma_j" = rep(0,ncol(data)),
-                          "lnalpha" = log(1),
-                          "logitlambda" = plogis(2),
-                          "lnkappa" = log(1),
-                          "x_vj" = 0.1 * rmatrix( nrow=nrow(edge_ez)+1, ncol=ncol(data) ),
-                          "xbar_j" = rep(0,ncol(data)) )
-  # Build map
-  map_list = list()
-  # Start off map_list$x_vj, which has multiple constraints
-  map_list$x_vj = array( 1:prod(dim(parameters_list$x_vj)), dim=dim(parameters_list$x_vj) )
-  map_list$x_vj[data_list$n_tip+1,] = ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data))
+    # Build parameters
+    rmatrix = function(nrow, ncol) matrix(rnorm(nrow*ncol),nrow=nrow,ncol=ncol)
+    parameters_list = list( "beta_z" = rep(0.1, max(RAM[,4])),
+                            "lnsigma_j" = rep(0,ncol(data)),
+                            "lnalpha" = log(1),
+                            "logitlambda" = plogis(2),
+                            "lnkappa" = log(1),
+                            "x_vj" = 0.1 * rmatrix( nrow=nrow(edge_ez)+1, ncol=ncol(data) ),
+                            "xbar_j" = rep(0,ncol(data)) )
+    # Build map
+    map_list = list()
+    # Start off map_list$x_vj, which has multiple constraints
+    map_list$x_vj = array( 1:prod(dim(parameters_list$x_vj)), dim=dim(parameters_list$x_vj) )
+    map_list$x_vj[data_list$n_tip+1,] = ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data))
 
-  # Build random
-  random = c("x_vj")
-
-  # Settings
-  map_list$lnsigma_j = 1:length(parameters_list$lnsigma_j)
-  for( j in 1:ncol(data)){
-    # Turn off SD of measurement error
-    if( familycode_j[j] %in% c(0,2,3) ){
-      map_list$lnsigma_j[j] = NA
+    # Settings
+    map_list$lnsigma_j = 1:length(parameters_list$lnsigma_j)
+    for( j in 1:ncol(data)){
+      # Turn off SD of measurement error
+      if( familycode_j[j] %in% c(0,2,3) ){
+        map_list$lnsigma_j[j] = NA
+      }
+      if( familycode_j[j] == 0 ){
+        # Fix random-effects for tips at their observed values
+        parameters_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), parameters_list$x_vj[v_i,j], data_list$y_ij[,j] )
+        map_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), map_list$x_vj[v_i,j], NA )
+      }
     }
-    if( familycode_j[j] == 0 ){
-      # Fix random-effects for tips at their observed values
-      parameters_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), parameters_list$x_vj[v_i,j], data_list$y_ij[,j] )
-      map_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), map_list$x_vj[v_i,j], NA )
+    if( estimate_ou==FALSE ){
+      map_list$lnalpha = factor(NA)
     }
-  }
-  if( estimate_ou==FALSE ){
-    map_list$lnalpha = factor(NA)
-  }
-  if( estimate_ou==FALSE ){
-    map_list$xbar_j = factor(rep( NA, length(parameters_list$xbar_j) ))
+    if( estimate_ou==FALSE ){
+      map_list$xbar_j = factor(rep( NA, length(parameters_list$xbar_j) ))
+    }else{
+      map_list$xbar_j = factor( ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data)) )
+    }
+    if( estimate_lambda==FALSE ){
+      map_list$logitlambda = factor(NA)
+    }
+    if( estimate_kappa==FALSE ){
+      map_list$lnkappa = factor(NA)
+    }
+
+    # wrap up map_list$x_vj
+    map_list$x_vj = factor(map_list$x_vj)
+    map_list$lnsigma_j = factor(map_list$lnsigma_j)
+
+    # Build random
+    random = c("x_vj")
+
+    # Bundle
+    tmb_inputs = list( map_list=map_list, parameters_list=parameters_list, data_list=data_list, random=random )
   }else{
-    map_list$xbar_j = factor( ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data)) )
+    if(!all(c() %in% names(tmb_inputs)) ){
+      stop("Check contents of `tmb_inputs`")
+    }
   }
-  if( estimate_lambda==FALSE ){
-    map_list$logitlambda = factor(NA)
-  }
-  if( estimate_kappa==FALSE ){
-    map_list$lnkappa = factor(NA)
-  }
-
-  # wrap up map_list$x_vj
-  map_list$x_vj = factor(map_list$x_vj)
-  map_list$lnsigma_j = factor(map_list$lnsigma_j)
 
   # Hardwire TMB using local path
   if( FALSE ){
@@ -258,15 +271,15 @@ function( sem,
   }
 
   # Build TMB object
-  obj = TMB::MakeADFun( data = data_list,
-                        parameters = parameters_list,
-                        map = map_list,
-                        random = random,
+  obj = TMB::MakeADFun( data = tmb_inputs$data_list,
+                        parameters = tmb_inputs$parameters_list,
+                        map = tmb_inputs$map_list,
+                        random = tmb_inputs$random,
                         DLL = "phylosem" )
   if(quiet==FALSE) list_parameters(obj)
   obj$env$beSilent()       # if(!is.null(Random))
   results = list( data=data, SEM_model=SEM_model, obj=obj, call=match.call(), tree=tree,
-                  map_list=map_list, parameters_list=parameters_list, data_list=data_list )
+                  tmb_inputs=tmb_inputs )
   #return(results)
 
   #
