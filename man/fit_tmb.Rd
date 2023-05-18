@@ -44,7 +44,7 @@ fit_tmb(
 \item{control}{A list of control parameters. For details see \code{\link[stats]{nlminb}}}
 
 \item{bias.correct}{Boolean indicating whether to do epsilon bias-correction;
-see \code{\link[TMB]{sdreport}} and \code{\link[TMBhelper]{fit_tmb}}for details}
+see \code{\link[TMB]{sdreport}} and \code{\link{fit_tmb}}for details}
 
 \item{bias.correct.control}{tagged list of options for epsilon bias-correction,
 where \code{vars_to_correct} is a character-vector of ADREPORT variables that should be bias-corrected}
@@ -86,10 +86,6 @@ the standard output from \code{\link[stats]{nlminb}}, except with additional dia
 }
 \description{
 \code{fit_tmb} runs a TMB model and generates standard diagnostics
-}
-\examples{
-TMBhelper::fit_tmb( Obj ) # where Obj is a compiled TMB object
-
 }
 \references{
 For more details see \url{https://doi.org/10.1016/j.fishres.2015.11.016}
