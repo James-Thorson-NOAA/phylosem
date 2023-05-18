@@ -22,7 +22,8 @@ Imports:
     DiagrammeR,
     semPlot,
     phytools,
-    TreeTools
+    TreeTools,
+    Rphylopars,
 Depends:
     R (>= 4.0.0),
     TMB,
@@ -31,7 +32,7 @@ Depends:
 Suggests:
     knitr,
     rmarkdown,
-    testthat,
+    testthat
 LinkingTo:
     TMB, 
     RcppEigen
