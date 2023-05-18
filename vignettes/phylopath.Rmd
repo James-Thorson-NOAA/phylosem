@@ -1,5 +1,5 @@
 ---
-title: "Detailed comparison with `phylopath`"
+title: "Appendix B:  Detailed comparison with `phylopath`"
 author: "Wouter van der Bijl"
 output: rmarkdown::html_vignette
 vignette: >

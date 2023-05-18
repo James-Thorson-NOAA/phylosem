@@ -17,25 +17,30 @@ Authors@R:
     )
 Imports:
     phylopath,
-    phylobase
-Depends:
-    R (>= 4.0.0),
-    TMB,
-    ape
-Remotes: 
-    kaskr/TMB_contrib_R/TMBhelper,
-    kaskr/adcomp/TMB
-Suggests:
+    phylobase,
+    TMBhelper (>= 1.4.0),
     phylosignal,
     DiagrammeR,
     semPlot,
     phytools,
+Depends:
+    R (>= 4.0.0),
+    TMB,
+    ape,
+    Matrix
+Remotes: 
+    kaskr/TMB_contrib_R/TMBhelper
+Suggests:
     knitr,
     rmarkdown
 LinkingTo:
     TMB, 
     RcppEigen
-Description: More about what it does (maybe more than one line)
+Description: Applies phylogenetic comparative methods (PCM) and phylogenetic trait imputation using 
+    structural equation models (SEM).  This implementation includes a minimal set of features, to 
+    allow users to easily read all documentation and source code.  SEM includes PCM using SEM 
+    includes phylogenetic linear models as a nested submodel, but also allows imputation of 
+    missing values.   
 License: file LICENSE
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr

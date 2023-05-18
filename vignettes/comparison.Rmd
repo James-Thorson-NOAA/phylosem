@@ -1,6 +1,8 @@
 ---
-title: "Comparison with other packages"
+title: "Appendix A:  Comparison with other packages"
+author: "James T. Thorson"
 output: rmarkdown::html_vignette
+#output: rmarkdown::pdf_document
 vignette: >
   %\VignetteIndexEntry{Comparison with other packages}
   %\VignetteEngine{knitr::rmarkdown}
@@ -13,6 +15,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 # use devtools::build_rmd("vignettes/comparison.Rmd") to test build
+# use render( "comparison.Rmd", pdf_document()) to build PDF, and perhaps tinytex::latexmk() to install dependencies
 ```
 
 ```{r setup, echo=TRUE}
