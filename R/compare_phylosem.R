@@ -46,6 +46,8 @@ function( sem_set,
   return(out)
 }
 
+#' Extract best fitted model
+#'
 #' @export
 best <- function(x, best, ...) UseMethod('best')
 #' Extract best fitted model
@@ -59,6 +61,7 @@ function( x ) {
   x[[which.min(AICs)]]
 }
 
+#' Choose model
 #' @export
 choice <- function(x, choice, ...) UseMethod('choice')
 #' Choose model
@@ -72,6 +75,7 @@ function( x,
   x[[choice]]
 }
 
+#' Choose model
 #' @export
 average <- function(x, average, ...) UseMethod('average')
 #' Choose model
