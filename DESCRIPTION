@@ -23,6 +23,8 @@ Imports:
     DiagrammeR,
     semPlot,
     phytools,
+    remotes,
+    devtools
 Depends:
     R (>= 4.0.0),
     TMB,
