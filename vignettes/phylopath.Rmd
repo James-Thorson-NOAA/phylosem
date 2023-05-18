@@ -87,6 +87,7 @@ result_pp <- phylopath::phylo_path(
   models_pp, data = rhino_std, tree = rhino_tree, model = 'BM'
 )
 
+library(phylosem)
 result_ps <- phylosem::compare_phylosem(
   models_ps, tree = rhino_tree, data = rhino_std
 )
