@@ -71,9 +71,6 @@ function( obj,
     message( "No random effects detected in TMB model, so overriding user input to `TMBhelper::fit_tmb` to instead specify `bias.correct=FALSE`")
     bias.correct = FALSE
   }
-  if( getReportCovariance==FALSE ){
-    message( "Note that `getReportCovariance=FALSE` causes an error in `TMB::sdreport` when no ADREPORTed variables are present")
-  }
 
   # Check for issues
   List = list(...)

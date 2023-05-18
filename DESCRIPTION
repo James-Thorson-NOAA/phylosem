@@ -22,6 +22,7 @@ Imports:
     DiagrammeR,
     semPlot,
     phytools,
+    TreeTools
 Depends:
     R (>= 4.0.0),
     TMB,
