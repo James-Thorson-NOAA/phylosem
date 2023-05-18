@@ -13,8 +13,11 @@ phylosem(
   estimate_ou = FALSE,
   estimate_lambda = FALSE,
   estimate_kappa = FALSE,
+  data_labels = rownames(data),
   quiet = FALSE,
   newtonsteps = 1,
+  tmb_inputs = NULL,
+  run_model = TRUE,
   ...
 )
 }
@@ -68,7 +71,10 @@ given sufficient time for well-behaved models.  However, this option will also
 perform strangely or have unexpected consequences for poorly-behaved models, e.g.,
 when fixed effects are at upper or lower bounds.}
 
-\item{...}{Additional parameters passed to \code{\link[TMBhelper]{fit_tmb}}}
+\item{run_model}{Boolean indicating whether to estimate parameters (the default), or
+instead to return the model inputs and compiled TMB object without running;}
+
+\item{...}{Additional parameters passed to \code{\link{fit_tmb}}}
 }
 \description{
 Fits a phylogenetic structural equation model
@@ -115,7 +121,7 @@ sem::pathDiagram( model = mysem,
                   edge.labels = "values" )
 myplot = semPlot::semPlotModel( as(psem,"sem") )
 semPlot::semPaths( myplot,
-                   nodeLabels = Plot@Vars$name )
+                   nodeLabels = myplot@Vars$name )
 effects( as(psem,"sem") )
 
 # Convert and plot using phylobase / phylosignal

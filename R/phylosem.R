@@ -17,7 +17,7 @@
 #'      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 #'
 #' @inheritParams sem::specifyModel
-#' @inheritParams TMBhelper::fit_tmb
+#' @inheritParams fit_tmb
 #'
 #' @param sem structural equation model structure, passed to either \code{\link[sem]{specifyModel}}
 #'        or \code{\link[sem]{specifyEquations}} and then parsed to control
@@ -40,7 +40,7 @@
 #'        lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}
 #' @param run_model Boolean indicating whether to estimate parameters (the default), or
 #'        instead to return the model inputs and compiled TMB object without running;
-#' @param ... Additional parameters passed to \code{\link[TMBhelper]{fit_tmb}}
+#' @param ... Additional parameters passed to \code{\link{fit_tmb}}
 #'
 #' @examples
 #' \dontrun{
@@ -292,7 +292,7 @@ function( sem,
 
   #
   obj$env$beSilent()       # if(!is.null(Random))
-  results$opt = TMBhelper::fit_tmb( obj,
+  results$opt = fit_tmb( obj,
                                     quiet = quiet,
                                     control = list(eval.max=10000, iter.max=10000, trace=ifelse(quiet==TRUE,0,1) ),
                                     newtonsteps = newtonsteps,
@@ -362,7 +362,7 @@ coef.phylosem = function( x, standardized=FALSE ){
 #' @method AIC phylosem
 #' @export
 AIC.phylosem = function( x ){
-  return( TMBhelper::TMBAIC(x$opt) )
+  return( TMBAIC(x$opt) )
 }
 
 #' summarize phylosem

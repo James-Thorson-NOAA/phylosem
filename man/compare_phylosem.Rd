@@ -53,7 +53,7 @@ phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \cod
 \item{estimate_kappa}{Boolean indicating whether to estimate a nonlinear scaling of branch
 lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}}
 
-\item{...}{Additional parameters passed to \code{\link[TMBhelper]{fit_tmb}}}
+\item{...}{Additional parameters passed to \code{\link{fit_tmb}}}
 }
 \description{
 Fits several phylogenetic structural equation model for further comparison
