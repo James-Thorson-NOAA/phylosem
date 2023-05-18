@@ -18,7 +18,6 @@ Authors@R:
 Imports:
     phylopath,
     phylobase,
-    TMBhelper (>= 1.4.0),
     phylosignal,
     DiagrammeR,
     semPlot,
