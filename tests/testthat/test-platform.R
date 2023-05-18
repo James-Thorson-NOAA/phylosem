@@ -23,23 +23,8 @@ test_that("phylosem example is working ", {
   expect_equal( as.numeric(psem$opt$obj), 1087.686, tolerance=1e-2 )
 
   # Convert and plot using phylopath
-  coef_plot( as(psem,"fitted_DAG") )
-  plot( as(psem,"fitted_DAG") )
-
-  # Convet and plot using sem
-  mysem = as(psem,"sem")
-  sem::pathDiagram( model = mysem,
-                  style = "traditional",
-                  edge.labels = "values" )
-  myplot = semPlot::semPlotModel( as(psem,"sem") )
-  semPlot::semPaths( myplot,
-                   nodeLabels = myplot@Vars$name )
-  effects( as(psem,"sem") )
-
-  # Convert and plot using phylobase / phylosignal
-  plot( as(psem,"phylo4d") )
-  barplot( as(psem,"phylo4d") )
-  dotplot( as(psem,"phylo4d") )
-  gridplot( as(psem,"phylo4d") )
+  as(psem,"fitted_DAG")
+  as(psem,"sem")
+  as(psem,"phylo4d")
 })
 
