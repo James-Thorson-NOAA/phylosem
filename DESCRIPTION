@@ -27,6 +27,7 @@ Imports:
 Depends:
     R (>= 4.0.0),
     TMB,
+    TMBhelper (>= 1.4.0),
     ape,
     Matrix
 Remotes: 
