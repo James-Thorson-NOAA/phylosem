@@ -10,7 +10,7 @@
 #' @param control A list of control parameters. For details see \code{\link[stats]{nlminb}}
 #' @param getsd Boolean indicating whether to run standard error calculation; see \code{\link[TMB]{sdreport}} for details
 #' @param bias.correct Boolean indicating whether to do epsilon bias-correction;
-#'        see \code{\link[TMB]{sdreport}} and \code{\link[TMBhelper]{fit_tmb}}for details
+#'        see \code{\link[TMB]{sdreport}} and \code{\link{fit_tmb}}for details
 #' @param bias.correct.control tagged list of options for epsilon bias-correction,
 #'        where \code{vars_to_correct} is a character-vector of ADREPORT variables that should be bias-corrected
 #' @param savedir directory to save results (if \code{savedir=NULL}, then results aren't saved)
@@ -65,7 +65,7 @@ function( obj,
 
   # Check for issues
   if( bias.correct==TRUE & is.null(obj$env$random) ){
-    message( "No random effects detected in TMB model, so overriding user input to `TMBhelper::fit_tmb` to instead specify `bias.correct=FALSE`")
+    message( "No random effects detected in TMB model, so overriding user input to `fit_tmb` to instead specify `bias.correct=FALSE`")
     bias.correct = FALSE
   }
 
