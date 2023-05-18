@@ -132,10 +132,10 @@ function( obj,
   parameter_estimates[["max_gradient"]] = max(abs(gr(parameter_estimates$par)))
   parameter_estimates[["Convergence_check"]] = ifelse( parameter_estimates[["max_gradient"]]<0.0001, "There is no evidence that the model is not converged", "The model is likely not converged" )
   parameter_estimates[["number_of_coefficients"]] = c("Total"=length(unlist(obj$env$parameters)), "Fixed"=length(startpar), "Random"=length(unlist(obj$env$parameters))-length(startpar) )
-  parameter_estimates[["AIC"]] = TMBhelper::TMBAIC( opt=parameter_estimates )
+  parameter_estimates[["AIC"]] = TMBAIC( opt=parameter_estimates )
   if( n!=Inf ){
-    parameter_estimates[["AICc"]] = TMBhelper::TMBAIC( opt=parameter_estimates, n=n )
-    parameter_estimates[["BIC"]] = TMBhelper::TMBAIC( opt=parameter_estimates, p=log(n) )
+    parameter_estimates[["AICc"]] = TMBAIC( opt=parameter_estimates, n=n )
+    parameter_estimates[["BIC"]] = TMBAIC( opt=parameter_estimates, p=log(n) )
   }
   parameter_estimates[["diagnostics"]] = data.frame( "Param"=names(startpar), "starting_value"=startpar, "Lower"=lower, "MLE"=parameter_estimates$par, "Upper"=upper, "final_gradient"=as.vector(gr(parameter_estimates$par)) )
 
