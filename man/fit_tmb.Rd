@@ -31,6 +31,10 @@ fit_tmb(
 \arguments{
 \item{obj}{The compiled TMB object}
 
+\item{fn}{Function to be minimized. Must return a scalar value. .}
+
+\item{gr}{Optional function that takes the same arguments as objective and evaluates the gradient of objective at its first argument. Must return a vector as long as startpar}
+
 \item{startpar}{Starting values for fixed effects (default NULL uses \code{obj$par})}
 
 \item{lower, upper}{

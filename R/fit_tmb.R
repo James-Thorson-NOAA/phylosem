@@ -6,6 +6,8 @@
 #' @inheritParams stats::nlminb
 #' @inheritParams TMB::sdreport
 #' @param obj The compiled TMB object
+#' @param fn Function to be minimized. Must return a scalar value. .
+#' @param gr Optional function that takes the same arguments as objective and evaluates the gradient of objective at its first argument. Must return a vector as long as startpar
 #' @param startpar Starting values for fixed effects (default NULL uses \code{obj$par})
 #' @param control A list of control parameters. For details see \code{\link[stats]{nlminb}}
 #' @param getsd Boolean indicating whether to run standard error calculation; see \code{\link[TMB]{sdreport}} for details

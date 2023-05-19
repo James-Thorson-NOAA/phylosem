@@ -48,6 +48,8 @@ function( sem_set,
 
 #' Extract best fitted model
 #'
+#' @param x output from \code{compare_phylosem}
+#'
 #' @export
 best <- function(x, best, ...) UseMethod('best')
 #' Extract best fitted model
@@ -62,6 +64,10 @@ function( x ) {
 }
 
 #' Choose model
+#'
+#' @param x output from \code{compare_phylosem}
+#' @param choice Integer indicating model to extract
+#'
 #' @export
 choice <- function(x, choice, ...) UseMethod('choice')
 #' Choose model
@@ -76,6 +82,11 @@ function( x,
 }
 
 #' Choose model
+#'
+#' @param x output from \code{compare_phylosem}
+#' @param cut_off threshold where any model with delta-AIC greater than this value is excluded from average
+#' @param avg_method see \code{\link[phylopath]{average_DAGs}}
+#'
 #' @export
 average <- function(x, average, ...) UseMethod('average')
 #' Choose model

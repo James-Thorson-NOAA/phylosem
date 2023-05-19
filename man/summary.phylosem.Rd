@@ -8,8 +8,6 @@
 }
 \arguments{
 \item{x}{Output from \code{\link{phylosem}}}
-
-\item{...}{Not used}
 }
 \description{
 summarize phylosem

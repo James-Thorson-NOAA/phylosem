@@ -370,7 +370,6 @@ AIC.phylosem = function( x ){
 #' @title Summarize phylosem
 #'
 #' @param x Output from \code{\link{phylosem}}
-#' @param ... Not used
 #' @method summary phylosem
 #' @export
 summary.phylosem = function( x ){
