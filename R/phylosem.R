@@ -396,7 +396,10 @@ summary.phylosem = function( x ){
     Estimate = c(NA,as.list(x$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==1),4]+1],
     StdErr = c(NA,as.list(x$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==1),4]+1]
   )
-  Slopes$Estimate = ifelse( is.na(x$SEM_model[which(RAM[,1]==1),3]), Slopes$Estimate, as.numeric(x$SEM_model[which(RAM[,1]==1),3]) )
+  # Plug in if fixed
+  #Slopes$Estimate = ifelse( is.na(x$SEM_model[which(RAM[,1]==1),3]), Slopes$Estimate, as.numeric(x$SEM_model[which(RAM[,1]==1),3]) )
+  Slopes$Estimate = ifelse( is.na(Slopes$Estimate), as.numeric(x$SEM_model[which(RAM[,1]==1),3]), Slopes$Estimate )
+  # Unknown junk
   #rownames = x$SEM_model[which(RAM[,1]==1),2]
   #rownames( Slopes ) = rownames # ifelse( is.na(rownames), "TURNED OFF", rownames )
 
@@ -407,7 +410,10 @@ summary.phylosem = function( x ){
     Estimate = c(NA,as.list(x$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==2),4]+1],
     StdErr = c(NA,as.list(x$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==2),4]+1]
   )
-  Variances$Estimate = ifelse( is.na(x$SEM_model[which(RAM[,1]==2),3]), Variances$Estimate, as.numeric(x$SEM_model[which(RAM[,1]==2),3]) )
+  # Plug in if fixed
+  #Variances$Estimate = ifelse( is.na(x$SEM_model[which(RAM[,1]==2),3]), Variances$Estimate, as.numeric(x$SEM_model[which(RAM[,1]==2),3]) )
+  Variances$Estimate = ifelse( is.na(Variances$Estimate), as.numeric(x$SEM_model[which(RAM[,1]==2),3]), Variances$Estimate )
+  # Unknown junk
   #rownames = x$SEM_model[which(RAM[,1]==2),1]
   #rownames( Variances ) = ifelse( is.na(rownames), "TURNED OFF", rownames )
 
