@@ -24,7 +24,8 @@ Imports:
     phytools,
     TreeTools,
     Rphylopars,
-    phyr
+    phyr,
+    ggplot2
 Depends:
     R (>= 4.0.0),
     TMB,

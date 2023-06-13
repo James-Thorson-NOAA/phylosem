@@ -72,7 +72,6 @@ We see that the maximum eigenvalue for the precision matrix (which corresponds t
 The package `phylolm` is expected to have a "linear runtime", i.e., a proportional increase in runtime with increasing tree size.  We therefore compare runtime for `phylosem` and `phylolm` using a simulated tree across three orders of magnitude (10, 100, 1000, or 10000 tips).
 
 ```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%"}
-
 # Settings
 Ntree_config = c( 1e1, 1e2, 1e3, 1e4 )
 Nreplicates = 5
@@ -117,6 +116,7 @@ df = apply( Time_rcz, MARGIN=2:3, FUN=mean )
 df = cbind( expand.grid(dimnames(df)), "time_seconds"=as.vector(df) )
 
 # Plot
+library(ggplot2)
 ggplot(data=df, aes(x=tree_size, y=time_seconds, group=package, color=package)) +
   geom_line() +
   geom_point() + scale_y_log10()
