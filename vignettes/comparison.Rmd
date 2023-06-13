@@ -14,8 +14,9 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-# use devtools::build_rmd("vignettes/comparison.Rmd") to test build
-# use render( "comparison.Rmd", pdf_document()) to build PDF, and perhaps tinytex::latexmk() to install dependencies
+# devtools::build_rmd("vignettes/comparison.Rmd") # to test build
+# library(rmarkdown); setwd( R'(C:\Users\James.Thorson\Desktop\Git\phylosem\vignettes)' )
+# render( "comparison.Rmd", pdf_document()) # to build PDF, and perhaps tinytex::latexmk() to install dependencies
 ```
 
 ```{r setup, echo=TRUE}
@@ -140,6 +141,107 @@ knitr::kable(c( "phylolm_kappa"=plm_kappa$optpar,
                 "phylosem_kappa"=exp(psem_kappa$parhat$lnkappa) ), digits=3)
 ```
 
+## Generalized linear models
+
+We also compare results among software for fitting phylogenetic generalized linear models (PGLM).
+
+### Poisson-distributed response
+
+First, we specifically explore a Poisson-distributed PGLM, comparing `phylosem` against `phylolm::phyloglm` (which uses Generalized Estimating Equations) and `phyr::pglmm_compare` (which uses maximum likelihood).
+
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
+# Settings
+Ntree = 100
+sd_x = 0.3
+sd_y = 0.3
+b0_x = 1
+b0_y = 0
+b_xy = 1
+
+# Simulate tree
+set.seed(1)
+tree = ape::rtree(n=Ntree)
+
+# Simulate data
+x = b0_x + sd_x * phylolm::rTrait(n = 1, phy=tree)
+ybar = b0_y + b_xy*x
+y_normal = ybar + sd_y * phylolm::rTrait(n = 1, phy=tree)
+y_pois = rpois( n=Ntree, lambda=exp(y_normal) )
+
+# Construct, re-order, and reduce data
+Data = data.frame(x=x,y=y_pois)
+
+# Compare using phyloglm
+pglm = phylolm::phyloglm(y ~ 1 + x, data=Data, phy=tree, method="poisson_GEE" )
+knitr::kable(summary(pglm)$coefficients, digits=3)
+
+#
+pglmm = phyr::pglmm_compare(
+  y ~ 1 + x,
+  family = "poisson",
+  data = Data,
+  phy = tree )
+knitr::kable(summary(pglmm), digits=3)
+
+#
+pgsem = phylosem( sem = "x -> y, p",
+          data = Data,
+          family = c("fixed","poisson"),
+          tree = tree,
+          quiet = TRUE )
+knitr::kable(summary(pgsem)$coefficients, digits=3)
+```
+
+In this instance (and in others we have explored), results from `phylolm::phyloglm` are generally different while those from `phylosem` and `phyr::pglmm_compare` are close but not identical.
+
+### Binomial regression
+
+We also compare results for a Bernoulli-distributed response using PGLM.  We again compare `phylosem` against `phyr::pglmm_compare`, and do not explore threshold models which we expect to give different results due differences in assumptions about how latent variables affect measurements.
+
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
+# Settings
+Ntree = 100
+sd_x = 0.3
+sd_y = 0.3
+b0_x = 1
+b0_y = 0
+b_xy = 1
+
+# Simulate tree
+set.seed(1)
+tree = ape::rtree(n=Ntree)
+
+# Simulate data
+x = b0_x + sd_x * phylolm::rTrait(n = 1, phy=tree)
+ybar = b0_y + b_xy*x
+y_normal = ybar + sd_y * phylolm::rTrait(n = 1, phy=tree)
+y_binom = rbinom( n=Ntree, size=1, prob=plogis(y_normal) )
+
+# Construct, re-order, and reduce data
+Data = data.frame(x=x,y=y_binom)
+
+#
+pglmm = phyr::pglmm_compare(
+  y ~ 1 + x,
+  family = "binomial",
+  data = Data,
+  phy = tree )
+knitr::kable(summary(pglmm), digits=3)
+
+#
+pgsem = phylosem( sem = "x -> y, p",
+          data = Data,
+          family = c("fixed","binomial"),
+          tree = tree,
+          quiet = TRUE )
+knitr::kable(summary(pgsem)$coefficients, digits=3)
+```
+
+In this instance, `phylosem` and `phyr::pglmm_compare` give similar estimates and standard errors for the slope term.
+
+### Summary of PGLM results
+
+Based on these two comparisons, we encourage further cross-testing of different phylogenetic generalized linear models.
 
 ## Compare with phylopath
 
