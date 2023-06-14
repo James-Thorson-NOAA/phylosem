@@ -147,9 +147,9 @@ We also compare results among software for fitting phylogenetic generalized line
 
 ### Poisson-distributed response
 
-First, we specifically explore a Poisson-distributed PGLM, comparing `phylosem` against `phylolm::phyloglm` (which uses Generalized Estimating Equations) and `phyr::pglmm_compare` (which uses maximum likelihood).
+First, we specifically explore a Poisson-distributed PGLM, comparing `phylosem` against `phylolm::phyloglm` (which uses Generalized Estimating Equations), `phyr::pglmm_compare` (which uses maximum likelihood), and `brms` (which fits a Bayesian hierarchical model).
 
-```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%"}
 # Settings
 Ntree = 100
 sd_x = 0.3
@@ -190,9 +190,37 @@ pgsem = phylosem( sem = "x -> y, p",
           tree = tree,
           quiet = TRUE )
 knitr::kable(summary(pgsem)$coefficients, digits=3)
+
+# Comare using Bayesian implementation in brms
+library(brms)
+Amat <- ape::vcv.phylo(tree)
+Data$tips <- rownames(Data)
+mcmc <- brm(
+  y ~ 1 + x + (1 | gr(tips, cov = A)),
+  data = Data, data2 = list(A = Amat),
+  family = 'poisson',
+  cores = 4
+)
+knitr::kable(fixef(mcmc), digits = 3)
+
+# Plot them together
+library(ggplot2)
+pdat <- rbind.data.frame(
+  coef(summary(pglm))[, 1:2],
+  data.frame(Estimate = pglmm$B, StdErr = pglmm$B.se),
+  setNames(as.data.frame(fixef(mcmc))[1:2], c('Estimate', 'StdErr')),
+  setNames(summary(pgsem)$coefficients[2:3, 3:4], c('Estimate', 'StdErr'))
+)
+pdat$Param <- rep(c('Intercept', 'Slope'), 4)
+pdat$Method <- rep(c('phylolm::phyloglm', 'phyr::pglmm_compare', 'brms::brm', 'phylosem::phylosem'), each = 2)
+ggplot(pdat, aes(
+  x = Estimate, xmin = Estimate - StdErr, xmax = Estimate + StdErr, y = Param, color = Method
+)) +
+  geom_pointrange(position = position_dodge(width = 0.6)) +
+  theme_classic() + theme(panel.grid.major.x = element_line(), panel.grid.minor.x = element_line())
 ```
 
-In this instance (and in others we have explored), results from `phylolm::phyloglm` are generally different while those from `phylosem` and `phyr::pglmm_compare` are close but not identical.
+In this instance (and in others we have explored), results from `phylolm::phyloglm` are generally different while those from `phylosem`, `phyr::pglmm_compare`, and `brms` are close but not quite identical.
 
 ### Binomial regression
 
@@ -241,7 +269,7 @@ In this instance, `phylosem` and `phyr::pglmm_compare` give similar estimates an
 
 ### Summary of PGLM results
 
-Based on these two comparisons, we encourage further cross-testing of different phylogenetic generalized linear models.
+Based on these two comparisons, we conclude that phylosem provides an interface for maximum-likelihood estimate of phylogenetic generalized linear models (PGLM), and extends this class to include mixed data (i.e., a combination of different measurement types), missing data, and non-recursive structural linkages.  However, we also encourage further cross-testing of different software for fitting phylogenetic generalized linear models.
 
 ## Compare with phylopath
 
