@@ -147,7 +147,7 @@ We also compare results among software for fitting phylogenetic generalized line
 
 ### Poisson-distributed response
 
-First, we specifically explore a Poisson-distributed PGLM, comparing `phylosem` against `phylolm::phyloglm` (which uses Generalized Estimating Equations), `phyr::pglmm_compare` (which uses maximum likelihood), and `brms` (which fits a Bayesian hierarchical model).
+First, we specifically explore a Poisson-distributed PGLM, comparing `phylosem` against `phylolm::phyloglm` (which uses Generalized Estimating Equations) and `phyr::pglmm_compare` (which uses maximum likelihood).
 
 ```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%"}
 # Settings
@@ -190,7 +190,11 @@ pgsem = phylosem( sem = "x -> y, p",
           tree = tree,
           quiet = TRUE )
 knitr::kable(summary(pgsem)$coefficients, digits=3)
+```
 
+We also compare results against `brms` (which fits a Bayesian hierarchical model), although we load results from compiled run of `brms` to avoid users having to install STAN to run vignettes for `phylosem`:
+
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%", eval=FALSE}
 # Comare using Bayesian implementation in brms
 library(brms)
 Amat <- ape::vcv.phylo(tree)
@@ -212,12 +216,22 @@ pdat <- rbind.data.frame(
   setNames(summary(pgsem)$coefficients[2:3, 3:4], c('Estimate', 'StdErr'))
 )
 pdat$Param <- rep(c('Intercept', 'Slope'), 4)
-pdat$Method <- rep(c('phylolm::phyloglm', 'phyr::pglmm_compare', 'brms::brm', 'phylosem::phylosem'), each = 2)
-ggplot(pdat, aes(
-  x = Estimate, xmin = Estimate - StdErr, xmax = Estimate + StdErr, y = Param, color = Method
+pdat$Method <- rep( c('phylolm::phyloglm', 'phyr::pglmm_compare',
+                     'brms::brm', 'phylosem::phylosem'), each = 2)
+figure = ggplot(pdat, aes(
+  x = Estimate, xmin = Estimate - StdErr,
+  xmax = Estimate + StdErr, y = Param, color = Method
 )) +
   geom_pointrange(position = position_dodge(width = 0.6)) +
-  theme_classic() + theme(panel.grid.major.x = element_line(), panel.grid.minor.x = element_line())
+  theme_classic() +
+  theme(panel.grid.major.x = element_line(), panel.grid.minor.x = element_line())
+saveRDS( figure, file=file.path(R'(C:\Users\James.Thorson\Desktop\Git\phylosem\vignettes)',"brms.RDS") )
+```
+
+```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%", echo=FALSE}
+library(ggplot2)
+figure = readRDS( file.path(R'(C:\Users\James.Thorson\Desktop\Git\phylosem\vignettes)',"brms.RDS") )
+figure
 ```
 
 In this instance (and in others we have explored), results from `phylolm::phyloglm` are generally different while those from `phylosem`, `phyr::pglmm_compare`, and `brms` are close but not quite identical.
