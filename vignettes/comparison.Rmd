@@ -1,6 +1,6 @@
 ---
 title: "Appendix A:  Comparison with other packages"
-author: "James T. Thorson"
+author: "James T. Thorson and Wouter van der Bijl"
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
 vignette: >

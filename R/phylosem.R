@@ -293,10 +293,10 @@ function( sem,
   #
   obj$env$beSilent()       # if(!is.null(Random))
   results$opt = fit_tmb( obj,
-                                    quiet = quiet,
-                                    control = list(eval.max=10000, iter.max=10000, trace=ifelse(quiet==TRUE,0,1) ),
-                                    newtonsteps = newtonsteps,
-                                    ... )
+                          quiet = quiet,
+                          control = list(eval.max=10000, iter.max=10000, trace=ifelse(quiet==TRUE,0,1) ),
+                          newtonsteps = newtonsteps,
+                          ... )
   results$report = obj$report()
   results$parhat = obj$env$parList()
   class(results) = "phylosem"

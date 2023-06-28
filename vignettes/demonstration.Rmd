@@ -65,7 +65,7 @@ knitr::kable(c("minimum_eigenvalue"=min(eigen(psem$opt$SD$jointPrecision)$values
 knitr::kable(Rsub, digits=3)
 ```
 
-We see that the maximum eigenvalue for the precision matrix (which corresponds to the maximum eigenvalue of the covariance matrix) is greater than zero, such that the precision is invertible and the Hessian matrix is full rank.  From this we can see that all parameters are estimable when applying all three transformations.  We also see that transformation parameters are not perfectly correlated, although the logit-lambda and ln-alpha parameters have a correlation of approximately 0.75.
+We see that the minimum eigenvalue for the precision matrix (which corresponds to the maximum eigenvalue of the covariance matrix) is greater than zero, such that the precision is invertible and the Hessian matrix is full rank.  From this we can see that all parameters are estimable when applying all three transformations.  We also see that transformation parameters are not perfectly correlated, although the logit-lambda and ln-alpha parameters have a correlation of approximately 0.75.
 
 ## Scaling of runtime with increased tree size
 
