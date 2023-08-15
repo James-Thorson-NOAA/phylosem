@@ -117,6 +117,7 @@ Type objective_function<Type>::operator() ()
   //DATA_INTEGER( estimate_kappa );
   DATA_VECTOR( height_v );
   DATA_MATRIX( y_ij );
+  DATA_UPDATE( y_ij ); // Experiment with cAIC
   DATA_IVECTOR( v_i );
   DATA_IVECTOR( familycode_j );
 
@@ -148,6 +149,7 @@ Type objective_function<Type>::operator() ()
   Type alpha = exp( lnalpha );
   Type lambda = invlogit( logitlambda );
   Type kappa = exp( lnkappa );
+  matrix<Type> yhat_ij( n_i, n_j );
   vector<Type> rho_v( n_v );
   vector<Type> var_v( n_v );
   vector<Type> sigma_j( n_j );
@@ -241,19 +243,23 @@ Type objective_function<Type>::operator() ()
       // familycode = 0 :  don't include likelihood
       // familycode = 1 :  normal
       if( familycode_j(j)==1 ){
-        jnll_ij(i,j) -= dnorm( y_ij(i,j), x_vj(v_i(i),j), sigma_j(j), true );
+        yhat_ij(i,j) = x_vj(v_i(i),j);
+        jnll_ij(i,j) -= dnorm( y_ij(i,j), yhat_ij(i,j), sigma_j(j), true );
       }
       // familycode = 2 :  binomial
       if( familycode_j(j)==2 ){
-        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), invlogit(x_vj(v_i(i),j)), true );
+        yhat_ij(i,j) = invlogit(x_vj(v_i(i),j));
+        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), yhat_ij(i,j), true );
       }
       // familycode = 3 :  Poisson
       if( familycode_j(j)==3 ){
-        jnll_ij(i,j) -= dpois( y_ij(i,j), exp(x_vj(v_i(i),j)), true );
+        yhat_ij(i,j) = exp(x_vj(v_i(i),j));
+        jnll_ij(i,j) -= dpois( y_ij(i,j), yhat_ij(i,j), true );
       }
       // familycode = 4 :  Gamma:   shape = 1/CV^2; scale = mean*CV^2
       if( familycode_j(j)==4 ){
-        jnll_ij(i,j) -= dgamma( y_ij(i,j), pow(sigma_j(j),-2), exp(x_vj(v_i(i),j))*pow(sigma_j(j),2), true );
+        yhat_ij(i,j) = exp(x_vj(v_i(i),j));
+        jnll_ij(i,j) -= dgamma( y_ij(i,j), pow(sigma_j(j),-2), yhat_ij(i,j)*pow(sigma_j(j),2), true );
       }
     }
   }}
@@ -278,6 +284,7 @@ Type objective_function<Type>::operator() ()
   REPORT( jnll_ij );
   REPORT( alpha );
   REPORT( x_vj );
+  REPORT( yhat_ij );  // Testing for cAIC
   ADREPORT( Rho_jj );
   return jnll;
 }
