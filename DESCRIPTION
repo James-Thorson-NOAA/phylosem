@@ -16,31 +16,33 @@ Authors@R:
              comment = c(ORCID = "0000-0002-7366-1868"))
     )
 Imports:
-    phylopath,
+    sem,
+    ape,
+    methods,
+    TMB, 
     phylobase,
+    phylopath
+Depends:
+    R (>= 4.0.0),
+Suggests:
     phylosignal,
     DiagrammeR,
     semPlot,
     phytools,
     TreeTools,
     Rphylopars,
+    phylolm,
     phyr,
-    ggplot2
-Depends:
-    R (>= 4.0.0),
-    TMB,
-    ape,
-    Matrix
-Suggests:
     knitr,
     rmarkdown,
+    ggplot2,
     testthat
 LinkingTo:
-    TMB, 
-    RcppEigen
+    RcppEigen,
+    TMB
 Description: Applies phylogenetic comparative methods (PCM) and phylogenetic trait imputation using 
     structural equation models (SEM).  This implementation includes a minimal set of features, to 
-    allow users to easily read all documentation and source code.  SEM includes PCM using SEM 
+    allow users to easily read all documentation and source code.  PCM using SEM 
     includes phylogenetic linear models as a nested submodel, but also allows imputation of 
     missing values.   
 License: file LICENSE

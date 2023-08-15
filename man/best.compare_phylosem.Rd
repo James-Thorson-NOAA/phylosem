@@ -6,6 +6,9 @@
 \usage{
 \method{best}{compare_phylosem}(x)
 }
+\arguments{
+\item{x}{output from \code{compare_phylosem}}
+}
 \description{
 Extract best fitted model
 }

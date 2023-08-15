@@ -5,10 +5,13 @@
 #' \code{list_parameters} lists all fixed and random effects
 #'
 #' @param Obj Compiled TMB object
+#' @param verbose Boolean, whether to print messages to terminal
 #' @return Return Tagged-list of fixed and random effects (returned invisibly)
 
 #' @export
-list_parameters = function( Obj, verbose=TRUE ){
+list_parameters <-
+function( Obj,
+          verbose=TRUE ){
   Return = list()
   Table = data.frame()
   if( length(Obj$env$random)>0 ){

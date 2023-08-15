@@ -38,9 +38,21 @@
 #'        phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}
 #' @param estimate_kappa Boolean indicating whether to estimate a nonlinear scaling of branch
 #'        lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}
+#' @param data_labels For each row of \code{data}, listing the corresponding name from
+#'        \code{tree$tip.label}.  Default pulls \code{data_labels} from \code{rownames(data)}
+#' @param tmb_inputs optional tagged list that overrides the default constructor
+#'        for TMB inputs (use at your own risk)
 #' @param run_model Boolean indicating whether to estimate parameters (the default), or
 #'        instead to return the model inputs and compiled TMB object without running;
 #' @param ... Additional parameters passed to \code{\link{fit_tmb}}
+#'
+#' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
+#' @importFrom sem sem pathDiagram specifyModel specifyEquations
+#' @importFrom phylopath average_DAGs coef_plot
+#' @importFrom phylobase phylo4d
+#' @importFrom ape Ntip node.depth.edgelength rtree
+#' @importFrom TMB compile dynlib MakeADFun sdreport
+#' @importFrom methods as
 #'
 #' @examples
 #' \dontrun{
@@ -76,7 +88,6 @@
 #' library(phylobase)
 #' library(phylosignal)
 #' plot( as(psem,"phylo4d") )
-#' barplot( as(psem,"phylo4d") )
 #' dotplot( as(psem,"phylo4d") )
 #' gridplot( as(psem,"phylo4d") )
 #'
@@ -88,7 +99,7 @@
 #' plot(gC, which = "graph", ask = FALSE)
 #' }
 #'
-#' @useDynLib phylosem
+#' @useDynLib phylosem, .registration = TRUE
 #' @export
 phylosem <-
 function( sem,
@@ -116,7 +127,8 @@ function( sem,
     # EXCERPT FROM `getAnywhere("sem.semmod")`
     heads = from = to = rep(0, n.paths)
     for (p in 1:n.paths) {
-      path = sem:::parse.path(model[p, 1])
+      #path = sem:::parse.path(model[p, 1])
+      path = parse_path(model[p, 1])
       heads[p] = abs(path$direction)
       to[p] = path$second
       from[p] = path$first
@@ -161,12 +173,12 @@ function( sem,
 
   #
   SEM_model = tryCatch(
-    sem::specifyModel( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=covs, quiet=quiet ),
+    specifyModel( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=covs, quiet=quiet ),
     error = function(e) e
   )
   if( isFALSE("semmod" %in% class(SEM_model)) ){
     SEM_model = tryCatch(
-      sem::specifyEquations( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=covs ),
+      specifyEquations( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=covs ),
       error = function(e) e
     )
   }
@@ -176,11 +188,11 @@ function( sem,
   RAM = build_ram( SEM_model, colnames(data) )
 
   #
-  n_tip = ape::Ntip(tree)
+  n_tip = Ntip(tree)
   vroot = n_tip + 1
   edge_ez = tree$edge  # parent, child
   length_e = tree$edge.length
-  height_v = ape::node.depth.edgelength(tree)
+  height_v = node.depth.edgelength(tree)
   # seems like length_e + height_v should be equal in an ultrametric tree
   if(vroot %in% edge_ez[,2]) stop("Check for problems")
   if(any(length_e==0)) stop("`tree` contains an edge with length of zero; please fix")
@@ -270,12 +282,12 @@ function( sem,
     #dyn.unload( TMB::dynlib("phylosem") )          #
     #setwd( "C:/Users/James.Thorson/Desktop/Git/phylosem/src/" )
     setwd( system.file("executables", package = "phylosem") )
-    TMB::compile( "phylosem.cpp", flags="-Wno-ignored-attributes -O2 -mfpmath=sse -msse2 -mstackrealign" )
-    dyn.load( TMB::dynlib("phylosem") )          #
+    compile( "phylosem.cpp", flags="-Wno-ignored-attributes -O2 -mfpmath=sse -msse2 -mstackrealign" )
+    dyn.load( dynlib("phylosem") )          #
   }
 
   # Build TMB object
-  obj = TMB::MakeADFun( data = tmb_inputs$data_list,
+  obj = MakeADFun( data = tmb_inputs$data_list,
                         parameters = tmb_inputs$parameters_list,
                         map = tmb_inputs$map_list,
                         random = tmb_inputs$random,
@@ -326,8 +338,7 @@ print.phylosem <- function(x, ...)
 #'
 #' @title Extract path coefficients
 #' @param x Output from \code{\link{phylosem}}
-#' @param standardize Whether to standardize regression coefficients
-#' @param ... Not used
+#' @param standardized Whether to standardize regression coefficients
 #' @return NULL
 #' @method coef phylosem
 #' @export
@@ -354,67 +365,70 @@ coef.phylosem = function( x, standardized=FALSE ){
 
 #' Calculate AIC
 #'
+#' @inheritParams TMBAIC
+#'
 #' @title Calculate Akaike Information Criterion from marginal likelihood
 #'
-#' @param x Output from \code{\link{phylosem}}
+#' @param object Output from \code{\link{phylosem}}
 #' @param ... Not used
 #' @return NULL
 #' @method AIC phylosem
 #' @export
-AIC.phylosem = function( x ){
-  return( TMBAIC(x$opt) )
+AIC.phylosem = function( object, ..., k = 2 ){
+  return( TMBAIC(object$opt, ..., k=k) )
 }
 
 #' summarize phylosem
 #'
 #' @title Summarize phylosem
 #'
-#' @param x Output from \code{\link{phylosem}}
+#' @param object Output from \code{\link{phylosem}}
+#' @param ... Not used
 #' @method summary phylosem
 #' @export
-summary.phylosem = function( x ){
+summary.phylosem = function( object, ... ){
 
   # Errors
-  if(is.null(x$opt$SD)) stop("Please re-run with `getsd=TRUE`")
+  if(is.null(object$opt$SD)) stop("Please re-run with `getsd=TRUE`")
 
   # Easy of use
-  RAM = x$obj$env$data$RAM
+  RAM = object$obj$env$data$RAM
 
   # Intercepts
   Intercepts = data.frame(
     Path = NA,
-    VarName = paste0("Intercept_", colnames(x$data) ),
-    Estimate = as.list(x$opt$SD, "Estimate", report=TRUE)$intercept_j,
-    StdErr = as.list(x$opt$SD, "Std. Error", report=TRUE)$intercept_j
+    VarName = paste0("Intercept_", colnames(object$data) ),
+    Estimate = as.list(object$opt$SD, "Estimate", report=TRUE)$intercept_j,
+    StdErr = as.list(object$opt$SD, "Std. Error", report=TRUE)$intercept_j
   )
-  #rownames(Intercepts) = paste0("Intercept_", colnames(x$data) )
+  #rownames(Intercepts) = paste0("Intercept_", colnames(object$data) )
 
   # Slopes
   Slopes = data.frame(
-    Path = x$SEM_model[which(RAM[,1]==1),1],
-    VarName = x$SEM_model[which(RAM[,1]==1),2],
-    Estimate = c(NA,as.list(x$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==1),4]+1],
-    StdErr = c(NA,as.list(x$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==1),4]+1]
+    Path = object$SEM_model[which(RAM[,1]==1),1],
+    VarName = object$SEM_model[which(RAM[,1]==1),2],
+    Estimate = c(NA,as.list(object$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==1),4]+1],
+    StdErr = c(NA,as.list(object$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==1),4]+1]
   )
   # Plug in if fixed
-  #Slopes$Estimate = ifelse( is.na(x$SEM_model[which(RAM[,1]==1),3]), Slopes$Estimate, as.numeric(x$SEM_model[which(RAM[,1]==1),3]) )
-  Slopes$Estimate = ifelse( is.na(Slopes$Estimate), as.numeric(x$SEM_model[which(RAM[,1]==1),3]), Slopes$Estimate )
+  #Slopes$Estimate = ifelse( is.na(object$SEM_model[which(RAM[,1]==1),3]), Slopes$Estimate, as.numeric(object$SEM_model[which(RAM[,1]==1),3]) )
+  Slopes$Estimate = ifelse( is.na(Slopes$Estimate), as.numeric(object$SEM_model[which(RAM[,1]==1),3]), Slopes$Estimate )
   # Unknown junk
-  #rownames = x$SEM_model[which(RAM[,1]==1),2]
+  #rownames = object$SEM_model[which(RAM[,1]==1),2]
   #rownames( Slopes ) = rownames # ifelse( is.na(rownames), "TURNED OFF", rownames )
 
   # Covariances
   Variances = data.frame(
-    Path = x$SEM_model[which(RAM[,1]==2),1],
-    VarName = x$SEM_model[which(RAM[,1]==2),2],
-    Estimate = c(NA,as.list(x$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==2),4]+1],
-    StdErr = c(NA,as.list(x$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==2),4]+1]
+    Path = object$SEM_model[which(RAM[,1]==2),1],
+    VarName = object$SEM_model[which(RAM[,1]==2),2],
+    Estimate = c(NA,as.list(object$opt$SD, "Estimate")$beta_z)[RAM[which(RAM[,1]==2),4]+1],
+    StdErr = c(NA,as.list(object$opt$SD, "Std. Error")$beta_z)[RAM[which(RAM[,1]==2),4]+1]
   )
   # Plug in if fixed
-  #Variances$Estimate = ifelse( is.na(x$SEM_model[which(RAM[,1]==2),3]), Variances$Estimate, as.numeric(x$SEM_model[which(RAM[,1]==2),3]) )
-  Variances$Estimate = ifelse( is.na(Variances$Estimate), as.numeric(x$SEM_model[which(RAM[,1]==2),3]), Variances$Estimate )
+  #Variances$Estimate = ifelse( is.na(object$SEM_model[which(RAM[,1]==2),3]), Variances$Estimate, as.numeric(object$SEM_model[which(RAM[,1]==2),3]) )
+  Variances$Estimate = ifelse( is.na(Variances$Estimate), as.numeric(object$SEM_model[which(RAM[,1]==2),3]), Variances$Estimate )
   # Unknown junk
-  #rownames = x$SEM_model[which(RAM[,1]==2),1]
+  #rownames = object$SEM_model[which(RAM[,1]==2),1]
   #rownames( Variances ) = ifelse( is.na(rownames), "TURNED OFF", rownames )
 
   #
@@ -423,7 +437,7 @@ summary.phylosem = function( x ){
   Coefs = cbind( Coefs, "p.value"=2*(1-pnorm(abs(Coefs$t.value))) )
 
   out = list(
-    call = x$call,
+    call = object$call,
     coefficients = Coefs
   )
 

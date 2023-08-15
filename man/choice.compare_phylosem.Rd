@@ -6,6 +6,11 @@
 \usage{
 \method{choice}{compare_phylosem}(x, choice)
 }
+\arguments{
+\item{x}{output from \code{compare_phylosem}}
+
+\item{choice}{Integer indicating model to extract}
+}
 \description{
 Choose model
 }

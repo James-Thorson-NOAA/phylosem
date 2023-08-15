@@ -4,7 +4,7 @@
 \alias{best}
 \title{Extract best fitted model}
 \usage{
-best(x, best, ...)
+best(x)
 }
 \arguments{
 \item{x}{output from \code{compare_phylosem}}

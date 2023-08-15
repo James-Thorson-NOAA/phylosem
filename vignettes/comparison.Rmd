@@ -7,12 +7,15 @@ vignette: >
   %\VignetteIndexEntry{Comparison with other packages}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{ggplot2,phylolm,phylopath,Rphylopars,phyr,TreeTools}
 ---
 
 ```{r, include = FALSE}
+have_packages = all(sapply( c("ggplot2","phylolm","phylopath","Rphylopars","phyr","TreeTools"), FUN=requireNamespace))
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = have_packages  # https://r-pkgs.org/vignettes.html#sec-vignettes-eval-option
 )
 # devtools::build_rmd("vignettes/comparison.Rmd") # to test build
 # library(rmarkdown); setwd( R'(C:\Users\James.Thorson\Desktop\Git\phylosem\vignettes)' )
@@ -21,6 +24,10 @@ knitr::opts_chunk$set(
 
 ```{r setup, echo=TRUE}
 library(phylosem)
+```
+
+```{r package_warning, echo=TRUE, eval=!have_packages}
+message("Must install ggplot2, phylopath, phylolm, ape")
 ```
 
 `phylosem` is an R package for fitting phylogenetic structural equation models (PSEMs).   The package generalizes features in existing R packages:
@@ -51,7 +58,7 @@ Below, we specifically highlight the syntax, runtime, and output resulting from 
 
 We first compare syntax and run-times using simulated data against `phylolm`.  This confirms that runtimes from `phylosem` are within an order of magnitude and that results are nearly identical for BM, OU, delta, and kappa models.
 
-```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
+```{r, eval=have_packages, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 # Settings
 Ntree = 100
 sd_x = 0.3
@@ -149,7 +156,7 @@ We also compare results among software for fitting phylogenetic generalized line
 
 First, we specifically explore a Poisson-distributed PGLM, comparing `phylosem` against `phylolm::phyloglm` (which uses Generalized Estimating Equations) and `phyr::pglmm_compare` (which uses maximum likelihood).
 
-```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%"}
+```{r, eval=have_packages, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%"}
 # Settings
 Ntree = 100
 sd_x = 0.3
@@ -171,7 +178,7 @@ y_pois = rpois( n=Ntree, lambda=exp(y_normal) )
 # Construct, re-order, and reduce data
 Data = data.frame(x=x,y=y_pois)
 
-# Compare using phyloglm
+# Compare using phylolm::phyloglm
 pglm = phylolm::phyloglm(y ~ 1 + x, data=Data, phy=tree, method="poisson_GEE" )
 knitr::kable(summary(pglm)$coefficients, digits=3)
 
@@ -228,7 +235,7 @@ figure = ggplot(pdat, aes(
 saveRDS( figure, file=file.path(R'(C:\Users\James.Thorson\Desktop\Git\phylosem\vignettes)',"brms.RDS") )
 ```
 
-```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%", echo=FALSE}
+```{r, eval=have_packages, message=FALSE, fig.width=6, fig.height=6, out.width = "75%", echo=FALSE}
 library(ggplot2)
 figure = readRDS( file.path(R'(C:\Users\James.Thorson\Desktop\Git\phylosem\vignettes)',"brms.RDS") )
 figure
@@ -240,7 +247,7 @@ In this instance (and in others we have explored), results from `phylolm::phylog
 
 We also compare results for a Bernoulli-distributed response using PGLM.  We again compare `phylosem` against `phyr::pglmm_compare`, and do not explore threshold models which we expect to give different results due differences in assumptions about how latent variables affect measurements.
 
-```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
+```{r, eval=have_packages, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 # Settings
 Ntree = 100
 sd_x = 0.3
@@ -289,7 +296,7 @@ Based on these two comparisons, we conclude that phylosem provides an interface 
 
 We next compare with a single run of `phylopath`.  This again confirms that runtimes are within an order of magnitude and results are identical for standardized or unstandardized coefficients.
 
-```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
+```{r, eval=have_packages, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 library(phylopath)
 library(phylosem)
 
@@ -329,7 +336,7 @@ plot( as(psem,"fitted_DAG") )
 We next compare syntax and runtime against R-package `sem`.  This confirms that runtimes are within an order of magnitude when specifying a star-phylogeny in `phylosem` to match the assumed structure in `sem`
 
 
-```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
+```{r, eval=have_packages, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 library(sem)
 library(TreeTools)
 
@@ -389,14 +396,14 @@ Sys.time() - start_time
 
 We then compare estimated values for standardized coefficients
 
-```{r, echo=FALSE, results='asis'}
+```{r, eval=have_packages, echo=FALSE, results='asis'}
 knitr::kable(coef(Sem, standardized=TRUE)[1:2], digits=3)
 knitr::kable(coef(psem, standardized=TRUE)[1:2,], digits=3)
 ```
 
 and also compare values for unstandardized coefficients:
 
-```{r, echo=FALSE, results='asis'}
+```{r, eval=have_packages, echo=FALSE, results='asis'}
 knitr::kable(coef(Sem, standardized=FALSE), digits=3)
 knitr::kable(coef(psem, standardized=FALSE), digits=3)
 ```
@@ -407,7 +414,7 @@ Finally, we compare syntax and runtime against R-package `Rphylopars`.  This con
 
 We note that `phylosem` also allows parsimonious representations of the trait covariance via the inputted SEM structure.
 
-```{r, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
+```{r, eval=have_packages, echo=TRUE, message=FALSE, fig.width=6, fig.height=6}
 library(Rphylopars)
 
 # Format data, within no values for species t1

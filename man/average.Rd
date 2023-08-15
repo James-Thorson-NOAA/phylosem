@@ -4,7 +4,7 @@
 \alias{average}
 \title{Choose model}
 \usage{
-average(x, average, ...)
+average(x, cut_off, avg_method)
 }
 \arguments{
 \item{x}{output from \code{compare_phylosem}}

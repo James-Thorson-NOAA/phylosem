@@ -4,7 +4,7 @@
 \alias{choice}
 \title{Choose model}
 \usage{
-choice(x, choice, ...)
+choice(x, choice)
 }
 \arguments{
 \item{x}{output from \code{compare_phylosem}}

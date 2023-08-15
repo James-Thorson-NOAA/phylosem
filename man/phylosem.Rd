@@ -58,6 +58,9 @@ phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \cod
 \item{estimate_kappa}{Boolean indicating whether to estimate a nonlinear scaling of branch
 lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}}
 
+\item{data_labels}{For each row of \code{data}, listing the corresponding name from
+\code{tree$tip.label}.  Default pulls \code{data_labels} from \code{rownames(data)}}
+
 \item{quiet}{if \code{FALSE}, the default, then the number of input lines is reported and
     a message is printed suggesting that \code{specifyEquations} or \code{cfa} be used.}
 
@@ -70,6 +73,9 @@ and therefore this option can be used to achieve an arbitrarily low final gradie
 given sufficient time for well-behaved models.  However, this option will also
 perform strangely or have unexpected consequences for poorly-behaved models, e.g.,
 when fixed effects are at upper or lower bounds.}
+
+\item{tmb_inputs}{optional tagged list that overrides the default constructor
+for TMB inputs (use at your own risk)}
 
 \item{run_model}{Boolean indicating whether to estimate parameters (the default), or
 instead to return the model inputs and compiled TMB object without running;}
@@ -128,7 +134,6 @@ effects( as(psem,"sem") )
 library(phylobase)
 library(phylosignal)
 plot( as(psem,"phylo4d") )
-barplot( as(psem,"phylo4d") )
 dotplot( as(psem,"phylo4d") )
 gridplot( as(psem,"phylo4d") )
 

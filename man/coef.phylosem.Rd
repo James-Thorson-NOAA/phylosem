@@ -9,9 +9,7 @@
 \arguments{
 \item{x}{Output from \code{\link{phylosem}}}
 
-\item{standardize}{Whether to standardize regression coefficients}
-
-\item{...}{Not used}
+\item{standardized}{Whether to standardize regression coefficients}
 }
 \description{
 Extract path coefficients.

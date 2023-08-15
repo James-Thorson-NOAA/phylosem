@@ -51,14 +51,15 @@ function( sem_set,
 #' @param x output from \code{compare_phylosem}
 #'
 #' @export
-best <- function(x, best, ...) UseMethod('best')
+best <- function(x) UseMethod('best')
 #' Extract best fitted model
+#'
+#' @param x output from \code{compare_phylosem}
 #'
 #' @method best compare_phylosem
 #' @export
 best.compare_phylosem <-
 function( x ) {
-
   AICs <- vapply(x, AIC, 1)
   x[[which.min(AICs)]]
 }
@@ -69,14 +70,17 @@ function( x ) {
 #' @param choice Integer indicating model to extract
 #'
 #' @export
-choice <- function(x, choice, ...) UseMethod('choice')
+choice <- function(x, choice) UseMethod('choice')
 #' Choose model
+#'
+#' @param x output from \code{compare_phylosem}
+#' @param choice Integer indicating model to extract
 #'
 #' @method choice compare_phylosem
 #' @export
 choice.compare_phylosem <-
 function( x,
-          choice) {
+          choice ) {
 
   x[[choice]]
 }
@@ -88,8 +92,12 @@ function( x,
 #' @param avg_method see \code{\link[phylopath]{average_DAGs}}
 #'
 #' @export
-average <- function(x, average, ...) UseMethod('average')
+average <- function(x, cut_off, avg_method) UseMethod('average')
 #' Choose model
+#'
+#' @param x output from \code{compare_phylosem}
+#' @param cut_off threshold where any model with delta-AIC greater than this value is excluded from average
+#' @param avg_method see \code{\link[phylopath]{average_DAGs}}
 #'
 #' @method average compare_phylosem
 #' @export
@@ -106,6 +114,10 @@ function( x,
   w <- l / sum(l)
 
   selected <- x[dAICs < cut_off]
-  selected_DAGs <- lapply(selected, phylosem2fitted_DAG)
-  phylopath::average_DAGs(selected_DAGs, w[dAICs < cut_off], avg_method = avg_method)
+  selected_DAGs <- NULL
+  for( i in seq_along(selected) ){
+    selected_DAGS[[i]] = as( selected[[i]], "fitted_DAG" )
+  }
+  #selected_DAGs <- lapply(selected, phylosem2fitted_DAG)
+  average_DAGs(selected_DAGs, w[dAICs < cut_off], avg_method = avg_method)
 }

@@ -4,12 +4,14 @@
 \alias{AIC.phylosem}
 \title{Calculate Akaike Information Criterion from marginal likelihood}
 \usage{
-\method{AIC}{phylosem}(x)
+\method{AIC}{phylosem}(object, ..., k = 2)
 }
 \arguments{
-\item{x}{Output from \code{\link{phylosem}}}
+\item{object}{Output from \code{\link{phylosem}}}
 
 \item{...}{Not used}
+
+\item{k}{the penalty on additional fixed effects (default=2, for AIC)}
 }
 \description{
 Calculate AIC

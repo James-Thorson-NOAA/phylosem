@@ -6,6 +6,13 @@
 \usage{
 \method{average}{compare_phylosem}(x, cut_off = 2, avg_method = "conditional")
 }
+\arguments{
+\item{x}{output from \code{compare_phylosem}}
+
+\item{cut_off}{threshold where any model with delta-AIC greater than this value is excluded from average}
+
+\item{avg_method}{see \code{\link[phylopath]{average_DAGs}}}
+}
 \description{
 Choose model
 }

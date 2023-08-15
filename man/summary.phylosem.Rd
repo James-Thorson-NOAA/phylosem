@@ -4,10 +4,12 @@
 \alias{summary.phylosem}
 \title{Summarize phylosem}
 \usage{
-\method{summary}{phylosem}(x)
+\method{summary}{phylosem}(object, ...)
 }
 \arguments{
-\item{x}{Output from \code{\link{phylosem}}}
+\item{object}{Output from \code{\link{phylosem}}}
+
+\item{...}{Not used}
 }
 \description{
 summarize phylosem

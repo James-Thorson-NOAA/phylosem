@@ -12,6 +12,7 @@
 #' \code{phylopath} package, and \code{\link[sem]{sem}} from the
 #' \code{sem} package.
 #' @keywords methods
+#'
 #' @aliases as as-method as,fitted_DAG,fitted_DAG-method,sem,sem-method
 setAs("phylosem", "fitted_DAG", function(from, to) {
 
@@ -19,7 +20,7 @@ setAs("phylosem", "fitted_DAG", function(from, to) {
   # extract and name identical to output from fitted_DAG
   out = list(
     coef = t(from$report$Rho_jj),
-    se = t(as.list(from$opt$SD,what="Std. Error",report=TRUE)$Rho_jj)
+    se = t(as.list(from$opt$SD, what="Std. Error", report=TRUE)$Rho_jj)
   )
   dimnames(out$coef) = dimnames(out$se) = list( colnames(from$data), colnames(from$data) )
 
@@ -33,7 +34,7 @@ setAs("phylosem", "sem", function(from, to) {
 
   Sprime = from$report$V_jj
     rownames(Sprime) = colnames(Sprime) = colnames(from$data)
-  out = sem::sem( from$SEM_model,
+  out = sem( from$SEM_model,
              S = Sprime,
              N = nrow(from$data) )   # data=data.frame(Database$Y_ij),
 
@@ -47,7 +48,7 @@ setAs("phylosem", "phylo4d", function(from, to) {
   #
   traits = from$report$x_vj
   colnames(traits) = colnames(from$data)
-  out = phylobase::phylo4d( x=from$tree, all.data=traits )
+  out = phylo4d( x=from$tree, all.data=traits )
 
   # pass out
   return(out)
