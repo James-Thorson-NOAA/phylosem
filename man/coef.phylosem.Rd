@@ -4,12 +4,14 @@
 \alias{coef.phylosem}
 \title{Extract path coefficients}
 \usage{
-\method{coef}{phylosem}(x, standardized = FALSE)
+\method{coef}{phylosem}(object, standardized = FALSE, ...)
 }
 \arguments{
-\item{x}{Output from \code{\link{phylosem}}}
+\item{object}{Output from \code{\link{phylosem}}}
 
 \item{standardized}{Whether to standardize regression coefficients}
+
+\item{...}{Not used}
 }
 \description{
 Extract path coefficients.

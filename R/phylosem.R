@@ -33,7 +33,7 @@
 #' @param estimate_ou Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 #'        process using additional parameter \code{lnalpha},
 #'        corresponding to the \code{model="OUrandomRoot"} parameterization from \pkg{phylolm}
-#'        as listed in \url{https://doi.org/10.1093/sysbio/syu005}
+#'        as listed in \doi{10.1093/sysbio/syu005}
 #' @param estimate_lambda Boolean indicating whether to estimate additional branch lengths for
 #'        phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}
 #' @param estimate_kappa Boolean indicating whether to estimate a nonlinear scaling of branch
@@ -337,15 +337,16 @@ print.phylosem <- function(x, ...)
 #' Extract path coefficients.
 #'
 #' @title Extract path coefficients
-#' @param x Output from \code{\link{phylosem}}
+#' @param object Output from \code{\link{phylosem}}
 #' @param standardized Whether to standardize regression coefficients
+#' @param ... Not used
 #' @return NULL
 #' @method coef phylosem
 #' @export
-coef.phylosem = function( x, standardized=FALSE ){
-  beta_z = x$opt$par[names(x$opt$par)=="beta_z"]
-  RAM = x$obj$env$data$RAM
-  if(nrow(RAM) != nrow(x$SEM_model)) stop("Check assumptions")
+coef.phylosem = function( object, standardized=FALSE, ... ){
+  beta_z = object$opt$par[names(object$opt$par)=="beta_z"]
+  RAM = object$obj$env$data$RAM
+  if(nrow(RAM) != nrow(object$SEM_model)) stop("Check assumptions")
   for( i in which(RAM[,1]==1) ){
     if( standardized==TRUE ){
       beta_z[i] = beta_z[i] * abs(beta_z[which( RAM[,'from']==RAM[i,'from'] & RAM[,'to']==RAM[i,'from'] )])
@@ -359,8 +360,8 @@ coef.phylosem = function( x, standardized=FALSE ){
     }
   }
   SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
-  SEM_params = ifelse( is.na(SEM_params), as.numeric(x$SEM_model[,3]), SEM_params )
-  return( data.frame(Path=x$SEM_model[,1], Parameter=x$SEM_model[,2], Estimate=SEM_params ) )
+  SEM_params = ifelse( is.na(SEM_params), as.numeric(object$SEM_model[,3]), SEM_params )
+  return( data.frame(Path=object$SEM_model[,1], Parameter=object$SEM_model[,2], Estimate=SEM_params ) )
 }
 
 #' Calculate AIC

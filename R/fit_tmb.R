@@ -38,7 +38,7 @@
 #' @return the standard output from \code{\link[stats]{nlminb}}, except with additional diagnostics and timing info,
 #'         and a new slot containing the output from \code{\link[TMB]{sdreport}}
 #'
-#' @references For more details see \url{https://doi.org/10.1016/j.fishres.2015.11.016}
+#' @references For more details see \doi{10.1016/j.fishres.2015.11.016}
 #' @export
 fit_tmb <-
 function( obj,
