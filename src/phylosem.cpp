@@ -1,11 +1,12 @@
 
+#define TMB_LIB_INIT R_init_phylosem
 #include <TMB.hpp>
 
 // Function for detecting NAs
-template<class Type>
-bool isNA(Type x){
-  return R_IsNA(asDouble(x));
-}
+//template<class Type>
+//bool isNA(Type x){
+//  return R_IsNA(asDouble(x));
+//}
 
 // SparseMatrix for Ornstein-Uhlenbeck network correlations
 //template<class Type>
@@ -239,7 +240,7 @@ Type objective_function<Type>::operator() ()
   // Distribution for data
   for(int i=0; i<n_i; i++){
   for(int j=0; j<n_j; j++){
-    if( !isNA(y_ij(i,j)) ){
+    if( !R_IsNA(asDouble(y_ij(i,j))) ){
       // familycode = 0 :  don't include likelihood
       // familycode = 1 :  normal
       if( familycode_j(j)==1 ){
