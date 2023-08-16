@@ -5,9 +5,7 @@ context("Testing cross platform and R version compatibility")
 # Eastern Bering Sea pollcok
 test_that("phylosem example is working ", {
   #skip_on_ci()
-  library(phylopath)
-  library(phylobase)
-  library(phylosignal)
+  data(rhino, rhino_tree, package="phylopath")
 
   # Run phylosem
   model = "
@@ -23,8 +21,8 @@ test_that("phylosem example is working ", {
   expect_equal( as.numeric(psem$opt$obj), 1087.686, tolerance=1e-2 )
 
   # Convert and plot using phylopath
-  as(psem,"fitted_DAG")
-  as(psem,"sem")
-  as(psem,"phylo4d")
+  as_fitted_DAG(psem)
+  as_sem(psem)
+  as_phylo4d(psem)
 })
 

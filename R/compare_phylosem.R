@@ -114,10 +114,10 @@ function( x,
   w <- l / sum(l)
 
   selected <- x[dAICs < cut_off]
-  selected_DAGs <- NULL
-  for( i in seq_along(selected) ){
-    selected_DAGS[[i]] = as( selected[[i]], "fitted_DAG" )
-  }
-  #selected_DAGs <- lapply(selected, phylosem2fitted_DAG)
+  #selected_DAGs <- NULL
+  #for( i in seq_along(selected) ){
+  #  selected_DAGS[[i]] = as( selected[[i]], "fitted_DAG" )
+  #}
+  selected_DAGs <- lapply(selected, as_fitted_DAG)
   average_DAGs(selected_DAGs, w[dAICs < cut_off], avg_method = avg_method)
 }

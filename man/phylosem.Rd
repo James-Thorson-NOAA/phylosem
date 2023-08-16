@@ -117,28 +117,28 @@ psem = phylosem( sem = model,
           tree = rhino_tree )
 
 # Convert and plot using phylopath
-coef_plot( as(psem,"fitted_DAG") )
-plot( as(psem,"fitted_DAG") )
+coef_plot( as_fitted_DAT(psem) )
+plot( as_fitted_DAT(psem) )
 
 # Convet and plot using sem
-mysem = as(psem,"sem")
+mysem = as_sem(psem)
 sem::pathDiagram( model = mysem,
                   style = "traditional",
                   edge.labels = "values" )
-myplot = semPlot::semPlotModel( as(psem,"sem") )
+myplot = semPlot::semPlotModel( mysem )
 semPlot::semPaths( myplot,
                    nodeLabels = myplot@Vars$name )
-effects( as(psem,"sem") )
+effects( mysem )
 
 # Convert and plot using phylobase / phylosignal
 library(phylobase)
 library(phylosignal)
-plot( as(psem,"phylo4d") )
-dotplot( as(psem,"phylo4d") )
-gridplot( as(psem,"phylo4d") )
+plot( as_phylo4d(psem) )
+dotplot( as_phylo4d(psem) )
+gridplot( as_phylo4d(psem) )
 
 # Cluster based on phylogeny and traits
-gC = graphClust( as(psem,"phylo4d"),
+gC = graphClust( as_phylo4d(psem),
                  lim.phylo = 5,
                  lim.trait = 5,
                  scale.lim = FALSE)

@@ -52,7 +52,6 @@
 #' @importFrom phylobase phylo4d
 #' @importFrom ape Ntip node.depth.edgelength rtree
 #' @importFrom TMB compile dynlib MakeADFun sdreport
-#' @importFrom methods as
 #'
 #' @examples
 #' \dontrun{
@@ -71,28 +70,28 @@
 #'           tree = rhino_tree )
 #'
 #' # Convert and plot using phylopath
-#' coef_plot( as(psem,"fitted_DAG") )
-#' plot( as(psem,"fitted_DAG") )
+#' coef_plot( as_fitted_DAT(psem) )
+#' plot( as_fitted_DAT(psem) )
 #'
 #' # Convet and plot using sem
-#' mysem = as(psem,"sem")
+#' mysem = as_sem(psem)
 #' sem::pathDiagram( model = mysem,
 #'                   style = "traditional",
 #'                   edge.labels = "values" )
-#' myplot = semPlot::semPlotModel( as(psem,"sem") )
+#' myplot = semPlot::semPlotModel( mysem )
 #' semPlot::semPaths( myplot,
 #'                    nodeLabels = myplot@Vars$name )
-#' effects( as(psem,"sem") )
+#' effects( mysem )
 #'
 #' # Convert and plot using phylobase / phylosignal
 #' library(phylobase)
 #' library(phylosignal)
-#' plot( as(psem,"phylo4d") )
-#' dotplot( as(psem,"phylo4d") )
-#' gridplot( as(psem,"phylo4d") )
+#' plot( as_phylo4d(psem) )
+#' dotplot( as_phylo4d(psem) )
+#' gridplot( as_phylo4d(psem) )
 #'
 #' # Cluster based on phylogeny and traits
-#' gC = graphClust( as(psem,"phylo4d"),
+#' gC = graphClust( as_phylo4d(psem),
 #'                  lim.phylo = 5,
 #'                  lim.trait = 5,
 #'                  scale.lim = FALSE)
@@ -447,6 +446,67 @@ summary.phylosem = function( object, ... ){
   return(out)
 }
 
+
+#' Convert phylosem to phylopath output
+#'
+#' @title Convert output from package phylosem to phylopath
+#'
+#' @param object Output from \code{\link{phylosem}}
+#'
+#' @export
+as_fitted_DAG <-
+function( object ){
+
+  # extract and name identical to output from fitted_DAG
+  out = list(
+    coef = t(object$report$Rho_jj),
+    se = t(as.list(object$opt$SD, what="Std. Error", report=TRUE)$Rho_jj)
+  )
+  dimnames(out$coef) = dimnames(out$se) = list( colnames(object$data), colnames(object$data) )
+
+  # pass out
+  class(out) = "fitted_DAG"
+  return(out)
+}
+
+#' Convert phylosem to sem output
+#'
+#' @title Convert output from package phylosem to sem
+#'
+#' @param object Output from \code{\link{phylosem}}
+#'
+#' @export
+as_sem <-
+function( object ){
+
+  Sprime = object$report$V_jj
+    rownames(Sprime) = colnames(Sprime) = colnames(object$data)
+  out = sem( object$SEM_model,
+             S = Sprime,
+             N = nrow(object$data) )
+
+  # pass out
+  return(out)
+}
+
+#' Convert phylosem to phylo4d
+#'
+#' @title Convert output from package phylosem to phylo4d object
+#'
+#' @param object Output from \code{\link{phylosem}}
+#'
+#' @export
+as_phylo4d <-
+function( object ){
+
+  #
+  traits = object$report$x_vj
+  colnames(traits) = colnames(object$data)
+  out = phylo4d( x=object$tree, all.data=traits )
+
+  # pass out
+  return(out)
+}
 
 #' predict values for new tip
 #'

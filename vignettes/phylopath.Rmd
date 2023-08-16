@@ -135,7 +135,7 @@ To compare the two, we can convert the _phylosem_ result in to the DAG format th
 
 ```{r, eval=have_packages, fig.dim = c(6, 6), out.width = "50%"}
 plot(best_pp)
-plot(as(best_ps, "fitted_DAG"))
+plot(as_fitted_DAG(best_ps))
 ```
 
 _phylopath_ is now actually fitting the causal model itself, not performing the d-separation procedure. Because this makes the methods much more closely aligned, we can see that the output matches very closely.
@@ -148,7 +148,7 @@ phylopath::est_DAG(
 ) |> plot()
 phylosem::phylosem(
   models_ps$five, tree = rhino_tree, data = rhino_std, estimate_lambda = TRUE
-) |> as("fitted_DAG") |> plot()
+) |> as_fitted_DAG() |> plot()
 ```
 
 The reason this happens is that _phylosem_ implements these additional parameters by estimating them as a single estimated parameter for the all variables in the model. _phylopath_, on the other hand, estimates a separate lambda on the residuals of each regression ran. For `est_DAG()` this means one lambda for each variable with a modelled cause, and for `phylo_path()` this means one lambda for each tested d-separation statement.

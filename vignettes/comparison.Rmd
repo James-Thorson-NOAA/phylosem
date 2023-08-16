@@ -328,7 +328,7 @@ psem = phylosem( sem = model,
           tree = rhino_tree,
           quiet = TRUE )
 Sys.time() - start_time
-plot( as(psem,"fitted_DAG") )
+plot( as_fitted_DAG(psem) )
 ```
 
 ## Comparison with sem
