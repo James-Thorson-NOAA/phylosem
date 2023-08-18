@@ -5,6 +5,8 @@
 #'
 #' Copied with permission from John Fox under licence GPL (>= 2)
 #'
+#' @return Tagged-list defining variables and direction for a specified path coefficient
+#'
 #' @param path text to parse
 parse_path <-
 function( path ){

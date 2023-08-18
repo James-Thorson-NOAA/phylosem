@@ -9,6 +9,9 @@ as_phylo4d(object)
 \arguments{
 \item{object}{Output from \code{\link{phylosem}}}
 }
+\value{
+Convert output to format supplied by \code{\link[phylobase:phylo4d-methods]{phylobase::phylo4d()}}
+}
 \description{
 Convert phylosem to phylo4d
 }

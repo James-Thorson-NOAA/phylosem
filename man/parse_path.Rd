@@ -9,6 +9,9 @@ parse_path(path)
 \arguments{
 \item{path}{text to parse}
 }
+\value{
+Tagged-list defining variables and direction for a specified path coefficient
+}
 \description{
 \code{parse_path} is copied from \code{sem::parse.path}
 }

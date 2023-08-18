@@ -13,6 +13,9 @@
 
 \item{...}{Not used}
 }
+\value{
+Data-frame listing all path coefficients, their parameter index and estimated values
+}
 \description{
 Extract path coefficients.
 }

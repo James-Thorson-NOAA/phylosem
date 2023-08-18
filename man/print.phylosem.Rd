@@ -11,6 +11,9 @@
 
 \item{...}{Not used}
 }
+\value{
+prints (and invisibly returns) output from \code{\link{fit_tmb}}
+}
 \description{
 Print parameter estimates and standard errors.
 }

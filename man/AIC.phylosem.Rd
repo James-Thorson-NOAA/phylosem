@@ -13,6 +13,9 @@
 
 \item{k}{the penalty on additional fixed effects (default=2, for AIC)}
 }
+\value{
+Akaike Information Criterion
+}
 \description{
 Calculate AIC
 }

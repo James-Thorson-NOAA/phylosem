@@ -7,6 +7,10 @@
 #' @param sem_set A named list of structural equation model specifications,
 #'        where each element will be passed as argument \code{sem} to
 #'        \code{\link{phylosem}}
+#' @param ... Additional arguments passed to \code{\link{phylosem}}
+#'
+#' @return An object (list) of class `compare_phylosem`, containing a list of
+#'         output from \code{\link{phylosem}}
 #'
 #' @export
 compare_phylosem <-
@@ -48,13 +52,17 @@ function( sem_set,
 
 #' Extract best fitted model
 #'
-#' @param x output from \code{compare_phylosem}
+#' @param x output from \code{\link{compare_phylosem}}
+#'
+#' @return Returns best model from those fitted using \code{\link{compare_phylosem}}
 #'
 #' @export
 best <- function(x) UseMethod('best')
 #' Extract best fitted model
 #'
 #' @param x output from \code{compare_phylosem}
+#'
+#' @return Returns best model from those fitted using \code{\link{compare_phylosem}}
 #'
 #' @method best compare_phylosem
 #' @export
@@ -69,12 +77,16 @@ function( x ) {
 #' @param x output from \code{compare_phylosem}
 #' @param choice Integer indicating model to extract
 #'
+#' @return Returns chosen model from those fitted using \code{\link{compare_phylosem}}
+#'
 #' @export
 choice <- function(x, choice) UseMethod('choice')
 #' Choose model
 #'
 #' @param x output from \code{compare_phylosem}
 #' @param choice Integer indicating model to extract
+#'
+#' @return Returns chosen model from those fitted using \code{\link{compare_phylosem}}
 #'
 #' @method choice compare_phylosem
 #' @export
@@ -91,6 +103,8 @@ function( x,
 #' @param cut_off threshold where any model with delta-AIC greater than this value is excluded from average
 #' @param avg_method see \code{\link[phylopath]{average_DAGs}}
 #'
+#' @return Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}} after conversion to format from [phylopath::est_DAG]
+#'
 #' @export
 average <- function(x, cut_off, avg_method) UseMethod('average')
 #' Choose model
@@ -98,6 +112,8 @@ average <- function(x, cut_off, avg_method) UseMethod('average')
 #' @param x output from \code{compare_phylosem}
 #' @param cut_off threshold where any model with delta-AIC greater than this value is excluded from average
 #' @param avg_method see \code{\link[phylopath]{average_DAGs}}
+#'
+#' @return Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}} after conversion to format from [phylopath::est_DAG]
 #'
 #' @method average compare_phylosem
 #' @export

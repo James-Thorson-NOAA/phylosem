@@ -7,7 +7,10 @@
 best(x)
 }
 \arguments{
-\item{x}{output from \code{compare_phylosem}}
+\item{x}{output from \code{\link{compare_phylosem}}}
+}
+\value{
+Returns best model from those fitted using \code{\link{compare_phylosem}}
 }
 \description{
 Extract best fitted model

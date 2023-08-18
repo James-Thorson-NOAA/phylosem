@@ -53,10 +53,77 @@
 #' @importFrom ape Ntip node.depth.edgelength rtree
 #' @importFrom TMB compile dynlib MakeADFun sdreport
 #'
+#'
+#' @return
+#' An object (list) of class `phylosem`. Elements include:
+#' \describe{
+#' * `data`: Copy of argument \code{data}
+#' * `SEM_model`: SEM model parsed from \code{sem} using [sem::specifyModel()] or [sem::specifyEquations()]
+#' * `obj`: TMB object from [TMB::MakeADFun()]
+#' * `tree`: Copy of argument \code{tree}
+#' * `tmb_inputs`: The list of inputs passed to [TMB::MakeADFun()]
+#' * `opt`: The output from \code{\link{fit_tmb}}
+#' * `report`: The output from \code{obj$report()}
+#' * `parhat`: The output from \code{obj$env$parList()} containing maximum likelihood estimates and empirical Bayes predictions
+#' }
+#'
+#' @references
+#'
+#' **Introducing the package, its features, and comparison with other software
+#' (to cite when using phylosem):**
+#'
+#' Thorson, J. T., & van der Bijl, W. (In revision). phylosem: A fast and simple
+#' R package for phylogenetic inference and trait imputation using phylogenetic
+#' structural equation models.
+#'
+#' *Statistical methods for phylogenetic structural equation models*
+#'
+#' Thorson, J. T., Maureaud, A. A., Frelat, R., Merigot, B., Bigman, J. S., Friedman,
+#' S. T., Palomares, M. L. D., Pinsky, M. L., Price, S. A., & Wainwright, P. (2023).
+#' Identifying direct and indirect associations among traits by merging phylogenetic
+#' comparative methods and structural equation models. Methods in Ecology and Evolution,
+#' 14(5), 1259-1275. \doi{10.1111/2041-210X.14076}
+#'
+#' *Earlier development of computational methods, originally used for phlogenetic factor analysis:*
+#'
+#' Thorson, J. T. (2020). Predicting recruitment density dependence and intrinsic growth rate for all fishes
+#' worldwide using a data-integrated life-history model. Fish and Fisheries, 21(2),
+#' 237-251. \doi{10.1111/faf.12427}
+#'
+#' Thorson, J. T., Munch, S. B., Cope, J. M., & Gao, J. (2017). Predicting life
+#' history parameters for all fishes worldwide. Ecological Applications, 27(8),
+#' 2262-2276. \doi{10.1002/eap.1606}
+#'
+#' *Earlier development of phylogenetic path analysis:*
+#'
+#' van der Bijl, W. (2018). phylopath: Easy phylogenetic path analysis in
+#' R. PeerJ, 6, e4718. \doi{10.7717/peerj.4718}
+#'
+#' von Hardenberg, A., & Gonzalez-Voyer, A. (2013). Disentangling
+#' evolutionary cause-effect relationships with phylogenetic confirmatory
+#' path analysis. Evolution; International Journal of Organic Evolution,
+#' 67(2), 378-387. \doi{10.1111/j.1558-5646.2012.01790.x}
+#'
+#' *Interface involving SEM `arrow notation` repurposed from:*
+#'
+#' Fox, J., Nie, Z., & Byrnes, J. (2020). Sem: Structural equation models.
+#' R package version 3.1-11. Computer software. https://CRAN.R-project.org/package=sem
+#'
+#' *Coercing output to phylo4d for user access benefits from:*
+#'
+#' Bolker, B., Butler, M., Cowan, P., de Vienne, D., Eddelbuettel, D., Holder, M.,
+#' Jombart, T., Kembel, S., Michonneau, F., & Orme, B. (2015). phylobase:
+#' Base package for phylogenetic structures and comparative data. R Package Version 0.8. 0.
+#'
+#' *Laplace approximation for parameter estimation depends upon:*
+#'
+#' Kristensen, K., Nielsen, A., Berg, C. W., Skaug, H., & Bell, B. M. (2016).
+#' TMB: Automatic differentiation and Laplace approximation. Journal of Statistical Software,
+#' 70(5), 1-21. \doi{10.18637/jss.v070.i05}
+#'
 #' @examples
-#' \dontrun{
 #' # Load data set
-#' library(phylopath)
+#' data(rhino, rhino_tree, package="phylopath")
 #'
 #' # Run phylosem
 #' model = "
@@ -70,28 +137,37 @@
 #'           tree = rhino_tree )
 #'
 #' # Convert and plot using phylopath
-#' coef_plot( as_fitted_DAT(psem) )
-#' plot( as_fitted_DAT(psem) )
+#' library(phylopath)
+#' my_fitted_DAG = as_fitted_DAG(psem)
+#' coef_plot( my_fitted_DAG )
+#' plot( my_fitted_DAG )
 #'
-#' # Convet and plot using sem
-#' mysem = as_sem(psem)
-#' sem::pathDiagram( model = mysem,
+#' # Convert to phylo4d
+#' my_phylo4d = as_phylo4d(psem)
+#'
+#' # Convert to sem
+#' library(sem)
+#' my_sem = as_sem(psem)
+#' pathDiagram( model = my_sem,
 #'                   style = "traditional",
 #'                   edge.labels = "values" )
-#' myplot = semPlot::semPlotModel( mysem )
-#' semPlot::semPaths( myplot,
-#'                    nodeLabels = myplot@Vars$name )
-#' effects( mysem )
+#' effects( my_sem )
 #'
-#' # Convert and plot using phylobase / phylosignal
-#' library(phylobase)
+#' \dontrun{
+#' # Convet and plot using semPlot
+#' library(semPlot)
+#' myplot = semPlotModel( my_sem )
+#' semPaths( my_sem,
+#'                    nodeLabels = myplot@Vars$name )
+#'
+#' # Convert and plot using phylosignal
 #' library(phylosignal)
-#' plot( as_phylo4d(psem) )
-#' dotplot( as_phylo4d(psem) )
-#' gridplot( as_phylo4d(psem) )
+#' plot( my_phylo4d )
+#' dotplot( my_phylo4d )
+#' gridplot( my_phylo4d )
 #'
 #' # Cluster based on phylogeny and traits
-#' gC = graphClust( as_phylo4d(psem),
+#' gC = graphClust( my_phylo4d,
 #'                  lim.phylo = 5,
 #'                  lim.trait = 5,
 #'                  scale.lim = FALSE)
@@ -276,15 +352,6 @@ function( sem,
     }
   }
 
-  # Hardwire TMB using local path
-  if( FALSE ){
-    #dyn.unload( TMB::dynlib("phylosem") )          #
-    #setwd( "C:/Users/James.Thorson/Desktop/Git/phylosem/src/" )
-    setwd( system.file("executables", package = "phylosem") )
-    compile( "phylosem.cpp", flags="-Wno-ignored-attributes -O2 -mfpmath=sse -msse2 -mstackrealign" )
-    dyn.load( dynlib("phylosem") )          #
-  }
-
   # Build TMB object
   obj = MakeADFun( data = tmb_inputs$data_list,
                         parameters = tmb_inputs$parameters_list,
@@ -292,9 +359,12 @@ function( sem,
                         random = tmb_inputs$random,
                         DLL = "phylosem" )
   if(quiet==FALSE) list_parameters(obj)
-  results = list( data=data, SEM_model=SEM_model, obj=obj, call=match.call(), tree=tree,
+  results = list( data=data,
+                  SEM_model=SEM_model,
+                  obj=obj,
+                  call=match.call(),
+                  tree=tree,
                   tmb_inputs=tmb_inputs )
-  #return(results)
 
   # Export stuff
   if( run_model==FALSE ){
@@ -319,7 +389,7 @@ function( sem,
 #' @title Print parameter estimates
 #' @param x Output from \code{\link{phylosem}}
 #' @param ... Not used
-#' @return NULL
+#' @return prints (and invisibly returns) output from \code{\link{fit_tmb}}
 #' @method print phylosem
 #' @export
 print.phylosem <- function(x, ...)
@@ -339,7 +409,7 @@ print.phylosem <- function(x, ...)
 #' @param object Output from \code{\link{phylosem}}
 #' @param standardized Whether to standardize regression coefficients
 #' @param ... Not used
-#' @return NULL
+#' @return Data-frame listing all path coefficients, their parameter index and estimated values
 #' @method coef phylosem
 #' @export
 coef.phylosem = function( object, standardized=FALSE, ... ){
@@ -371,7 +441,7 @@ coef.phylosem = function( object, standardized=FALSE, ... ){
 #'
 #' @param object Output from \code{\link{phylosem}}
 #' @param ... Not used
-#' @return NULL
+#' @return Akaike Information Criterion
 #' @method AIC phylosem
 #' @export
 AIC.phylosem = function( object, ..., k = 2 ){
@@ -384,6 +454,8 @@ AIC.phylosem = function( object, ..., k = 2 ){
 #'
 #' @param object Output from \code{\link{phylosem}}
 #' @param ... Not used
+#' @return Data-frame containing all estimated intercepts, path coefficients, and variance-covariance parameters
+#'         as well as their standard errors
 #' @method summary phylosem
 #' @export
 summary.phylosem = function( object, ... ){
@@ -453,11 +525,13 @@ summary.phylosem = function( object, ... ){
 #'
 #' @param object Output from \code{\link{phylosem}}
 #'
+#' @return Convert output to format supplied by [phylopath::est_DAG()]
+#'
 #' @export
 as_fitted_DAG <-
 function( object ){
 
-  # extract and name identical to output from fitted_DAG
+  # extract and name identical to output from est_DAG
   out = list(
     coef = t(object$report$Rho_jj),
     se = t(as.list(object$opt$SD, what="Std. Error", report=TRUE)$Rho_jj)
@@ -474,6 +548,8 @@ function( object ){
 #' @title Convert output from package phylosem to sem
 #'
 #' @param object Output from \code{\link{phylosem}}
+#'
+#' @return Convert output to format supplied by [sem::sem()]
 #'
 #' @export
 as_sem <-
@@ -494,6 +570,8 @@ function( object ){
 #' @title Convert output from package phylosem to phylo4d object
 #'
 #' @param object Output from \code{\link{phylosem}}
+#'
+#' @return Convert output to format supplied by [phylobase::phylo4d()]
 #'
 #' @export
 as_phylo4d <-
@@ -516,6 +594,9 @@ function( object ){
 #'
 #' @param x Output from \code{\link{phylosem}}
 #' @param ... passed to \code{\link[phytools]{bind.tip}}
+#'
+#' @return predict new values
+#'
 #' @method predict phylosem
 #' @export
 #predict.phylosem <-

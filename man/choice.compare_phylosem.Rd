@@ -11,6 +11,9 @@
 
 \item{choice}{Integer indicating model to extract}
 }
+\value{
+Returns chosen model from those fitted using \code{\link{compare_phylosem}}
+}
 \description{
 Choose model
 }

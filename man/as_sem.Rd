@@ -9,6 +9,9 @@ as_sem(object)
 \arguments{
 \item{object}{Output from \code{\link{phylosem}}}
 }
+\value{
+Convert output to format supplied by \code{\link[sem:sem]{sem::sem()}}
+}
 \description{
 Convert phylosem to sem output
 }
