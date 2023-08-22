@@ -56,7 +56,6 @@
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:
-#' \describe{
 #' * `data`: Copy of argument \code{data}
 #' * `SEM_model`: SEM model parsed from \code{sem} using [sem::specifyModel()] or [sem::specifyEquations()]
 #' * `obj`: TMB object from [TMB::MakeADFun()]
@@ -65,7 +64,6 @@
 #' * `opt`: The output from \code{\link{fit_tmb}}
 #' * `report`: The output from \code{obj$report()}
 #' * `parhat`: The output from \code{obj$env$parList()} containing maximum likelihood estimates and empirical Bayes predictions
-#' }
 #'
 #' @references
 #'

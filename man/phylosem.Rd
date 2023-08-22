@@ -84,7 +84,6 @@ instead to return the model inputs and compiled TMB object without running;}
 }
 \value{
 An object (list) of class \code{phylosem}. Elements include:
-\describe{
 \itemize{
 \item \code{data}: Copy of argument \code{data}
 \item \code{SEM_model}: SEM model parsed from \code{sem} using \code{\link[sem:specifyModel]{sem::specifyModel()}} or \code{\link[sem:specifyModel]{sem::specifyEquations()}}
@@ -94,7 +93,6 @@ An object (list) of class \code{phylosem}. Elements include:
 \item \code{opt}: The output from \code{\link{fit_tmb}}
 \item \code{report}: The output from \code{obj$report()}
 \item \code{parhat}: The output from \code{obj$env$parList()} containing maximum likelihood estimates and empirical Bayes predictions
-}
 }
 }
 \description{
