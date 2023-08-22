@@ -104,12 +104,12 @@
 #' path analysis. Evolution; International Journal of Organic Evolution,
 #' 67(2), 378-387. \doi{10.1111/j.1558-5646.2012.01790.x}
 #'
-#' *Interface involving SEM `arrow notation` repurposed from:*
+#' *Interface involving SEM `arrow notation` is repurposed from:*
 #'
 #' Fox, J., Nie, Z., & Byrnes, J. (2020). Sem: Structural equation models.
 #' R package version 3.1-11. Computer software. https://CRAN.R-project.org/package=sem
 #'
-#' *Coercing output to phylo4d for user access benefits from:*
+#' *Coercing output to phylo4d depends upon:*
 #'
 #' Bolker, B., Butler, M., Cowan, P., de Vienne, D., Eddelbuettel, D., Holder, M.,
 #' Jombart, T., Kembel, S., Michonneau, F., & Orme, B. (2015). phylobase:

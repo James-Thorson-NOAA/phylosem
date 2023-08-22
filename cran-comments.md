@@ -2,7 +2,7 @@
 
 This is a resubmission to fix '1 warning' on CRAN checks as requested.
 
-### Comments from Victoria Wimmer (thanks for these!)
+### Comments from Victoria Wimmer (thanks for these!) with responses as bullets
 
 If there are references describing the methods in your package, please
 add these in the description field of your DESCRIPTION file in the form
