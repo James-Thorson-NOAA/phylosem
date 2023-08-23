@@ -10,7 +10,7 @@ as_fitted_DAG(object)
 \item{object}{Output from \code{\link{phylosem}}}
 }
 \value{
-Convert output to format supplied by \code{\link[phylopath:est_DAG]{phylopath::est_DAG()}}
+Convert output to format supplied by \code{\link[phylopath]{est_DAG}}
 }
 \description{
 Convert phylosem to phylopath output

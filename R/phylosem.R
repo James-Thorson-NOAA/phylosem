@@ -56,14 +56,16 @@
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:
-#' * `data`: Copy of argument \code{data}
-#' * `SEM_model`: SEM model parsed from \code{sem} using [sem::specifyModel()] or [sem::specifyEquations()]
-#' * `obj`: TMB object from [TMB::MakeADFun()]
-#' * `tree`: Copy of argument \code{tree}
-#' * `tmb_inputs`: The list of inputs passed to [TMB::MakeADFun()]
-#' * `opt`: The output from \code{\link{fit_tmb}}
-#' * `report`: The output from \code{obj$report()}
-#' * `parhat`: The output from \code{obj$env$parList()} containing maximum likelihood estimates and empirical Bayes predictions
+#' \describe{
+#' \item{data}{Copy of argument \code{data}}
+#' \item{SEM_model}{SEM model parsed from \code{sem} using \code{\link[sem]{specifyModel}} or \code{\link[sem]{specifyEquations}}}
+#' \item{obj}{TMB object from \code{\link[TMB]{MakeADFun}}}
+#' \item{tree}{Copy of argument \code{tree}}
+#' \item{tmb_inputs}{The list of inputs passed to \code{\link[TMB]{MakeADFun}}}
+#' \item{opt}{The output from \code{\link{fit_tmb}}}
+#' \item{report}{The output from \code{obj$report()}}
+#' \item{parhat}{The output from \code{obj$env$parList()} containing maximum likelihood estimates and empirical Bayes predictions}
+#' }
 #'
 #' @references
 #'
@@ -105,13 +107,14 @@
 #' *Interface involving SEM `arrow notation` is repurposed from:*
 #'
 #' Fox, J., Nie, Z., & Byrnes, J. (2020). Sem: Structural equation models.
-#' R package version 3.1-11. Computer software. https://CRAN.R-project.org/package=sem
+#' R package version 3.1-11. \url{https://CRAN.R-project.org/package=sem}
 #'
 #' *Coercing output to phylo4d depends upon:*
 #'
 #' Bolker, B., Butler, M., Cowan, P., de Vienne, D., Eddelbuettel, D., Holder, M.,
 #' Jombart, T., Kembel, S., Michonneau, F., & Orme, B. (2015). phylobase:
-#' Base package for phylogenetic structures and comparative data. R Package Version 0.8. 0.
+#' Base package for phylogenetic structures and comparative data. R Package Version 0.8.0.
+#' \url{https://CRAN.R-project.org/package=phylobase}
 #'
 #' *Laplace approximation for parameter estimation depends upon:*
 #'
@@ -523,7 +526,7 @@ summary.phylosem = function( object, ... ){
 #'
 #' @param object Output from \code{\link{phylosem}}
 #'
-#' @return Convert output to format supplied by [phylopath::est_DAG()]
+#' @return Convert output to format supplied by \code{\link[phylopath]{est_DAG}}
 #'
 #' @export
 as_fitted_DAG <-
@@ -547,7 +550,7 @@ function( object ){
 #'
 #' @param object Output from \code{\link{phylosem}}
 #'
-#' @return Convert output to format supplied by [sem::sem()]
+#' @return Convert output to format supplied by \code{\link[sem]{sem}}
 #'
 #' @export
 as_sem <-
@@ -569,7 +572,7 @@ function( object ){
 #'
 #' @param object Output from \code{\link{phylosem}}
 #'
-#' @return Convert output to format supplied by [phylobase::phylo4d()]
+#' @return Convert output to format supplied by \code{\link[phylobase]{phylo4d}}
 #'
 #' @export
 as_phylo4d <-

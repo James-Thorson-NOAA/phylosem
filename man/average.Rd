@@ -14,7 +14,7 @@ average(x, cut_off, avg_method)
 \item{avg_method}{see \code{\link[phylopath]{average_DAGs}}}
 }
 \value{
-Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}} after conversion to format from \link[phylopath:est_DAG]{phylopath::est_DAG}
+Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}} after conversion to format from [phylopath::est_DAG]
 }
 \description{
 Choose model

@@ -13,7 +13,7 @@
 }
 \value{
 Data-frame containing all estimated intercepts, path coefficients, and variance-covariance parameters
-as well as their standard errors
+        as well as their standard errors
 }
 \description{
 summarize phylosem

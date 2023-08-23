@@ -56,8 +56,8 @@ lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}}
 \item{...}{Additional arguments passed to \code{\link{phylosem}}}
 }
 \value{
-An object (list) of class \code{compare_phylosem}, containing a list of
-output from \code{\link{phylosem}}
+An object (list) of class `compare_phylosem`, containing a list of
+        output from \code{\link{phylosem}}
 }
 \description{
 Fits several phylogenetic structural equation model for further comparison

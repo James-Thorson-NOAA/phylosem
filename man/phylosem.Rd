@@ -83,16 +83,16 @@ instead to return the model inputs and compiled TMB object without running;}
 \item{...}{Additional parameters passed to \code{\link{fit_tmb}}}
 }
 \value{
-An object (list) of class \code{phylosem}. Elements include:
-\itemize{
-\item \code{data}: Copy of argument \code{data}
-\item \code{SEM_model}: SEM model parsed from \code{sem} using \code{\link[sem:specifyModel]{sem::specifyModel()}} or \code{\link[sem:specifyModel]{sem::specifyEquations()}}
-\item \code{obj}: TMB object from \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}
-\item \code{tree}: Copy of argument \code{tree}
-\item \code{tmb_inputs}: The list of inputs passed to \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}
-\item \code{opt}: The output from \code{\link{fit_tmb}}
-\item \code{report}: The output from \code{obj$report()}
-\item \code{parhat}: The output from \code{obj$env$parList()} containing maximum likelihood estimates and empirical Bayes predictions
+An object (list) of class `phylosem`. Elements include:
+\describe{
+\item{data}{Copy of argument \code{data}}
+\item{SEM_model}{SEM model parsed from \code{sem} using \code{\link[sem]{specifyModel}} or \code{\link[sem]{specifyEquations}}}
+\item{obj}{TMB object from \code{\link[TMB]{MakeADFun}}}
+\item{tree}{Copy of argument \code{tree}}
+\item{tmb_inputs}{The list of inputs passed to \code{\link[TMB]{MakeADFun}}}
+\item{opt}{The output from \code{\link{fit_tmb}}}
+\item{report}{The output from \code{obj$report()}}
+\item{parhat}{The output from \code{obj$env$parList()} containing maximum likelihood estimates and empirical Bayes predictions}
 }
 }
 \description{
@@ -100,18 +100,18 @@ Fits a phylogenetic structural equation model
 }
 \details{
 Note that parameters \code{logitlambda}, \code{lnkappa}, and \code{lnalpha} if estimated are each estimated as having a single value
-that applies to all modeled variables.
-This differs from default behavior in \pkg{phylolm}, where these parameters only apply to the "response" and not "predictor" variables.
-This also differs from default behavior in \pkg{phylopath}, where a different value is estimated
-in each call to \pkg{phylolm} during the d-separation estimate of path coefficients. However, it is
-consistent with default behavior in \pkg{Rphylopars}, and estimates should be comparable in that case.
-These additional parameters are estimated with unbounded support, which differs somewhat from default
-bounded estimates in \pkg{phylolm}, although parameters should match if overriding \pkg{phylolm} defaults
-to use unbounded support.  Finally, \code{phylosem} allows these three parameters to be estimated in any
-combination, which is expanded functionality relative to the single-option functionality in \pkg{phylolm}.
+     that applies to all modeled variables.
+     This differs from default behavior in \pkg{phylolm}, where these parameters only apply to the "response" and not "predictor" variables.
+     This also differs from default behavior in \pkg{phylopath}, where a different value is estimated
+     in each call to \pkg{phylolm} during the d-separation estimate of path coefficients. However, it is
+     consistent with default behavior in \pkg{Rphylopars}, and estimates should be comparable in that case.
+     These additional parameters are estimated with unbounded support, which differs somewhat from default
+     bounded estimates in \pkg{phylolm}, although parameters should match if overriding \pkg{phylolm} defaults
+     to use unbounded support.  Finally, \code{phylosem} allows these three parameters to be estimated in any
+     combination, which is expanded functionality relative to the single-option functionality in \pkg{phylolm}.
 
 Also note that \pkg{phylopath} by default uses standardized coefficients.  To achieve matching parameter estimates between
-\pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
+     \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 }
 \examples{
 # Load data set
@@ -168,14 +168,14 @@ plot(gC, which = "graph", ask = FALSE)
 
 }
 \references{
-\strong{Introducing the package, its features, and comparison with other software
-(to cite when using phylosem):}
+**Introducing the package, its features, and comparison with other software
+(to cite when using phylosem):**
 
 Thorson, J. T., & van der Bijl, W. (In revision). phylosem: A fast and simple
 R package for phylogenetic inference and trait imputation using phylogenetic
 structural equation models.
 
-\emph{Statistical methods for phylogenetic structural equation models}
+*Statistical methods for phylogenetic structural equation models*
 
 Thorson, J. T., Maureaud, A. A., Frelat, R., Merigot, B., Bigman, J. S., Friedman,
 S. T., Palomares, M. L. D., Pinsky, M. L., Price, S. A., & Wainwright, P. (2023).
@@ -183,7 +183,7 @@ Identifying direct and indirect associations among traits by merging phylogeneti
 comparative methods and structural equation models. Methods in Ecology and Evolution,
 14(5), 1259-1275. \doi{10.1111/2041-210X.14076}
 
-\emph{Earlier development of computational methods, originally used for phlogenetic factor analysis:}
+*Earlier development of computational methods, originally used for phlogenetic factor analysis:*
 
 Thorson, J. T. (2020). Predicting recruitment density dependence and intrinsic growth rate for all fishes
 worldwide using a data-integrated life-history model. Fish and Fisheries, 21(2),
@@ -193,7 +193,7 @@ Thorson, J. T., Munch, S. B., Cope, J. M., & Gao, J. (2017). Predicting life
 history parameters for all fishes worldwide. Ecological Applications, 27(8),
 2262-2276. \doi{10.1002/eap.1606}
 
-\emph{Earlier development of phylogenetic path analysis:}
+*Earlier development of phylogenetic path analysis:*
 
 van der Bijl, W. (2018). phylopath: Easy phylogenetic path analysis in
 R. PeerJ, 6, e4718. \doi{10.7717/peerj.4718}
@@ -203,18 +203,18 @@ evolutionary cause-effect relationships with phylogenetic confirmatory
 path analysis. Evolution; International Journal of Organic Evolution,
 67(2), 378-387. \doi{10.1111/j.1558-5646.2012.01790.x}
 
-\emph{Interface involving SEM \verb{arrow notation} is repurposed from:}
+*Interface involving SEM `arrow notation` is repurposed from:*
 
 Fox, J., Nie, Z., & Byrnes, J. (2020). Sem: Structural equation models.
 R package version 3.1-11. Computer software. https://CRAN.R-project.org/package=sem
 
-\emph{Coercing output to phylo4d depends upon:}
+*Coercing output to phylo4d depends upon:*
 
 Bolker, B., Butler, M., Cowan, P., de Vienne, D., Eddelbuettel, D., Holder, M.,
 Jombart, T., Kembel, S., Michonneau, F., & Orme, B. (2015). phylobase:
 Base package for phylogenetic structures and comparative data. R Package Version 0.8. 0.
 
-\emph{Laplace approximation for parameter estimation depends upon:}
+*Laplace approximation for parameter estimation depends upon:*
 
 Kristensen, K., Nielsen, A., Berg, C. W., Skaug, H., & Bell, B. M. (2016).
 TMB: Automatic differentiation and Laplace approximation. Journal of Statistical Software,
