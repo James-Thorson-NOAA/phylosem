@@ -145,8 +145,7 @@ pathDiagram( model = my_sem,
                   edge.labels = "values" )
 effects( my_sem )
 
-\dontrun{
-# Convet and plot using semPlot
+# Convert and plot using semPlot
 library(semPlot)
 myplot = semPlotModel( my_sem )
 semPaths( my_sem,
@@ -154,7 +153,6 @@ semPaths( my_sem,
 
 # Convert and plot using phylosignal
 library(phylosignal)
-plot( my_phylo4d )
 dotplot( my_phylo4d )
 gridplot( my_phylo4d )
 
@@ -164,7 +162,6 @@ gC = graphClust( my_phylo4d,
                  lim.trait = 5,
                  scale.lim = FALSE)
 plot(gC, which = "graph", ask = FALSE)
-}
 
 }
 \references{
@@ -206,13 +203,14 @@ path analysis. Evolution; International Journal of Organic Evolution,
 *Interface involving SEM `arrow notation` is repurposed from:*
 
 Fox, J., Nie, Z., & Byrnes, J. (2020). Sem: Structural equation models.
-R package version 3.1-11. Computer software. https://CRAN.R-project.org/package=sem
+R package version 3.1-11. \url{https://CRAN.R-project.org/package=sem}
 
 *Coercing output to phylo4d depends upon:*
 
 Bolker, B., Butler, M., Cowan, P., de Vienne, D., Eddelbuettel, D., Holder, M.,
 Jombart, T., Kembel, S., Michonneau, F., & Orme, B. (2015). phylobase:
-Base package for phylogenetic structures and comparative data. R Package Version 0.8. 0.
+Base package for phylogenetic structures and comparative data. R Package Version 0.8.0.
+\url{https://CRAN.R-project.org/package=phylobase}
 
 *Laplace approximation for parameter estimation depends upon:*
 

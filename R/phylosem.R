@@ -154,8 +154,7 @@
 #'                   edge.labels = "values" )
 #' effects( my_sem )
 #'
-#' \dontrun{
-#' # Convet and plot using semPlot
+#' # Convert and plot using semPlot
 #' library(semPlot)
 #' myplot = semPlotModel( my_sem )
 #' semPaths( my_sem,
@@ -163,7 +162,6 @@
 #'
 #' # Convert and plot using phylosignal
 #' library(phylosignal)
-#' plot( my_phylo4d )
 #' dotplot( my_phylo4d )
 #' gridplot( my_phylo4d )
 #'
@@ -173,7 +171,6 @@
 #'                  lim.trait = 5,
 #'                  scale.lim = FALSE)
 #' plot(gC, which = "graph", ask = FALSE)
-#' }
 #'
 #' @useDynLib phylosem, .registration = TRUE
 #' @export

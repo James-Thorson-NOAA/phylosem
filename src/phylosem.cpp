@@ -2,12 +2,6 @@
 #define TMB_LIB_INIT R_init_phylosem
 #include <TMB.hpp>
 
-// Function for detecting NAs
-//template<class Type>
-//bool isNA(Type x){
-//  return R_IsNA(asDouble(x));
-//}
-
 // SparseMatrix for Ornstein-Uhlenbeck network correlations
 //template<class Type>
 //Eigen::SparseMatrix<Type> Q_network( Type log_alpha,
