@@ -4,10 +4,12 @@
 \alias{as_phylo4d}
 \title{Convert output from package phylosem to phylo4d object}
 \usage{
-as_phylo4d(object)
+as_phylo4d(object, what = "Estimate")
 }
 \arguments{
 \item{object}{Output from \code{\link{phylosem}}}
+
+\item{what}{Select what to convert (Estimate / Std. Error).}
 }
 \value{
 Convert output to format supplied by \code{\link[phylobase]{phylo4d}}

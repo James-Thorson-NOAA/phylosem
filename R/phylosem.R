@@ -568,15 +568,18 @@ function( object ){
 #' @title Convert output from package phylosem to phylo4d object
 #'
 #' @param object Output from \code{\link{phylosem}}
+#' @param what Select what to convert (Estimate / Std. Error).
 #'
 #' @return Convert output to format supplied by \code{\link[phylobase]{phylo4d}}
 #'
 #' @export
 as_phylo4d <-
-function( object ){
+function( object,
+          what = "Estimate" ){
 
   #
-  traits = object$report$x_vj
+  #traits = object$report$x_vj
+  traits = as.list( psem$opt$SD, what=what )$x_vj
   colnames(traits) = colnames(object$data)
   out = phylo4d( x=object$tree, all.data=traits )
 
