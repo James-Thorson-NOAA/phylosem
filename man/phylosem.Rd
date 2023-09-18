@@ -152,19 +152,6 @@ if( require(semPlot) ){
                    nodeLabels = myplot@Vars$name )
 }
 
-# Plot using phylosignal
-if( require(phylosignal) ){
-  dotplot( my_phylo4d )
-  gridplot( my_phylo4d )
-
-  # Cluster based on phylogeny and traits
-  gC = graphClust( my_phylo4d,
-                 lim.phylo = 5,
-                 lim.trait = 5,
-                 scale.lim = FALSE)
-  plot(gC, which = "graph", ask = FALSE)
-}
-
 }
 \references{
 **Introducing the package, its features, and comparison with other software
