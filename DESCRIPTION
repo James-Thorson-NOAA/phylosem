@@ -24,9 +24,7 @@ Depends:
     TMB,
     R (>= 4.0.0),
 Suggests:
-    DiagrammeR,
     semPlot,
-    phytools,
     TreeTools,
     Rphylopars,
     phylolm,
@@ -35,6 +33,9 @@ Suggests:
     rmarkdown,
     ggplot2,
     testthat
+Enhances:
+    phytools,
+    DiagrammeR
 LinkingTo:
     RcppEigen,
     TMB

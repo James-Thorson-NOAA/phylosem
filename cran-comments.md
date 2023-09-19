@@ -1,15 +1,14 @@
 Thank you for your ongoing help!  Please see responses to previous comments as bullets below:
 
-Please proof-read your description text.
-Currently it reads:    "...  to allow users to easily read all documentation and source code. ..."
-Probably it should be: "...  to allow users to easily read all the documentation and source code. ..."
-and
-Currently it reads:    "...  tructural equation models as a nested submodels, ..."
-Probably it should be: "...  tructural equation models as a nested submodel, ..."
+Please see the problems shown on
+<https://cran.r-project.org/web/checks/check_results_phylosem.html>.
 
-* We have carefully proof-read this text.  We instead say "... all of the documentation" and ".. as nested submodels", but agree that this wording needed improvement.
+Please correct before 2023-09-30 to safely retain your package on CRAN.
 
-We still see an example wrapped within \dontrun{} in phylosem.Rd, which I think is not necessary.
-Please unwrap the examples if they are executable in < 5 sec, or replace \dontrun{} with \donttest{} or explain why dontrun{} is indeed necessary there.
+Packages in Suggests should be used conditionally: see 'Writing R Extensions'.
+This needs to be corrected even if the missing package(s) become available.
+It can be tested by checking with _R_CHECK_DEPENDS_ONLY_=true.
 
-* Thank you for continuing to suggest that we include these.  We have now eliminated all use of \dontrun{}.
+* We have removed `phylosignal` (which was removed from CRAN) from SUGGESTS.
+
+* We have also changed the examples section to use `if(require(semPlot)){...}`, i.e., using SUGGESTS packages conditionally.  The other packages in SUGGESTS packages are used when building vignettes.  We have added `VignetteDepends` statements to declare those conditional dependencies on SUGGESTS packages.
