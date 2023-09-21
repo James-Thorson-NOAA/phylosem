@@ -579,7 +579,7 @@ function( object,
 
   #
   #traits = object$report$x_vj
-  traits = as.list( psem$opt$SD, what=what )$x_vj
+  traits = as.list( object$opt$SD, what=what )$x_vj
   colnames(traits) = colnames(object$data)
   out = phylo4d( x=object$tree, all.data=traits )
 
