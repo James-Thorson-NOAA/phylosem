@@ -1,6 +1,7 @@
 # phylosem 1.0.2
 
 * Fixed bug arising when data are missing for observations in the earliest tips and for the first inputted variable
+* Updating vignette to show confidence intervals on alpha/kappa/lambda as well as lnalppha/lnkappa/logitlambda
 
 # phylosem 1.0.1
 
