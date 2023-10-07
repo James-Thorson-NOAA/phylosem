@@ -1,0 +1,233 @@
+Order,Family,CommonName,Genus,Species,SubSpecies,SpecificLocation,Sex,M,Mref,K,Linf,GrowthRef,tmax,tmaxRef,Temp
+Perciformes,Sparidae,panga,Pterogymnus,laniarius,na,"Agulhas Bank, South Africa",c,0.36,"Booth & Buxton, 1997",0.13,379.4,"Booth & Buxton, 1997",16,"Booth & Buxton, 1997",12
+Clupeiformes,Clupeidae,"pilchard, Pacific sardine",Sardinops,sagax,na,"Albany region, Australia",c,0.43,"Fletcher, 1995",0.696,168,"Fletcher, 1995",8,"Fletcher, 1995",17.6
+Salmoniformes,Salmonidae,Arctic char,Salvelinus,alpinus,alpinus,"Baffin Island, Canada",c,0.17,"Moore, 1975",0.095,800,"Pauly, 1980",25,"Grainger, 1953",7
+Beloniformes,Hemiramphidae,garfish,Hyporhamphus,melanochir,na,"Baird Bay, Australia",c,0.55,"Jones, 1990",0.524,377,"Jones, 1990",10,"Jones, 1990",20
+Perciformes,Pomacentridae,Cortez damselfish,Stegastes,rectifraenum,na,Baja California,c,0.402,"Meekan et al., 2001",1.11,107.3,"Meekan et al., 2001",11,"Meekan et al., 2001",24
+Perciformes,Carangidae,jack mackerel,Trachurus,novaezelandiae,na,"Bay of Plenty, New Zealand",c,0.18,"Horn, 1993",0.23,377,"Horn, 1993",28,"Horn, 1993",12
+Salmoniformes,Salmonidae,brook trout,Salvelinus,fontinalis,na,"Big Indian Lake, Nova Scotia, Canada",c,1.82,"*Alexander & Merrill, 1976",,,,4,"Alexander & Merrill, 1976",6.2
+Gasterosteiformes,Gasterosteidae,three-spined stickleback,Gasterosteus,aculeatus,na,"Birket Stream, Cheshire, England",c,1.06,"*Jones & Hynes, 1950",1.16,50.8,"*Jones & Hynes, 1950",4,"Jones & Hynes, 1950",10
+Perciformes,Sciaenidae,"blackspotted croaker, ghol",Protonibea,diacanthus,na,"Bombay and Saurashtra waters, India",c,0.855,"Rao, 1968",0.315,1221.4,"Rao, 1966",8,"Rao, 1968",27
+Scorpaeniformes,Scorpaenidae,Pacific ocean perch,Sebastes,alutus,na,British Columbia coastal waters,c,0.048,"Archibald et al., 1981",0.126,426,"Archibald et al., 1981",100,"Leaman, 1991",5.4
+Scorpaeniformes,Scorpaenidae,silvergray rockfish,Sebastes,brevispinis,na,British Columbia coastal waters,c,0.0483,"Archibald et al., 1981",0.085,568,"Archibald et al., 1981",80,"Archibald et al., 1981",5.4
+Scorpaeniformes,Scorpaenidae,canary rockfish,Sebastes,pinniger,na,British Columbia coastal waters,c,0.038,"Archibald et al., 1981",0.139,533,"Archibald et al., 1981",84,"Munk, 2001",5.4
+Scorpaeniformes,Scorpaenidae,redstripe rockfish,Sebastes,proriger,na,British Columbia coastal waters,c,0.1,"Archibald et al., 1981",0.166,383,"Archibald et al., 1981",42,"Archibald et al., 1981",5.4
+Scorpaeniformes,Scorpaenidae,yellowmouth rockfish,Sebastes,reedi,na,British Columbia coastal waters,c,0.1425,"Archibald et al., 1981",0.126,463,"Archibald et al., 1981",72,"Archibald et al., 1981",5.4
+Scorpaeniformes,Scorpaenidae,sharpchin rockfish,Sebastes,zacentrus,na,British Columbia coastal waters,c,0.07,"Archibald et al., 1981",0.095,349,"Archibald et al., 1981",46,"Archibald et al., 1981",5.4
+Clupeiformes,Engraulidae,Argentine anchovy,Engraulis,anchoita,na,Buenos Aires sector,c,0.9,"Brandhorst et al., 1974",0.713,173,"Brandhorst et al., 1974",8,"Brandhorst et al., 1974",16
+Perciformes,Serranidae,kelp bass,Paralabrax,clathratus,na,California,c,0.287,"Young, 1963",0.06,698,"Love et al., 1996",33,"Love et al., 1996",16.9
+Perciformes,Sparidae,red porgy,Pagrus,pagrus,na,"Cape Lookout, Cape Fear, and Cape Romain",c,0.44,"Manooch & Huntsman, 1977",0.096,763,"Manooch & Huntsman, 1977",15,"Manooch & Huntsman, 1977",24
+Gadiformes,Macrouridae,glasshead grenadier,Hymenocephalus,italicus,na,Catalan Sea,c,0.645,"*Massutí et al., 1995",0.196,53,"Massutí et al., 1995",9,"Massutí et al., 1995",12.7
+Gadiformes,Macrouridae,common Atlantic grenadier,Nezumia,aequalis,na,Catalan Sea,c,0.94,"*Massutí et al., 1995",0.122,96,"Massutí et al., 1995",9,"Massutí et al., 1995",12.7
+Gadiformes,Macrouridae,longsnout grenadier,Trachyrhynchus,trachyrhynchus,na,Catalan Sea,c,0.325,"*Massutí et al., 1995",0.164,211,"Massutí et al., 1995",11,"Massutí et al., 1995",12.7
+Perciformes,Acanthuridae,brown surgeonfish,Acanthurus,nigrofuscus,na,Central Great Barrier Reef,c,0.174,"Hart & Russ, 1996",0.568,152,"Hart & Russ, 1996",25,"Hart & Russ, 1996",25.5
+Perciformes,Lethrinidae,collared large-eye bream,Gymnocranius,audleyi,na,Central Great Barrier Reef,c,0.583,"Laursen et al., 1999",0.557,282.45,"Laursen et al., 1999",13,"Laursen et al., 1999",26
+Perciformes,Lutjanidae,"stripey, stripey bass, Spanish flag snapper",Lutjanus,carponotatus,na,Central Great Barrier Reef,c,0.1994,"Newman et al., 2000b",0.449,313,"Newman et al., 2000b",20,"Newman et al., 2000b",25.7
+Perciformes,Lutjanidae,"brownstripe snapper, brownstripe red snapper",Lutjanus,vitta,na,Central Great Barrier Reef,c,0.3424,"Newman et al., 2000b",0.853,245.3,"Newman et al., 2000b",12,"Newman et al., 2000b",25.7
+Perciformes,Serranidae,coral trout,Plectropomus,leopardus,na,Central Great Barrier Reef,c,0.147,"Russ et al., 1998",0.098,711.9,"Ferreira & Russ, 1995",18,"Russ et al., 1998",25
+Perciformes,Serranidae,inshore coral trout,Plectropomus,maculatus,na,Central Great Barrier Reef,c,0.39,"Ferreira & Russ, 1992",0.206,600,"Ferreira & Russ, 1992",12,"Ferreira & Russ, 1992",25
+Gadiformes,Macrouridae,two saddle rattail,Coelorinchus,biclinozonalis,na,Chatham Rise,f,0.67,"Stevens et al., 2010",0.34,548.3,"Stevens et al., 2010",15,"Stevens et al., 2010",8
+Gadiformes,Macrouridae,Bollons’s rattail,Coelorinchus,bollonsi,na,Chatham Rise,f,0.35,"Stevens et al., 2010",0.3231,497.6,"Stevens et al., 2010",24,"Stevens et al., 2010",8
+Gadiformes,Macrouridae,javelinfish,Lepidorhynchus,denticulatus,na,Chatham Rise,f,0.29,"Stevens et al., 2010",0.1882,552.2,"Stevens et al., 2010",10,"Stevens et al., 2010",8
+Clupeiformes,Clupeidae,Atlantic menhaden,Brevoortia,tyrannus,na,Chesapeake Bay,c,0.37,"Schaaf & Huntsman, 1972",0.391,349.7,"Schaaf & Huntsman, 1972",10,"Schaaf & Huntsman, 1972",15
+Clupeiformes,Engraulidae,Peruvian anchoveta,Engraulis,ringens,na,"Chile, Peru",c,1.1,"Schaefer, 1967",1.4,169.8,"Saetersdal & Valdivia, 1964; Simpson & Buzeta, 1967",3,"Sanchez, 1966",15
+Perciformes,Kyphosidae,luderick,Girella,tricuspidata,na,"Clarence River, Australia",c,0.38,"Gray et al., 2010",0.24,348.4,"Gray et al., 2010",24,"Gray et al., 2010",21
+Carcharhiniformes,Carcharhinidae,spottail shark,Carcharhinus,sorrah,na,"Cleveland Bay, Australia",c,0.05,"Knip et al., 2012",0.4904,1155.5,"Knip et al., 2012",13.7,"Harry et al., 2013",25
+Carcharhiniformes,Carcharhinidae,Australian sharpnose shark,Rhizoprionodon,taylori,na,"Cleveland Bay, Australia",c,0.63,"Simpfendorfer, 1999",1.175,692.35,"Simpfendorfer, 1993",7,"Simpfendorfer, 1999",25
+Perciformes,Pomacanthidae,yellowbar angelfish,Pomacanthus,maculosus,na,coast of the Emirate of Abu Dhabi,c,0.15,"Grandcourt et al., 2010",0.19,288,"Grandcourt et al., 2010",36,"Grandcourt et al., 2010",27
+Perciformes,Sciaenidae,red drum,Sciaenops,ocellatus,na,coastal North Carolina,c,0.04,"Bacheler et al., 2009",0.19,1114,"Ross et al., 1995",56,"Ross et al., 1995",17.5
+Perciformes,Arripidae,Australian salmon,Arripis,trutta,na,"coastal waters of Tasmania, Victoria and New South Wales",c,0.8,"Stanley, 1978",0.38,584,"Nicholls, 1973",7,"Stanley, 1978",16
+Perciformes,Sciaenidae,Fusca drum,Umbrina,robinsoni,na,"De Hoop Marine Protected Area, South Africa",c,0.24,"Hutchings & Griffiths, 2010",0.183,594,"Hutchings & Griffiths, 2010",17,"Hutchings & Griffiths, 2010",18
+Perciformes,Lutjanidae,mutton snapper,Lutjanus,analis,na,Dry Tortugas,c,0.13,"Faunce & Muller, 2007",0.16,874.4,"SEDAR, 2008",40,"Faunce & Muller, 2007",21
+Perciformes,Serranidae,black grouper,Mycteroperca,bonaci,na,Dry Tortugas and Florida Keys,c,0.16,"Muller, 2009",0.169,1306.2,"Crabtree & Bullock, 1998",33,"Muller, 2009",21
+Scorpaeniformes,Cottidae,yellow Irish lord,Hemilepidotus,jordani,na,eastern Bering Sea and Aleutian Islands,c,0.18,"Hutchinson & TenBrink, 2011",0.218,463,"TenBrink & Aydin, 2008",28,"Hutchinson & TenBrink, 2011",5
+Perciformes,Centracanthidae,blotched picarel,Spicara,maena,na,eastern central Adriatic Sea,c,1.18,"Dul?i? et al., 2000",0.532,248.2,"Dul?i? et al., 2000",8,"Dul?i? et al., 2000",16.8
+Perciformes,Centracanthidae,picarel,Spicara,smaris,na,eastern central Adriatic Sea,c,0.98,"Dul?i? et al., 2003",0.277,227.6,"Dul?i? et al., 2003",6,"Dul?i? et al., 2003",15.6
+Perciformes,Carangidae,Japanese jack mackerel,Trachurus,japonicus,na,East China Sea,c,0.99,"Mitani & Shojima, 1966",0.35,386,"Nakashima, 1982",5,"Nakamura & Hamano, 2009",20
+Perciformes,Emmelichthyidae,rubyfish,Plagiogeneion,rubiginosum,na,"east coast of North Island, New Zealand",c,0.035,"Paul et al., 2000",0.031,477,"Horn et al., 2012",100,"Horn et al., 2012",10.4
+Perciformes,Pomacentridae,damselfish,Chromis,chromis,na,eastern middle Adriatic sea,c,1.07,"Dul?i? & Kraljevi?, 1995",0.26,142,"Dul?i? & Kraljevi?, 1995",9,"Dul?i? & Kraljevi?, 1995",16.9
+Myctophiformes,Myctophidae,lanternfish,Lampanyctodes,hectoris,na,"eastern Tasmania, Australia",c,1.58,"Young et al., 1988",0.0744,70.1,"Young et al., 1988",3,"Young et al., 1988",12
+Perciformes,Serranidae,passionfruit trout,Plectropomus,areolatus,na,"eastern Torres Strait, Australia",c,0.3995,"Williams et al., 2008",0.09,764,"Williams et al., 2008",14,"Williams et al., 2008",27
+Perciformes,Cepolidae,red bandfish,Cepola,macrophthalma,na,"Euboikos and 
+
+Pagassitikos Gulfs, Greece",c,0.88,"Stergiou et al., 1992",0.216,669.6,"Stergiou et al., 1992",8,"Stergiou et al., 1992",15.5
+Salmoniformes,Salmonidae,lake trout,Salvelinus,namaycush,na,"Experimental Lakes Area, Ontario, Canada",c,0.18,"Mills et al., 2002",0.3,410,"Shuter et al., 1998",20,"Mills et al., 2002",7.6
+Gadiformes,Gadidae,Norway pout,Trisopterus,esmarkii,na,Faroe and west coast of Scotland,c,1.49,"Bailey & Kunzlik, 1984",0.49,215.5,"Bailey & Kunzlik, 1984",6,"Bailey & Kunzlik, 1984",9
+Gadiformes,Gadidae,Atlantic cod,Gadus,morhua,na,Faroe Plateau,c,0.17,"Jones, 1966",0.19,1153,"Jones, 1966",23,"Jones, 1966",8
+Perciformes,Polynemidae,king threadfin,Polydactylus,macrochir,na,"Fitzroy River, Australia",c,0.119,"Moore et al., 2012",0.24,1222,"Moore et al., 2012",21.9,"Moore et al., 2012",24.8
+Gadiformes,Macrouridae,roughhead grenadier,Macrourus,berglax,na,Flemish Cap,f,0.25,"Murua, 2003",0.043,566.9,"*Murua, 2003",20,"Murua, 2003",5.2
+Lepisosteiformes,Lepisosteidae,Florida gar,Lepisosteus,platyrhincus,na,Florida Everglades,f,0.209,"Murie et al., 2009",0.195,691,"Murie et al., 2009",19,"Murie et al., 2009",26
+Acipenseriformes,Acipenseridae,white sturgeon,Acipenser,transmontanus,na,"Fraser River, British Columbia, Canada",c,0.18,"*Semakula & Larkin, 1968",0.023,3164,"*Semakula & Larkin, 1968",71,"Semakula & Larkin, 1968",10
+Perciformes,Pomacentridae,island major,Stegastes,arcifrons,na,Galapagos Archipelago,c,0.1471,"Meekan et al., 2001",0.75,103.8,"Meekan et al., 2001",27,"Meekan et al., 2001",24
+Perciformes,Pomacentridae,whitetail major,Stegastes,beebei,na,Galapagos Archipelago,c,0.2994,"Meekan et al., 2001",0.7,93.6,"Meekan et al., 2001",19,"Meekan et al., 2001",24
+Perciformes,Lethrinidae,spangled emperor,Lethrinus,nebulosus,na,"Gascoyne Bioregion, Western Australia",c,0.146,"Marriott et al., 2011",0.282,573.1,"Marriott et al., 2011",30.75,"Marriott et al., 2011",24.375
+Pleuronectiformes,Pleuronectidae,yellowtail flounder,Limanda,ferruginea,na,"Grand Bank, Newfoundland, Canada",c,0.256,"Cowen et al., 2009",0.16,556,"Dwyer et al., 2003",15,"Dwyer et al., 2003",10
+Perciformes,Gobiidae,pygmy goby,Eviota,sigillata,na,Great Barrier Reef,c,49.57,"Depczynski & Bellwood, 2005",,,,0.16,"Depczynski & Bellwood, 2005",27.5
+Perciformes,Lutjanidae,hussar,Lutjanus,adetii,na,Great Barrier Reef,c,0.24,"Newman et al., 1996",0.15,265.2,"Newman et al., 1996",24,"Newman et al., 1996",25.7
+Perciformes,Lutjanidae,crimson snapper,Lutjanus,erythropterus,na,Great Barrier Reef,c,0.15,"Newman et al., 2000a",0.3922,584.5,"Newman et al., 2000a",32,"Newman et al., 2000a",25.9
+Perciformes,Lutjanidae,five-line snapper,Lutjanus,quinquelineatus,na,Great Barrier Reef,c,0.15,"Newman et al., 1996",0.31,206.9,"Newman et al., 1996",31,"Newman et al., 1996",25.7
+Perciformes,Serranidae,humpback grouper,Cromileptes,altivelis,na,Great Barrier Reef and Torres Strait,c,0.26,"Williams et al., 2009",0.35,575,"Williams et al., 2009",19,"Williams et al., 2009",22.5
+Perciformes,Labridae,venus tusk fish,Choerodon,venustus,na,Great Barrier Reef ,c,0.45,"Platten et al., 2002",0.0852,829,"Platten et al., 2002",20,"Platten et al., 2002",25
+Gadiformes,Macrouridae,giant grenadier,Albatrossia,pectoralis,na,Gulf of Alaska,c,0.105,"Rodgveller et al., 2010",0.02,566.08,"Hutchinson & Anderl, 2012",58,"Rodgveller et al., 2010",6
+Pleuronectiformes,Pleuronectidae,arrowtooth flounder,Atheresthes,stomias,na,Gulf of Alaska,f,0.19,"Wilderbuer & Turnock, 2009",0.077,1015,"Turnock et al., 2003",25,"Wilderbuer & Turnock, 2009",4
+Clupeiformes,Clupeidae,Gulf menhaden,Brevoortia,patronus,na,Gulf of Mexico,c,1.09,"Ahrenholz, 1981",0.475,252.7,"Nelson & Ahrenholz, 1986",4,"Nicholson & Schaaf, 1978",24.5
+Perciformes,Serranidae,yellowedge grouper,Epinephelus,flavolimbatus,na,Gulf of Mexico,c,0.078,"*Walter, J.F., unpublished data",0.059,1004.5,"SEDAR, 2011",85,"Cook et al., 2009",16
+Perciformes,Cichlidae,redbelly tilapia,Tilapia,zillii,na,"Haebaru Reservoir, Okinawa-jima Island, Japan",f,1.2,"*Ishikawa & Tachihara, 2008",0.67,99,"Ishikawa & Tachihara, 2008",7,"Ishikawa & Tachihara, 2008",23.5
+Perciformes,Cichlidae,convict cichlid,Amatitlania,nigrofasciata,na,"Haebaru Reservoir, Okinawa-jima Island, Japan",m,1.817,"*Ishikawa & Tachihara, 2010",1.07,69.5,"Ishikawa & Tachihara, 2010",3,"Ishikawa & Tachihara, 2010",26
+Anguilliformes,Anguillidae,American eel,Anguilla,rostrata,na,Hudson River,c,0.16,"Morrison & Secor, 2003",,,,38,"Morrison & Secor, 2003",13
+Perciformes,Lutjanidae,graysnapper,Lutjanus,griseus,na,"Indian River county, Florida",c,0.35,"Burton, 2001",0.17,717,"Burton, 2001",24,"Burton, 2001",25
+Salmoniformes,Salmonidae,rainbow trout,Oncorhynchus,mykiss,na,"Iris & Cabin lakes, Alberta, Canada",c,0.69,"Donald & Alger, 1986",,,,7,"Donald & Alger, 1986",4.6
+Beryciformes,Berycidae,alfonsino,Beryx,splendens,na,"Izu Islands waters, Japan",c,0.57,"Tanaka, 2006",0.141,447,"Adachi et al., 2000",23,"Adachi et al., 2000",18
+Perciformes,Channichthyidae,spiny icefish,Chaenodraco,wilsoni,na,Joinville–D’Urville Islands,c,2.26,"*La Mesa et al., 2009",0.78,325.5,"La Mesa et al., 2009",5,"La Mesa et al., 2009",17
+Perciformes,Labridae,western king wrasse,Coris,auricularis,na,"Jurien Bay, Australia",c,0.54,"*Lek, E., unpublished data",0.25,378,"Lek et al., 2012",10.5,"Lek et al., 2012",20.6
+Perciformes,Labridae,brownspotted wrasse,Notolabrus,parilus,na,"Jurien Bay, Australia",c,0.59,"*Lek, E., unpublished data",0.2,335,"Lek et al., 2012",10.4,"Lek et al., 2012",20.6
+Perciformes,Labridae,Southern Maori wrasse,Ophthalmolepis,lineolatus,na,"Jurien Bay, Australia",c,1.27,"*Lek, E., unpublished data",0.27,296,"Lek et al., 2012",10.4,"Lek et al., 2012",20.6
+Anguilliformes,Anguillidae,Japanese eel,Anguilla,japonica,na,"Kao-Ping River, Taiwan",c,0.39,"Lin et al., 2010",0.1435,891.2,"Lin & Tzeng, 2009",10,"Lin & Tzeng, 2009",25
+Perciformes,Lutjanidae,mangrove jack,Lutjanus,argentimaculatus,na,"Kimberley, Western Australia",c,0.13,"Pember et al., 2005",0.177,659.5,"Pember et al., 2005",52,"Pember et al., 2005",26.9
+Anguilliformes,Anguillidae,European eel,Anguilla,anguilla,na,"Koster Islands, Swedish west coast",f,0.23,"Svedäng, 1999",,,,19,"Svedäng, 1999",10.1
+Perciformes,Gobiidae,striped goby,Gobius,vittatus,na,"Kvarner area, north Adriatic Sea",c,0.965,"Kovacic, 2006",1.1,50.545,"Kovacic, 2006",4,"Kovacic, 2006",14
+Cypriniformes,Cyprinidae,redeye labeo,Labeo,cylindricus,na,"Lake Chicamba, Mozambique",c,1.93,"Weyl & Booth, 1999",0.66,224.2,"Weyl & Booth, 1999",4,"Weyl & Booth, 1999",25.8
+Salmoniformes,Salmonidae,"least cisco, whitefish",Coregonus,sardinella,na,"Lake Ikroavik, Alaska",c,0.6,"Wohlschlag, 1954",0.17,380,"*Cohen, 1954",11,"Wohlschlag, 1954",5
+Perciformes,Centrarchidae,white crappie,Pomoxis,annularis,na,"Lake Kathryn, Mississippi",c,0.84,"Allen et al., 1998",0.313,364,"Hammers & Miranda, 1991",9,"Allen et al., 1998",17.67
+Salmoniformes,Salmonidae,kiyi,Coregonus,kiyi,na,"Lake Michigan, USA",c,1.25,"*Deason & Hile, 1947",0.45,227.6,"*Deason & Hile, 1947",10,"Deason & Hile, 1947",4
+Salmoniformes,Salmonidae,lake whitefish,Coregonus,clupeaformis,na,"Lake Opeongo, Ontario, Canada",c,1.3,"Beverton & Holt, 1959",0.419,141,"*Kennedy, 1943",5,Kennedy 1943,5
+Siluriformes,Ictaluridae,flathead catfish,Pylodictis,olivaris,na,"Lake Wilson, Alabama",c,0.19,"Marshall et al., 2009",0.066,1145,"Marshall et al., 2009",34,"Marshall et al., 2009",8.7
+Scorpaeniformes,Cottidae,bullhead,Cottus,gobio,na,"Lake Windermere, England",f,0.99,"*Smyly, 1957",0.57,68.2,"*Smyly, 1957",6,"Smyly, 1957",9
+Esociformes,Esocidae,northern pike,Esox,lucius,na,"Lake Windermere, England",f,0.3,"Kipling & Frost, 1970",0.24,1000,"Johnson, 1966",14,"Johnson, 1966",9
+Cypriniformes,Cyprinidae,minnow,Phoxinus,phoxinus,na,"Lake Windermere, England",c,1.1,"Beverton & Holt, 1959",0.669,79.6,"*Frost, 1943",4,"Frost, 1943",9
+Acipenseriformes,Acipenseridae,lake sturgeon,Acipenser,fulvescens,na,"Lake Winnebago, Wisconsin",c,0.093,"*Probst & Cooper, 1955",0.042,2009,"*Probst & Cooper, 1955",82,"Probst & Cooper, 1955",8
+Perciformes,Ammodytidae,small sandeel,Ammodytes,tobianus,na,"Langstone Harbour, Hampshire, UK",c,1.1,"*Reay, 1973",0.77,160,"Reay, 1973",7,"Reay, 1973",11
+Perciformes,Labridae,"paketi, spotty",Notolabrus,celidotus,na,"Leigh, New Zealand",c,0.55,"Jones, 1980",0.192,257.63,"*Jones, 1980",8,"Jones, 1980",12
+Cypriniformes,Cyprinidae,,Ptychobarbus,dipogon,na,"Lhasa River, Tibet",c,0.11,"Li & Chen, 2009",0.1084,563.7,"Li & Chen, 2009",45,"Li & Chen, 2009",7.5
+Perciformes,Gobiidae,decorated goby,Istigobius,decoratus,na,"Lizard Island, Australia",c,7.92,"Kritzer, 2002",,,,0.73,"Kritzer, 2002",27.5
+Perciformes,Percidae,Eurasian perch,Perca,fluviatilis,na,"Loch Davan and Loch Kinord, Scotland",c,0.21,"Treasurer et al., 1992",0.2034,308,"Treasurer et al., 1992",17,"Treasurer et al., 1992",9
+Perciformes,Scaridae,stoplight parrotfish,Sparisoma,viride,na,"Los Roques, Venezuela",c,0.274,"Choat et al., 2003",0.6,280.6,"Choat et al., 2003",9,"Choat et al., 2003",27.2
+Perciformes,Serranidae,snowy grouper,Epinephelus,niveatus,na,lower Florida Keys,c,0.18,"Moore & Labisky, 1984",0.087,1320,"Moore & Labisky, 1984",27,"Moore & Labisky, 1984",22.5
+Acipenseriformes,Acipenseridae,shovelnose sturgeon,Scaphirhynchus,platorynchus,na,lower Mississippi River,c,0.22,"Morrow et al., 1998",0.213,730,"Morrow et al., 1998",16,"Morrow et al., 1998",14
+Cyprinodontiformes,Poeciliidae,eastern mosquitofish,Gambusia,holbrooki,na,"lower Mondego River Valley, Portugal",f,2.723,"Cabral & Marques, 1999",0.675,48.5,"Cabral & Marques, 1999",1.4,"Cabral & Marques, 1999",18.4
+Perciformes,Serranidae,red hind,Epinephelus,guttatus,na,"Luis Pena Channel Marine Fishery Reserve, Puerto Rico",c,0.2,"Lopez-Rivera & Sabat, 2009",0.101,514.5,"Sadovy et al.,1992",18,"Sadovy et al.,1992",27.75
+Perciformes,Labridae,rainbow wrasse,Coris,julis,na,"Medas Island Marine Reserve, Mediterranean Sea",c,1.58,"Macpherson et al., 2000",0.107,271.5,"Gordoa et al., 2000",8,"Gordoa et al., 2000",18
+Perciformes,Sparidae,,Diplodus,annularis,na,"Medas Island Marine Reserve, Mediterranean Sea",c,0.49,"Macpherson et al., 2000",0.544,203.7,"Gordoa & Molí, 1997",7,"Gordoa & Molí, 1997",18
+Perciformes,Sparidae,,Diplodus,sargus,na,"Medas Island Marine Reserve, Mediterranean Sea",c,1.33,"Macpherson et al., 2000",0.245,417,"Gordoa & Molí, 1997",10,"Gordoa & Molí, 1997",18
+Perciformes,Serranidae,comber,Serranus,cabrilla,na,"Medas Island Marine Reserve, Mediterranean Sea",c,0.68,"Macpherson et al., 2000",,,,7,"Macpherson et al., 2000",18
+Perciformes,Labridae,five-spotted wrasse,Symphodus,roissali,na,"Medas Island Marine Reserve, Mediterranean Sea",c,1.71,"Macpherson et al., 2000",0.346,165.3,"Gordoa et al., 2000",3,"Gordoa et al., 2000",18
+Perciformes,Blenniidae,shanny,Lipophrys,pholis,na,"Menai Straits, English Channel",c,0.79,"*Qasim, 1957",0.3,170,"Beverton & Holt, 1959",6,"Qasim, 1957",17
+Perciformes,Sparidae,westcoast steenbras,Lithognathus,aureti,na,"Meob Bay area, Namibia",c,0.35,"Beyer et al., 1999",0.083,700,"Beyer et al., 1999",28,"Beyer et al., 1999",16.6
+Perciformes,Centrarchidae,pumpkinseed,Lepomis,gibbosus,na,"Mid Lake, Wisconsin",c,0.54,"Goedde & Coble, 1981",,,,10,"Goedde & Coble, 1981",15.5
+Perciformes,Percidae,yellow perch,Perca,flavescens,na,"Mid Lake, Wisconsin",c,1.17,"Goedde & Coble, 1981",0.332,280.5,"Jackson et al., 2008",10,"Goedde & Coble, 1981",15.5
+Perciformes,Labridae,peacock wrasse,Symphodus,tinca,na,middle eastern Adriatic,c,0.25,"Pallaoro & Jardas, 2003",0.214,422.4,"Pallaoro & Jardas, 2003",13,"Pallaoro & Jardas, 2003",16
+Cypriniformes,Cyprinidae,common carp,Cyprinus,carpio,na,"mid-Murray River and Barmah Forest Wetlands, Australia",c,0.303,"Brown et al., 2005",0.236,515,"Brown et al., 2005",27,"Brown et al., 2005",17.1
+Pleuronectiformes,Pleuronectidae,Pacific halibut,Hippoglossus,stenolepis,na,North Pacific and the Bering Sea,c,0.198,"Chen & Xiao, 2006",0.079,1345,"Martell et al., 2013",55,"Forsberg, 2001",5
+Scorpaeniformes,Scorpaenidae,yellowtail rockfish,Sebastes,flavidus,na,"Queen Charlotte Sound, Canada",c,0.07,"Leaman & Nagtegaal, 1987",0.186,486,"Archibald et al., 1981",53,"Leaman & Nagtegaal, 1987",8.5
+Beloniformes,Scomberesocidae,Pacific saury,Cololabis,saira,na,northeastern Pacific Ocean,c,1.6,"Hughes, 1974",0.42,342.36,"Hughes, 1974",6,"Hughes, 1974",12
+Scorpaeniformes,Scorpaenidae,splitnose rockfish,Sebastes,diploproa,na,northeastern Pacific Ocean,c,0.04,"Wilson & Boehlert, 1990",0.13,319.8,"Wilson & Boehlert, 1990",84,"Wilson & Boehlert, 1990",5.4
+Scorpaeniformes,Scorpaenidae,greenstriped rockfish,Sebastes,elongatus,na,northeastern Pacific Ocean,c,0.15,"Shaw & Gunderson, 2006",0.094,338,"Shaw & Gunderson, 2006",46,"Shaw & Gunderson, 2006",13.5
+Perciformes,Scombridae,narrow-barred Spanish mackerel,Scomberomorus,commerson,na,"northeastern Queensland waters, Australia",c,0.62,"*McPherson, 1992",0.21,1412.5,"McPherson, 1992",14,"McPherson, 1992",25
+Perciformes,Centrarchidae,rock bass,Ambloplites,rupestris,na,"Nebish Lake, Wisconsin",c,1.2,"Ricker, 1949",0.229,194.4,"*Hile, 1941",13,"Ricker, 1949",12
+Perciformes,Centrarchidae,black crappie,Pomoxis,nigromaculatus,na,Nebraska Sand Hills lakes,c,0.49,"Paukert et al., 2001",0.33,347,"*Paukert et al., 2001",11,"Paukert et al., 2001",12.5
+Esociformes,Esocidae,muskellunge,Esox,masquinongy,na,"New River, Virginia",c,0.22,"Brenden et al., 2007",0.3716,1200,"Brenden et al., 2007",11,"Brenden et al., 2006",13.24
+Perciformes,Carangidae,jack mackerel,Trachurus,declivis,na,"New South Wales to Tasmania, Australia",c,0.56,"*Stevens & Hausfeld, 1982",0.2,464,"Stevens & Hausfeld, 1982",16,"Stevens & Hausfeld, 1982",12
+Perciformes,Ammodytidae,sand lance,Ammodytes,dubius,na,Newfoundland Grand Bank,c,0.885,"Winters, 1983",0.34,262,"Winters, 1981",10,"Winters, 1983",8
+Perciformes,Malacanthidae,blueline tilefish,Caulolatilus,microps,na,North and South Carolina,c,0.22,"Ross & Huntsman, 1982",0.15,643,"Harris et al., 2004",43,"Harris et al., 2004",17.1
+Perciformes,Apogonidae,black cardinalfish,Epigonus,telescopus,na,"east coast North Island, New Zealand",c,0.034,"Tracey et al., 2000",0.034,708,"Tracey et al., 2000",104,"Tracey et al., 2000",8
+Perciformes,Ammodytidae,Shetland sandeel,Ammodytes,marinus,na,North Sea,c,1.28,"Cook, 2004",0.36,185,"ICES, 1995",8,"Bergstad & Hoines, 2001",7
+Perciformes,Labridae,humphead wrasse,Cheilinus,undulatus,na,northern and central Great Barrier Reef,c,0.11,"Choat et al., 2006",,,,30,"Choat et al., 2006",26
+Perciformes,Labridae,California sheephead,Semicossyphus,pulcher,na,"northern Channel Islands, southern California",c,0.2,"Hamilton et al., 2011",0.146,569.6,"Hamilton et al., 2011",29,"Hamilton et al., 2011",14
+Perciformes,Scaridae,bridled parrotfish,Scarus,frenatus,na,northern Great Barrier Reef (mid shelf),c,0.24,"Gust et al., 2002",0.77,255.43,"Gust et al., 2002",20,"Gust et al., 2002",26
+Perciformes,Scaridae,daisy parrotfish,Chlorurus,sordidus,na,northern Great Barrier Reef (outer shelf),c,0.49,"Gust et al., 2002",1.15,158.21,"Gust et al., 2002",9,"Gust et al., 2002",26
+Perciformes,Lamnidae,porbeagle,Lamna,nasus,na,North West Atlantic,c,0.18,"Aasen, 1963",0.111,2800,"Aasen, 1963",25,"Aasen, 1963",7
+Scorpaeniformes,Scorpaenidae,chilipepper,Sebastes,goodei,na,off California,c,0.41,"*Wilkins, 1980",0.24,459.25,"Wilkins, 1980",16,"Wilkins, 1980",14
+Scorpaeniformes,Scorpaenidae,bocaccio,Sebastes,paucispinis,na,off California,c,0.434,"*Wilkins, 1980",0.12,821.7,"Wilkins, 1980",14,"Wilkins, 1980",18
+Perciformes,Nototheniidae,Patagonian toothfish,Dissostichus,eleginoides,na,off Kerguelen,c,0.09,"Ashford et al., 2005",0.13,982,"Ashford et al., 2005",36,"Ashford et al., 2005",6
+Myctophiformes,Myctophidae,lanternfish,Notoscopelus,elongatus,na,off the British Isles and coast of Norway,c,0.8,"Gjøsæter, 1981",0.89,119.1,"Gjøsæter, 1981",6,"Gjøsæter, 1981",6.5
+Scorpaeniformes,Scorpaenidae,darkblotched rockfish,Sebastes,crameri,na,off the Oregon coast,c,0.014,"Nichol, 1990",0.2053,423,"Nichol, 1990",105,"Nichol, 1990",12.5
+Perciformes,Lutjanidae,scarlet seaperch,Lutjanus,malabaricus,na,"off the Pilbara coast, Australia",c,0.115,"Newman, 2002c",0.225,622.8,"Newman, 2002c",31,"Newman, 2002c",26.9
+Perciformes,Haemulidae,white grunt,Haemulon,plumieri,na,"Onslow Bay, North Carolina",c,0.43,"Rudershausen et al., 2008",0.08,591,"Potts & Manooch, 2001",13,"Potts & Manooch, 2001",27.5
+Perciformes,Lutjanidae,vermillion snapper,Rhomboplites,aurorubens,na,"Onslow Bay, North Carolina",c,0.37,"Rudershausen et al., 2008",0.144,650,"Rudershausen et al., 2008",14,"SEDAR, 2003",18
+Scorpaeniformes,Triglidae,grey gurnard,Eutrigla,gurnardus,na,"Pagassitikos Gulf, Greece",c,1.07,"*Papaconstantinou, 1982",0.22,264,"Papaconstantinou, 1982",8,"Papaconstantinou, 1982",14
+Perciformes,Centrarchidae,bluegill,Lepomis,macrochirus,na,"Par Pond, South Carolina",c,0.87,"Belk & Hales, 1993",0.5094,274.1073,"*Belk & Hales, 1993",9,"Belk & Hales, 1993",30
+Clupeiformes,Engraulidae,bay anchovy,Anchoa,mitchilli,na,"Patuxent River, Chesapeake Bay",c,2.36,"Newberger & Houde, 1995",0.23,129.3,"Newberger & Houde, 1995",3,"Newberger & Houde, 1995",15
+Tetraodontiformes,Balistidae,queen triggerfish,Balistes,vetula,na,"Pedro Bank, Jamaica",c,2.6,"Aiken, 1983",0.57,450,"Aiken, 1983",,,28
+Perciformes,Serranidae,coney,Cephalopholis,fulva,na,"Pedro Bank, Jamaica",c,0.55,"Thompson & Munro, 1978",0.63,340,"Thompson & Munro, 1978",,,27
+Perciformes,Serranidae,estuary rockcod,Epinephelus,coioides,na,"Pilbara coast, Australia",c,0.29,"Pember et al., 2005",0.15,1082,"Pember et al., 2005",22,"Pember et al., 2005",26.9
+Perciformes,Serranidae,Malabar grouper,Epinephelus,malabaricus,na,"Pilbara coast, Australia",c,0.17,"Pember et al., 2005",0.1,1278,"Pember et al., 2005",31,"Pember et al., 2005",26.9
+Perciformes,Glaucosomatidae,pearl perch,Glaucosoma,buergeri,na,"Pilbara coast, Australia",c,0.14,"Newman, 2002a",0.139,512.7,"Newman, 2002a",26,"Newman, 2002a",26.9
+Perciformes,Gobiidae,starry goby,Asterropteryx,semipunctatus,na,"Pioneer Bay, Orpheus Island",m,4.304,"Hernaman & Munday, 2005b",1.095,77.1,"Hernaman & Munday, 2005a",1.25,"Hernaman & Munday, 2005a",25.8
+Perciformes,Gobiidae,Goldman's goby,Istigobius,goldmanni,na,"Pioneer Bay, Orpheus Island, Australia",f,5.07,"Hernaman & Munday, 2005b",1.46,64.8,"Hernaman & Munday, 2005a",0.88,"Hernaman & Munday, 2005a",25.8
+Perciformes,Gobiidae,mural goby,Valenciennea,muralis,na,"Pioneer Bay, Orpheus Island, Australia",c,4.87,"Hernaman & Munday, 2005b",2.555,106.1,"Hernaman & Munday, 2005a",0.99,"Hernaman & Munday, 2005a",25.8
+Perciformes,Gobiidae,Bynoe goby,Amblygobius,bynoensis,na,"Pioneer Bay, Orpheus Island, Australia",c,4.05,"Hernaman & Munday, 2005b",1.46,117.1,"Hernaman & Munday, 2005a",1.03,"Hernaman & Munday, 2005a",25.8
+Perciformes,Gobiidae,whitebarred goby,Amblygobius,phalaena,na,"Pioneer Bay, Orpheus Island, Australia",c,3.82,"Hernaman & Munday, 2005b",1.825,114.4,"Hernaman & Munday, 2005a",1.13,"Hernaman & Munday, 2005a",25.8
+Scorpaeniformes,Cottidae,rough sculpin,Cottus,asperrimus,na,"Pit River System, California",c,0.97,"Daniels, 1987",0.18,92.4,"Daniels, 1987",5,"Daniels, 1987",9.3
+Perciformes,Callionymidae,dragonet,Callionymus,lyra,na,"Plymouth, English Channel",f,1.146,"*Chang, 1951",0.55,174,"*Chang, 1951",6,"Chang, 1951",12
+Gadiformes,Gadidae,poor cod,Trisopterus,minutus,na,"Plymouth, English Channel",f,1.17,"*Menon, 1950",0.443,230,"*Menon, 1950",5,"Menon, 1950",12
+Acipenseriformes,Polyodontidae,paddlefish,Polyodon,spathula,na,"Pontchartrain, Louisiana",c,0.3,"Reed et al., 1992",0.276,1205,"Reed et al., 1992",14,"Reed et al., 1992",20
+Myliobatiformes,Urolophidae,white spotted stingaree,Urolophus,paucimaculatus,na,"Port Phillip Bay, Australia",c,0.445,"Edwards, 1980",0.33,500.5,"Edwards, 1980",10,"Edwards, 1980",16.5
+Siluriformes,Ictaluridae,channel catfish,Ictalurus,punctatus,na,"Powder River System, Wyoming-Montana",c,0.26,"Gerhardt & Hubert, 1991",0.129,765.43,"*Gerhardt & Hubert, 1991",21,"Gerhardt & Hubert, 1991",6.94
+Pleuronectiformes,Pleuronectidae,English sole,Parophrys,vetulus,na,"Puget Sound, Washington",c,0.39,"Van Cleve & El-Sayed, 1969",0.31,372.2,"Van Cleve & El-Sayed, 1969",16,van Cleve & El-Sayed 1969,11.2
+Zeiformes,Oreosomatidae,black oreo,Allocyttus,niger,na,"Puysegur Bank & west Snares areas, south of New Zealand",c,0.044,"McMillan et al., 1997",0.0495,385.5,"McMillan et al., 1997",142,"McMillan et al., 1997",11
+Perciformes,Percidae,walleye,Sander,vitreus,na,"Pymatuning Sanctuary, Pennsylvania",c,0.44425,"Kocovsky & Carline, 2001",0.39725,594.25,"Kocovsky & Carline, 2001",16,"Kocovsky & Carline, 2001",13
+Pleuronectiformes,Pleuronectidae,petrale sole,Eopsetta,jordani,na,"Queen Charlotte sound, British Columbia",c,0.23,"Ketchen & Forrester, 1966",0.17,538,"Ketchen & Forrester, 1966",35,"Munk, 2001",9
+Gasterosteiformes,Syngnathidae,long-snouted seahorse,Hippocampus,guttulatus,na,"Ria Formosa coastal lagoon, Portugal",c,1.22,"Curtis & Vincent, 2006",0.571,197.6,"Curtis & Vincent, 2006",5.5,"Curtis & Vincent, 2006",18.2
+Gadiformes,Lotidae,burbot,Lota,lota,na,"Ring Lake, Wind river watershed, Wyoming",c,0.26,"Hubert et al., 2008",,,,18,"Krueger & Hubert, 1997 ",9.1
+Gadiformes,Macrouridae,roundnose grenadier,Coryphaenoides,rupestris,na,Rockall Trough and neighbouring areas,c,0.11,"Lorance et al., 2001",0.029,324,"Lorance et al., 2003",60,"Lorance et al., 2001",9
+Perciformes,Sparidae,two banded bream,Diplodus,vulgaris,na,south coast of Portugal,c,0.625,"Gonçalves et al., 2003",0.4,277.3,"Gonçalves et al., 2003",14,"Gonçalves et al., 2003",15.1
+Perciformes,Acanthuridae,ocean surgeonfish,Acanthurus,bahianus,na,"South Atlantic (Ascension, St. Helena, and Cabo Frio)",c,0.083,"Robertson et al., 2005",1.35,182.2,"Robertson et al., 2005",31,"Robertson et al., 2005",24.3
+Perciformes,Malacanthidae,golden tilefish,Lopholatilus,chamaeleonticeps,na,"South Atlantic Bight, off Georgia",c,0.259,"Harris & Grossman, 1985",0.084,907,"Harris & Grossman, 1985",33,"Harris & Grossman, 1985",18
+Perciformes,Scombridae,southern bluefin tuna,Thunnus,maccoyii,na,south Australia,c,0.22,"Hampton, 1991",0.185,1832,"Gunn et al., 2008",41,"Gunn et al., 2008",17
+Perciformes,Lutjanidae,yellowtail snapper,Ocyurus,chrysurus,na,south Florida,c,0.56,"*Johnson, 1983",0.28,450.9,"Johnson, 1983",14,"Johnson, 1983",25.7
+Perciformes,Lethrinidae,red throat emperor,Lethrinus,miniatus,na,southern Great Barrier Reef,c,0.368,"*Brown & Sumpton, 1998",0.229,520.6,"Brown & Sumpton, 1998",25,"Brown & Sumpton, 1998",24.8
+Scorpaeniformes,Scorpaenidae,Puget Sound rockfish,Sebastes,emphaeus,na,"San Juan Islands, Washington",c,0.44,"Beckmann et al., 1998",0.62,154.06,"Beckmann et al., 1998",13,"Beckmann et al., 1998",10
+Scorpaeniformes,Scorpaenidae,dark rockfish,Sebastes,ciliatus,na,"Sanak Island, Gulf of Alaska",f,0.073,"Chilton, 2005 ",0.195,435,"Chilton, 2005 ",61,"Chilton, 2005 ",7
+Pleuronectiformes,Pleuronectidae,Atlantic halibut,Hippoglossus,hippoglossus,na,Scotian Shelf and southern Grand Banks,c,0.22,"den Heyer et al., 2013",0.14,1696.5,"Armsworthy & Campana, 2010",,,5
+Scorpaeniformes,Scorpaenidae,rougheye rockfish,Sebastes,aleutianus,na,southeast Alaska,c,0.037,"Nelson & Quinn, 1987",0.0503,547.4,"Nelson & Quinn, 1987",205,"Munk, 2001",10
+Scorpaeniformes,Scorpaenidae,shortspine thornyhead rockfish,Sebastolobus,alascanus,na,southeast Alaska,c,0.07,"Miller, 1985",0.012,700,"Gaichas & Ianelli, 2003",89,"Bechtol, 2000",4.5
+Carcharhiniformes,Triakidae,school shark,Galeorhinus,galeus,na,southeast Australia,c,0.1006,"Grant et al., 1979",0.164,1600,"Grant et al., 1979",40,"Grant et al., 1979",17
+Perciformes,Carangidae,greater amberjack,Seriola,dumerili,na,southeastern coast of USA,c,0.61,"Manooch & Potts, 1997",0.119,1648,"Manooch & Potts, 1997",17,"Manooch & Potts, 1997",26
+Perciformes,Lutjanidae,Pacific red snapper,Lutjanus,peru,na,southeastern coast of Gulf of California,c,0.345,"Rocha-Olivares, 1998",0.1111,973.2,"Rocha-Olivares, 1998",31,"Rocha-Olivares, 1998",14
+Perciformes,Nototheniidae,Patagonian rockcod,Patagonotothen,brevicauda,shagensis,Shag Rocks area,c,0.9175,"Shlibanov, 1989",0.3258,233.1,"Shlibanov, 1989",7,"Shlibanov, 1989",5.9
+Salmoniformes,Salmonidae,lake whitefish,Coregonus,clupeaformis,na,"Shakespeare Island Lake, Canada",c,0.15,"Beverton & Holt, 1959",0.084,512,"*Hart, 1931",27,"Hart, 1931",5
+Perciformes,Nemipteridae,butterfish,Pentapodus,vitta,na,"Shark Bay, Australia",f,0.91,"Mant et al., 2006",0.886,156.6,"Mant et al., 2006",8,"Mant et al., 2006",23.1
+Perciformes,Sparidae,tarwhine,Rhabdosargus,sarba,na,"Shark Bay, Australia",c,0.3342,"*Hesp, A., unpublished data",0.51,302.84,"Hesp et al., 2004",14,"*Hesp, A., unpublished data",23.1
+Perciformes,Nototheniidae,yellowbelly rockcod,Notothenia,neglecta,na,"Signy Island, South Orkney Islands",c,0.36,"Everson, 1970",0.11,396,"Everson, 1970",18,"Everson, 1970",17
+Perciformes,Lutjanidae,dog snapper,Lutjanus,jocu,na,"Sirius, Ceara, and Bahia States, Brazil",c,0.134,"Rezende & Ferreira, 2004",0.11,772.2,"Rezende & Ferreira, 2004",25,"Rezende & Ferreira, 2004",27.5
+Perciformes,Polyprionidae,hapuku,Polyprion,oxygeneios,na,south coast of Western Australia,c,0.12,"Wakefield et al., 2010",0.24,890,"Wakefield et al., 2010",52,"Wakefield et al., 2010",22.6
+Perciformes,Labridae,western blue groper,Achoerodus,gouldii,na,south coast of Western Australia,c,0.086,"Coulson et al., 2009",0.1,777,"Coulson et al., 2009",70,"Coulson et al., 2009",18
+Perciformes,Labridae,foxfish,Bodianus,frenchii,na,south coast of Western Australia,c,0.067,"*Cossington, S. & Potter, I., unpublished data",0.09,396,"Cossington et al., 2010",78,"Cossington et al., 2010",19.5
+Perciformes,Channichthyidae,mackerel icefish,Champsocephalus,gunnari,na,South Georgia,c,0.56,"Frolkina & Dorovskikh, 1989",0.134,688,"Frolkina & Dorovskikh, 1989",8,"Frolkina & Dorovskikh, 1989",6
+Myctophiformes,Myctophidae,Nichol's lanternfish,Gymnoscopelus,nicholsi,na,"South Georgia, South Shetlands",c,0.61,"Linkowski, 1985",0.44,151,"Linkowski, 1985",7,"Linkowski, 1985",7
+Gadiformes,Merlucciidae,Panama hake,Merluccius,angustimanus,na,southeast Gulf of California,c,0.82,"Mathews, 1975",0.35,327,"Mathews, 1975",7,"Mathews, 1975",20
+Perciformes,Scombridae,king mackerel,Scomberomorus,cavalla,na,southeastern US,c,0.46,"Johnson et al., 1983",0.29,1067,"Johnson et al., 1983",14,"Johnson et al., 1983",22.2
+Perciformes,Sparidae,blacktail seabream,Diplodus,capensis,na,southern Angola,f,0.11,"Richardson, 2010",0.045,419.5,"Richardson, 2010",31,"Richardson, 2010",20.4
+Perciformes,Carangidae,leerfish,Lichia,amia,na,southern Angola,c,0.41,"Potts et al., 2008",0.22,1137,"Potts et al., 2008",11,"Potts et al., 2008",24.73
+Clupeiformes,Engraulidae,northern anchovy,Engraulis,mordax,na,Southern California,c,0.97,"Hanan, 1981",0.298682,165.52,"Spratt, 1975",7,"Spratt, 1975",15
+Scorpaeniformes,Scorpaenidae,yelloweye rockfish,Sebastes,ruberrimus,na,Southern Southeast Outside management sections,c,0.0174,"O'Connell et al., 2002",0.0369,659.6,"O'Connell et al., 2002",121,"O'Connell et al., 2002",5.4
+Perciformes,Centrarchidae,smallmouth bass,Micropterus,dolomieu,na,"Spencer Lake, Washington",c,0.52,"*Mueller et al., 2005",0.13,421.7,"Mueller et al., 2005",13,"Mueller et al., 2005",10.3
+Perciformes,Centrarchidae,largemouth bass,Micropterus,salmoides,na,"Spencer Lake, Washington",c,0.45,"*Mueller et al., 2005",0.12,516.3,"Mueller et al., 2005",10,"Mueller et al., 2005",10.3
+Salmoniformes,Salmonidae,brown trout,Salmo,trutta,na,"Spruce Creek, Pennsylvania",c,0.67,"Carline, 2006",,,,4,"Carline, 2006",9.4
+Pleuronectiformes,Pleuronectidae,American plaice,Hippoglossoides,platessoides,na,"St Mary Bay, Newfoundland, Canada",f,0.18,"Pitt, 1973",0.07,600,"Pitt, 1967",32,"Pitt, 1973",15
+Pleuronectiformes,Pleuronectidae,winter flounder,Pseudopleuronectes,americanus,na,"St Mary Bay, western Nova Scotia, Canada",c,0.3,"Dickie & McCracken, 1955",0.26,468.6,"Beverton & Holt, 1959",11,"Dickie & McCracken, 1955",5
+Gadiformes,Macrouridae,ridge-scaled rattail,Macrourus,carinatus,na,Sub-Antartic,m,0.15,"Stevens et al., 2010",0.0694,764.6,"Stevens et al., 2010",42,"Stevens et al., 2010",6.5
+Perciformes,Cichlidae,Nile tilapia,Oreochromis,niloticus,na,"Tabaru River, Yonaguni-jima Island, Japan",c,0.32,"Ishikawa et al., 2013",0.43,291.1,"Ishikawa et al., 2013",13,"Ishikawa et al., 2013",24
+Carcharhiniformes,Sphyrnidae,bonnethead shark,Sphyrna,tiburo,na,"Tampa Bay, Florida",c,0.6615,"Cortés & Parsons, 1996",0.34,1150,"Parsons, 1993",7,"Cortés & Parsons, 1996",22.3
+Perciformes,Cichlidae,Mayan cichlid,Cichlasoma,urophthalmum,na,"Taylor River, Florida",c,0.74,"Faunce et al., 2002",0.181,239.645,"Faunce et al., 2002",7,"Faunce et al., 2002",26
+Perciformes,Sparidae,Carpenter seabream,Argyrozona,argyrozona,na,"Tsitsikamma & Agulhas Bank, South Africa",c,0.27,"Brouwer & Griffiths, 2005",0.08,623,"Brouwer & Griffiths, 2004",27,"Brouwer & Griffiths, 2004",21
+Perciformes,Sparidae,,Chrysoblephus,cristiceps,na,"Tsitsikamma, South Africa",c,0.2094,"Buxton, 1993",0.081,654.7,"Buxton, 1993",23,"Buxton, 1993",17
+Perciformes,Sparidae,,Chrysoblephus,laticeps,na,"Tsitsikamma, South Africa",c,0.2395,"Buxton, 1993",0.147,425,"Buxton, 1993",17,"Buxton, 1993",17
+Cyprinodontiformes,Cyprinodontidae,White Sands pupfish,Cyprinodon,tularosa,na,"Tularosa Basin, New Mexico",c,1.96,"*Jester & Suminski, 1982",,,,5,"Jester & Suminski, 1982",20
+Cypriniformes,Catostomidae,shortnose sucker,Chasmistes,brevirostris,na,"Upper Klamath Lake, Oregon",f,0.15,"Hewitt et al., 2012",0.237,464.32,"Terwilliger et al., 2010",24,"Terwilliger et al., 2010",13
+Cypriniformes,Catostomidae,Lost River sucker,Deltistes,luxatus,na,"Upper Klamath Lake, Oregon",f,0.082,"Hewitt et al., 2012",0.13,700.6,"Terwilliger et al., 2010",57,"Terwilliger et al., 2010",13
+Clupeiformes,Clupeidae,Pacific herring,Clupea,pallasii,pallasii,"Vancouver Island, British Columbia",c,0.56,"Beverton & Holt, 1959",0.48,270,"Beverton, 1963",11,"Beverton & Holt, 1959",10
+Perciformes,Nemipteridae,Japanese threadfin bream,Nemipterus,japonicus,na,"Visakhapatnam, Bay of Bengal",c,0.52,"Krishnamoorthi, 1976",0.314,305.4,"Krishnamoorthi, 1971",4,"Krishnamoorthi, 1971",28
+Atheriniformes,Atherinidae,sand smelt,Atherina,boyeri,na,"Vistonis estuarine system, Greece",c,1.29,"Koutrakis et al., 2004",0.35,116.97,"Koutrakis et al., 2004",4,"Koutrakis et al., 2004",17.5
+Perciformes,Lutjanidae,Moses perch,Lutjanus,russelli,na,Western Australia,c,0.152,"Newman, 2002b",0.347,330.1,"Newman, 2002b",21,"Newman, 2002b",26.9
+Perciforme,Cheilodactylidae,tarakihi,Nemadactylus,macropterus,na,west coast of the South Island and Chatham Islands,c,0.08,"Vooren, 1977",0.1878,446.2,"Annala et al., 1989",45,"Vooren, 1977",14
+Perciformes,Gobiidae,sand goby,Pomatoschitus,minutus,na,Wadden Sea,c,3.3,"Fonds, 1973",0.92,89.3,"Fonds, 1973",2,"Fonds, 1973",10
+Scorpaeniformes,Scorpaenidae,black rockfish,Sebastes,melanops,na,Washington and north Oregon coast,c,0.2,"Stewart, 1993",0.18,506.8,"Wallace & Tagart, 1994",42,"Wallace & Tagart, 1994",12.5
+Clupeiformes,Clupeidae,Indian oil sardine,Sardinella,longiceps,na,west coast of India,c,0.67,"Banerji, 1973",0.528,206.6,"Banerji, 1973",3,"Banerji, 1973",27
+Gadiformes,Merlucciidae,southern hake,Merluccius,australis,na,west coast of the South Island,f,0.21,"Dunn et al., 2000",0.202,1134,"Dunn et al., 2000",27,"Horn, 1997",10
+Myctophiformes,Myctophidae,glacier lantern fish,Benthosema,glaciale,na,West Norwegian Fjords,c,0.91,"*Gjøsaeter, 1973",0.45,75,"Gjøsaeter, 1973",5,"Gjøsaeter, 1973",6.5
+Perciformes,Nemipteridae,palefin threadfin bream,Nemipterus,thosaporni,na,"Western Kalimantan, South China Sea",c,1.73,"Pauly & Martosubroto, 1980",0.42,245,"Pauly & Martosubroto, 1980",5,"Pauly & Martosubroto, 1980",28
+Perciformes,Scombridae,bigeye tuna,Thunnus,obesus,na,western tropical Pacific Ocean,c,0.48,"Hampton, 2000",0.238,1690,"Farley et al., 2006",16,"Farley et al., 2006",23
+Perciformes,Scombridae,skipjack tuna,Katsuwonus,pelamis,na,western tropical Pacific Ocean,c,1.6,"Hampton, 2000",1.3,651,"Hampton, 2000",10,"Froese & Pauly, 2006",23
+Perciformes,Scombridae,yellowfin tuna,Thunnus,albacares,na,western tropical Pacific Ocean,c,1.085,"Hampton, 2000",0.25,1664,"Hampton, 2000",7,"Lehodey & Leroy, 1999",23
+Clupeiformes,Engraulidae,Japanese anchovy,Engraulis,japonicus,na,Yellow Sea and East China Sea,c,0.63,"Iversen et al., 1993",0.6,155,"Iversen et al., 1993",4,"Iversen et al., 1993",11.5
