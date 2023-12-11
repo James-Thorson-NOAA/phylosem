@@ -35,7 +35,8 @@ Suggests:
     rmarkdown,
     ggplot2,
     testthat,
-    phylosignal
+    phylosignal,
+    adephylo
 Enhances:
     phytools,
     DiagrammeR
