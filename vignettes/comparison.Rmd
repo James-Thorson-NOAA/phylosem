@@ -1,5 +1,5 @@
 ---
-title: "Appendix A:  Comparison with other packages"
+title: "Comparison with other packages"
 author: "James T. Thorson and Wouter van der Bijl"
 output: rmarkdown::html_vignette
 #output: rmarkdown::pdf_document
@@ -26,8 +26,8 @@ knitr::opts_chunk$set(
 library(phylosem)
 ```
 
-```{r package_warning, echo=TRUE, eval=!have_packages}
-message("Must install ggplot2, phylopath, phylolm, ape")
+```{r package_warning, include=!have_packages}
+message("Must install ggplot2, phylopath, phylolm, Rphylopars, TreeTools")
 ```
 
 `phylosem` is an R package for fitting phylogenetic structural equation models (PSEMs).   The package generalizes features in existing R packages:
