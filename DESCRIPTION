@@ -23,6 +23,7 @@ Imports:
 Depends:
     TMB (>= 1.9.7),
     R (>= 4.0.0),
+    Matrix(>= 1.6.3)
 Suggests:
     semPlot,
     TreeTools,
@@ -34,7 +35,8 @@ Suggests:
     rmarkdown,
     ggplot2,
     testthat,
-    phylosignal
+    phylosignal,
+    adephylo
 Enhances:
     phytools,
     DiagrammeR
