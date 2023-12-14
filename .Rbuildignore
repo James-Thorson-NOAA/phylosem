@@ -4,8 +4,7 @@
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
 ^data-raw$
-
-
+^scratch$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
