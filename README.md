@@ -18,7 +18,9 @@ _phylosem_ is specifically intended as a minimal implementation, and uses standa
 Please see package vignettes for more details regarding syntax and features.
 
 [![](https://cranlogs.r-pkg.org/badges/phylosem)](https://cran.r-project.org/package=phylosem)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/phylosem)](https://cran.r-project.org/package=phylosem)
 
 [![DOI](https://zenodo.org/badge/534386257.svg)](https://zenodo.org/badge/latestdoi/534386257)
+
 
 
