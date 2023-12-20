@@ -55,6 +55,9 @@
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/best.html</loc>
   </url>
   <url>
+    <loc>https://james-thorson-noaa.github.io/phylosem/reference/checkDepPackageVersion.html</loc>
+  </url>
+  <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/choice.compare_phylosem.html</loc>
   </url>
   <url>
@@ -83,6 +86,9 @@
   </url>
   <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/print.phylosem.html</loc>
+  </url>
+  <url>
+    <loc>https://james-thorson-noaa.github.io/phylosem/reference/reinstalling.html</loc>
   </url>
   <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/summary.phylosem.html</loc>
