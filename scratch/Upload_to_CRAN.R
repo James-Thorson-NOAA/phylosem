@@ -63,7 +63,8 @@ if( FALSE ){
 }
 
 # Build for uploading via web interface
+save_dir = file.path( getwd(), "scratch")
 # https://cran.r-project.org/submit.html
-build( path=root_dir, manual=TRUE )
-
+build( path=save_dir, manual=TRUE )
+# REMEMBER TO UPDATE NEWS.RMD
 
