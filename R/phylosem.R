@@ -51,6 +51,7 @@
 #' @importFrom phylobase phylo4d
 #' @importFrom ape Ntip node.depth.edgelength rtree
 #' @importFrom TMB compile dynlib MakeADFun sdreport
+#' @importFrom methods is
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:
@@ -241,13 +242,13 @@ function( sem,
     specifyModel( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=covs, quiet=control$quiet ),
     error = function(e) e
   )
-  if( isFALSE("semmod" %in% class(SEM_model)) ){
+  if( isFALSE(is(SEM_model,"semmod")) ){
     SEM_model = tryCatch(
       specifyEquations( text=sem, exog.variances=TRUE, endog.variances=TRUE, covs=covs ),
       error = function(e) e
     )
   }
-  if( isFALSE("semmod" %in% class(SEM_model)) ){
+  if( isFALSE(is(SEM_model,"semmod")) ){
     stop("Must supply either input for `sem::specifyModel` or `sem::specifyEquations`")
   }
   RAM = build_ram( SEM_model, colnames(data) )
