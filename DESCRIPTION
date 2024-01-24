@@ -1,8 +1,8 @@
 Package: phylosem
 Type: Package
 Title: Phylogenetic Structural Equation Model
-Version: 1.1.2
-Date: 2023-12-19
+Version: 1.1.3
+Date: 2024-01-17
 Authors@R: 
     c(person(given = "James",
              family = "Thorson",
@@ -19,7 +19,8 @@ Imports:
     sem,
     ape,
     phylobase,
-    phylopath
+    phylopath,
+    methods
 Depends:
     TMB,
     R (>= 4.0.0)
