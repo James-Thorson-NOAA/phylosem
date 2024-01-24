@@ -28,6 +28,8 @@ jobs:
 
       - name: Test coverage
         run: |
+	  install.packages("Matrix", type = "source")
+	  install.packages("TMB", type = "source")
           covr::codecov(
             quiet = FALSE,
             clean = FALSE,
