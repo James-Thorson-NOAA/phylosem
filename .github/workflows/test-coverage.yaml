@@ -28,8 +28,7 @@ jobs:
 
       - name: Install extra source packages
         run: |
-          install.packages("Matrix", type = "source")
-          install.packages("TMB", type = "source")
+          utils::install.packages( c("Matrix","TMB"), type = "source")
           shell: Rscript {0}
 
       - name: Test coverage
