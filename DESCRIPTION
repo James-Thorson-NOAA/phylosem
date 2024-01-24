@@ -23,7 +23,8 @@ Imports:
     methods
 Depends:
     TMB,
-    R (>= 4.0.0)
+    R (>= 4.0.0),
+    Matrix
 Suggests:
     semPlot,
     TreeTools,
