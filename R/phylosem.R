@@ -394,7 +394,7 @@ function( sem,
 
   # Run sdreport
   if( isTRUE(control$getsd) ){
-    if( isTRUE(control$verbose) ) message("Running sdreport")
+    if( isFALSE(control$quiet) ) message("Running sdreport")
     Hess_fixed = optimHess( par=results$opt$par, fn=obj$fn, gr=obj$gr )
     results$sdrep = sdreport( obj,
                               hessian.fixed=Hess_fixed,
