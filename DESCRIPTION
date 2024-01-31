@@ -24,7 +24,6 @@ Imports:
 Depends:
     TMB,
     R (>= 4.0.0),
-    Matrix
 Suggests:
     semPlot,
     TreeTools,
