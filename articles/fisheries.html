@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">phylosem</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/James-Thorson-NOAA/phylosem/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -72,7 +79,7 @@
 Thorson</h4>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/James-Thorson-NOAA/phylosem/blob/HEAD/vignettes/fisheries.Rmd" class="external-link"><code>vignettes/fisheries.Rmd</code></a></small>
       <div class="d-none name"><code>fisheries.Rmd</code></div>
     </div>
 
@@ -90,7 +97,7 @@ as stock-recruit and natural mortality parameters.</p>
 <h2 id="preparing-the-then-et-al--mortality-database">Preparing the Then et al. mortality database<a class="anchor" aria-label="anchor" href="#preparing-the-then-et-al--mortality-database"></a>
 </h2>
 <p>To demonstrate the potential role for PCM in fisheries science, we
-re-analyze a foundational dataset compiled by <a href="https://www.vims.edu/research/departments/fisheries/programs/mort_db/index.php" class="external-link">Then
+re-analyze a foundational dataset compiled by <a href="https://www.vims.edu/research/departments/fisheries/programs/mort_db/" class="external-link">Then
 et al.</a>. We specifically download the file “Mlifehist_ver1.0.csv” and
 then include a copy as a data object in package <em>phylosem</em> to
 simplify the following demonstration. This demonstration then provides
@@ -179,11 +186,11 @@ coefficients.</p>
 <span>                   estimate_ou <span class="op">=</span> <span class="va">Grid</span><span class="op">[</span><span class="va">i</span>,<span class="st">'OU'</span><span class="op">]</span>,</span>
 <span>                   estimate_lambda <span class="op">=</span> <span class="va">Grid</span><span class="op">[</span><span class="va">i</span>,<span class="st">'lambda'</span><span class="op">]</span>,</span>
 <span>                   estimate_kappa <span class="op">=</span> <span class="va">Grid</span><span class="op">[</span><span class="va">i</span>,<span class="st">'kappa'</span><span class="op">]</span>,</span>
-<span>                   quiet <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span></span>
+<span>                   control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Extract AIC for each model and rank-order by parsimony</span></span>
-<span><span class="va">Grid</span><span class="op">$</span><span class="va">AIC</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span> <span class="va">psem_grid</span>, \<span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="va">m</span><span class="op">$</span><span class="va">opt</span><span class="op">$</span><span class="va">AIC</span> <span class="op">)</span></span>
+<span><span class="va">Grid</span><span class="op">$</span><span class="va">AIC</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span> <span class="va">psem_grid</span>, \<span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">AIC</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="va">Grid</span> <span class="op">=</span> <span class="va">Grid</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">Grid</span><span class="op">$</span><span class="va">AIC</span>,decreasing<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>,<span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Select model with lowest AIC</span></span>
@@ -440,7 +447,7 @@ coefficients are very similar to estimates when using phyogeny.</p>
 <span>                 tree <span class="op">=</span> <span class="va">tree</span>,</span>
 <span>                 sem <span class="op">=</span> <span class="va">sem_structure</span>,</span>
 <span>                 estimate_ou <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                 quiet <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span></span>
+<span>                 control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot path diagram</span></span>
 <span><span class="va">my_fitted_DAG</span> <span class="op">=</span> <span class="fu"><a href="../reference/as_fitted_DAG.html">as_fitted_DAG</a></span><span class="op">(</span><span class="va">psem_taxon</span><span class="op">)</span></span>

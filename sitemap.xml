@@ -28,12 +28,6 @@
     <loc>https://james-thorson-noaa.github.io/phylosem/news/index.html</loc>
   </url>
   <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/Mlifehist_ver1_0.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/TMBAIC.html</loc>
-  </url>
-  <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/as_fitted_DAG.html</loc>
   </url>
   <url>
@@ -70,19 +64,22 @@
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/compare_phylosem.html</loc>
   </url>
   <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/fit_tmb.html</loc>
-  </url>
-  <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/index.html</loc>
   </url>
   <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/list_parameters.html</loc>
   </url>
   <url>
+    <loc>https://james-thorson-noaa.github.io/phylosem/reference/Mlifehist_ver1_0.html</loc>
+  </url>
+  <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/parse_path.html</loc>
   </url>
   <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/phylosem.html</loc>
+  </url>
+  <url>
+    <loc>https://james-thorson-noaa.github.io/phylosem/reference/phylosem_control.html</loc>
   </url>
   <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/print.phylosem.html</loc>

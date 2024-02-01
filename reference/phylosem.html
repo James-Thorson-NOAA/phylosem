@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">phylosem</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,13 @@
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/James-Thorson-NOAA/phylosem/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -44,7 +50,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Fit phylogenetic structural equation model</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/James-Thorson-NOAA/phylosem/blob/HEAD/R/phylosem.R" class="external-link"><code>R/phylosem.R</code></a></small>
       <div class="d-none name"><code>phylosem.Rd</code></div>
     </div>
 
@@ -64,11 +70,8 @@
 <span>  estimate_lambda <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  estimate_kappa <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  data_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,</span>
-<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  newtonsteps <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  tmb_inputs <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  run_model <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="phylosem_control.html">phylosem_control</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -131,37 +134,14 @@ lengths (a.k.a. the Pagel-kappa term) using additional parameter <code>lnkappa</
 <code>tree$tip.label</code>.  Default pulls <code>data_labels</code> from <code>rownames(data)</code></p></dd>
 
 
-<dt>quiet</dt>
-<dd><p>if <code>FALSE</code>, the default, then the number of input lines is reported and
-    a message is printed suggesting that <code>specifyEquations</code> or <code>cfa</code> be used.</p></dd>
-
-
-<dt>newtonsteps</dt>
-<dd><p>Integer specifying the number of extra newton steps to take
-after optimization (alternative to <code>loopnum</code>).
-Each newtonstep requires calculating the Hessian matrix and is therefore slow.
-But for well-behaved models, each Newton step will typically
-decrease the maximum gradient of the loglikelihood with respect to each fixed effect,
-and therefore this option can be used to achieve an arbitrarily low final gradient
-given sufficient time for well-behaved models.  However, this option will also
-perform strangely or have unexpected consequences for poorly-behaved models, e.g.,
-when fixed effects are at upper or lower bounds. There is no need to increase the value
-of newtonsteps if the model appears to be converged (i.e., has low final_gradient and none of
-the standard errors are NA values)</p></dd>
-
-
 <dt>tmb_inputs</dt>
 <dd><p>optional tagged list that overrides the default constructor
 for TMB inputs (use at your own risk)</p></dd>
 
 
-<dt>run_model</dt>
-<dd><p>Boolean indicating whether to estimate parameters (the default), or
-instead to return the model inputs and compiled TMB object without running;</p></dd>
-
-
-<dt>...</dt>
-<dd><p>Additional parameters passed to <code><a href="fit_tmb.html">fit_tmb</a></code></p></dd>
+<dt>control</dt>
+<dd><p>Output from <code><a href="phylosem_control.html">phylosem_control</a></code>, used to define user
+settings, and see documentation for that function for details.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -184,7 +164,10 @@ instead to return the model inputs and compiled TMB object without running;</p><
 <dd><p>The list of inputs passed to <code><a href="https://rdrr.io/pkg/TMB/man/MakeADFun.html" class="external-link">MakeADFun</a></code></p></dd>
 
 <dt>opt</dt>
-<dd><p>The output from <code><a href="fit_tmb.html">fit_tmb</a></code></p></dd>
+<dd><p>The output from <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a></code></p></dd>
+
+<dt>sdrep</dt>
+<dd><p>The output from <code><a href="https://rdrr.io/pkg/TMB/man/sdreport.html" class="external-link">sdreport</a></code></p></dd>
 
 <dt>report</dt>
 <dd><p>The output from <code>obj$report()</code></p></dd>
@@ -272,40 +255,8 @@ TMB: Automatic differentiation and Laplace approximation. Journal of Statistical
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Coefficient_name Number_of_coefficients   Type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1           beta_z                      9  Fixed</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2             x_vj                    495 Random</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0:     218940.22: 0.100000 0.100000 0.100000 0.100000 0.100000 0.100000 0.100000 0.100000 0.100000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:     8397.8060: 0.0842226 0.130623 0.120621 0.124798 0.347153 0.487021 0.538215 0.426241 0.798883</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:     6354.4828: 0.0315557 0.151274 0.172831 0.173170 0.658033 0.551767 0.542706 0.578654 0.594083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:     3672.8577: 0.000303728 0.221429 0.224967 0.235152 0.725274 0.724685 0.748919 0.705591 0.856342</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:     2740.3780: -0.102677 0.415193 0.403189 0.371336 0.731170 0.859963 0.790331 0.921711 0.951636</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:     1998.5720: -0.126539 0.503355 0.465231 0.444702 0.930180 0.997626  1.00743  1.03020  1.14979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   6:     1603.6727: -0.156804 0.611920 0.546135 0.512778  1.10880  1.15370  1.19174  1.17670  1.34656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   7:     1378.4437: -0.184978 0.735384 0.635855 0.574242  1.28215  1.30788  1.36879  1.33950  1.53299</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   8:     1246.1754: -0.205749 0.871125 0.727935 0.623959  1.45479  1.45790  1.54574  1.51056  1.71079</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   9:     1168.3619: -0.217139  1.01403 0.814506 0.657424  1.62857  1.60494  1.72664  1.68772  1.88166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  10:     1123.9069: -0.220534  1.15457 0.885299 0.673319  1.80466  1.75160  1.91435  1.87091  2.04888</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  11:     1100.3689: -0.220150  1.27536 0.928361 0.675635  1.98358  1.90047  2.11097  2.06073  2.21911</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  12:     1089.9414: -0.220524  1.34559 0.935212 0.674388  2.16290  2.04937  2.31732  2.25655  2.40368</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  13:     1088.5461: -0.220084  1.33812 0.932369 0.675458  2.21370  2.08811  2.38334  2.31655  2.47029</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  14:     1087.8319: -0.220718  1.33618 0.933085 0.674475  2.26200  2.12267  2.45045  2.37612  2.54069</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  15:     1087.7787: -0.220253  1.33642 0.932854 0.675008  2.26795  2.12603  2.46060  2.38452  2.55226</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  16:     1087.7091: -0.220358  1.33673 0.932671 0.675146  2.27944  2.13226  2.48095  2.40115  2.57585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  17:     1087.7069: -0.217349  1.33044 0.940994 0.668413  2.28729  2.11448  2.49234  2.41721  2.59797</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  18:     1087.6911: -0.222165  1.33489 0.932128 0.677383  2.28740  2.12316  2.49506  2.41681  2.59939</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  19:     1087.6907: -0.214887  1.33792 0.933697 0.669999  2.28758  2.13505  2.49955  2.41615  2.60180</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  20:     1087.6863: -0.221547  1.33726 0.932944 0.675110  2.28759  2.13517  2.49998  2.41611  2.60207</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  21:     1087.6861: -0.220478  1.33704 0.932837 0.675081  2.28760  2.13522  2.50021  2.41608  2.60222</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  22:     1087.6861: -0.220143  1.33645 0.932761 0.674901  2.28764  2.13538  2.50097  2.41602  2.60264</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  23:     1087.6861: -0.220221  1.33658 0.932819 0.675126  2.28770  2.13531  2.50117  2.41601  2.60276</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  24:     1087.6861: -0.220415  1.33670 0.932693 0.674998  2.28765  2.13538  2.50131  2.41596  2.60293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  25:     1087.6861: -0.220192  1.33683 0.932842 0.675013  2.28773  2.13544  2.50141  2.41587  2.60309</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  26:     1087.6861: -0.220324  1.33674 0.932762 0.675074  2.28770  2.13543  2.50142  2.41588  2.60310</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  27:     1087.6861: -0.220275  1.33670 0.932749 0.675068  2.28767  2.13543  2.50143  2.41589  2.60311</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  28:     1087.6861: -0.220310  1.33668 0.932761 0.675067  2.28763  2.13543  2.50146  2.41592  2.60310</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  29:     1087.6861: -0.220287  1.33668 0.932751 0.675069  2.28763  2.13543  2.50146  2.41592  2.60311</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  30:     1087.6861: -0.220295  1.33668 0.932747 0.675069  2.28762  2.13542  2.50146  2.41592  2.60311</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  31:     1087.6861: -0.220290  1.33668 0.932749 0.675069  2.28762  2.13542  2.50145  2.41592  2.60312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0:     1087.6861: -0.220290  1.33668 0.932749 0.675069  2.28762  2.13542  2.50145  2.41592  2.60312</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:     1087.6861: -0.220290  1.33668 0.932749 0.675069  2.28762  2.13542  2.50145  2.41592  2.60312</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Running nlminb_loop #1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Running newton_loop #1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert and plot using phylopath</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://Ax3man.github.io/phylopath/" class="external-link">phylopath</a></span><span class="op">)</span></span></span>

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">phylosem</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/James-Thorson-NOAA/phylosem/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -72,7 +79,7 @@
 Thorson</h4>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/James-Thorson-NOAA/phylosem/blob/HEAD/vignettes/demonstration.Rmd" class="external-link"><code>vignettes/demonstration.Rmd</code></a></small>
       <div class="d-none name"><code>demonstration.Rmd</code></div>
     </div>
 
@@ -117,15 +124,16 @@ set.</p>
 <span>          estimate_lambda <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>          estimate_kappa <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>          tree <span class="op">=</span> <span class="va">rhino_tree</span>,</span>
-<span>          getJointPrecision <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          quiet <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span></span>
+<span>          control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span></span>
+<span>            getJointPrecision <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>            quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span></span>
 <span><span class="co">#</span></span>
-<span><span class="va">V</span> <span class="op">=</span> <span class="va">psem</span><span class="op">$</span><span class="va">opt</span><span class="op">$</span><span class="va">SD</span><span class="op">$</span><span class="va">cov.fixed</span></span>
+<span><span class="va">V</span> <span class="op">=</span> <span class="va">psem</span><span class="op">$</span><span class="va">sdrep</span><span class="op">$</span><span class="va">cov.fixed</span></span>
 <span><span class="va">Rsub</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov2cor</a></span><span class="op">(</span><span class="va">V</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'lnalpha'</span>,<span class="st">'logitlambda'</span>,<span class="st">'lnkappa'</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'lnalpha'</span>,<span class="st">'logitlambda'</span>,<span class="st">'lnkappa'</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimum_eigenvalue"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/eigen.html" class="external-link">eigen</a></span><span class="op">(</span><span class="va">psem</span><span class="op">$</span><span class="va">opt</span><span class="op">$</span><span class="va">SD</span><span class="op">$</span><span class="va">jointPrecision</span><span class="op">)</span><span class="op">$</span><span class="va">values</span><span class="op">)</span>,</span>
-<span>             <span class="st">"maximum_eigenvalue"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/eigen.html" class="external-link">eigen</a></span><span class="op">(</span><span class="va">psem</span><span class="op">$</span><span class="va">opt</span><span class="op">$</span><span class="va">SD</span><span class="op">$</span><span class="va">jointPrecision</span><span class="op">)</span><span class="op">$</span><span class="va">values</span><span class="op">)</span><span class="op">)</span>, digits<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimum_eigenvalue"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/eigen.html" class="external-link">eigen</a></span><span class="op">(</span><span class="va">psem</span><span class="op">$</span><span class="va">sdrep</span><span class="op">$</span><span class="va">jointPrecision</span><span class="op">)</span><span class="op">$</span><span class="va">values</span><span class="op">)</span>,</span>
+<span>             <span class="st">"maximum_eigenvalue"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/eigen.html" class="external-link">eigen</a></span><span class="op">(</span><span class="va">psem</span><span class="op">$</span><span class="va">sdrep</span><span class="op">$</span><span class="va">jointPrecision</span><span class="op">)</span><span class="op">$</span><span class="va">values</span><span class="op">)</span><span class="op">)</span>, digits<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left"></th>
@@ -194,7 +202,7 @@ Ornstein-Uhlenbeck and Pagel parameters:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="co"># Compile estimates and SEs</span></span>
-<span><span class="va">pdat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span> <span class="st">"Estimate"</span> <span class="op">=</span> <span class="va">psem</span><span class="op">$</span><span class="va">opt</span><span class="op">$</span><span class="va">SD</span><span class="op">$</span><span class="va">par.fixed</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'lnalpha'</span>,<span class="st">'logitlambda'</span>,<span class="st">'lnkappa'</span><span class="op">)</span><span class="op">]</span>,</span>
+<span><span class="va">pdat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span> <span class="st">"Estimate"</span> <span class="op">=</span> <span class="va">psem</span><span class="op">$</span><span class="va">sdrep</span><span class="op">$</span><span class="va">par.fixed</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'lnalpha'</span>,<span class="st">'logitlambda'</span>,<span class="st">'lnkappa'</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>              <span class="st">"StdErr"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">V</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'lnalpha'</span>,<span class="st">'logitlambda'</span>,<span class="st">'lnkappa'</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="va">pdat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span> <span class="va">pdat</span>, <span class="st">"Param"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pdat</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -263,9 +271,10 @@ magnitude (10, 100, 1000, or 10000 tips).</p>
 <span>  <span class="va">psem_bm</span> <span class="op">=</span> <span class="fu"><a href="../reference/phylosem.html">phylosem</a></span><span class="op">(</span> sem <span class="op">=</span> <span class="st">"x -&gt; y, p"</span>,</span>
 <span>            data <span class="op">=</span> <span class="va">Data</span>,</span>
 <span>            tree <span class="op">=</span> <span class="va">tree</span>,</span>
-<span>            quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>            newtonsteps <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>            getsd <span class="op">=</span> <span class="cn">FALSE</span> <span class="op">)</span></span>
+<span>            control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span></span>
+<span>              quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>              newton_loops <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>              getsd <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">)</span></span>
 <span>  <span class="va">Time_rcz</span><span class="op">[</span><span class="va">rI</span>,<span class="va">cI</span>,<span class="st">"phylosem"</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
 <span><span class="op">}</span><span class="op">}</span></span>
 <span></span>
