@@ -28,6 +28,9 @@
     <loc>https://james-thorson-noaa.github.io/phylosem/news/index.html</loc>
   </url>
   <url>
+    <loc>https://james-thorson-noaa.github.io/phylosem/reference/Mlifehist_ver1_0.html</loc>
+  </url>
+  <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/as_fitted_DAG.html</loc>
   </url>
   <url>
@@ -68,9 +71,6 @@
   </url>
   <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/list_parameters.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/Mlifehist_ver1_0.html</loc>
   </url>
   <url>
     <loc>https://james-thorson-noaa.github.io/phylosem/reference/parse_path.html</loc>
