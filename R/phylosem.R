@@ -349,6 +349,7 @@ function( sem,
                         parameters = tmb_inputs$parameters_list,
                         map = tmb_inputs$map_list,
                         random = tmb_inputs$random,
+                        profile = control$profile,
                         DLL = "phylosem" )
   if(control$quiet==FALSE) list_parameters(obj)
   results = list( "data" = data,
@@ -431,6 +432,8 @@ function( sem,
 #' @param quiet Boolean indicating whether to run model printing messages to terminal or not;
 #' @param getJointPrecision whether to get the joint precision matrix.  Passed
 #'        to \code{\link[TMB]{sdreport}}.
+#' @param Parameters to profile out of the likelihood (this subset will be
+#'        appended to random with Laplace approximation disabled).
 #'
 #' @return
 #' An S3 object of class "phylosem_control" that specifies detailed model settings,
@@ -446,7 +449,8 @@ function( nlminb_loops = 1,
           getsd = TRUE,
           quiet = FALSE,
           run_model = TRUE,
-          getJointPrecision = FALSE ){
+          getJointPrecision = FALSE,
+          profile = c() ){
 
   # Return
   structure( list(
@@ -458,7 +462,8 @@ function( nlminb_loops = 1,
     getsd = getsd,
     quiet = quiet,
     run_model = run_model,
-    getJointPrecision = getJointPrecision
+    getJointPrecision = getJointPrecision,
+    profile = profile
   ), class = "phylosem_control" )
 }
 
