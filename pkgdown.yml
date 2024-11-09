@@ -1,13 +1,12 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   comparison: comparison.html
   demonstration: demonstration.html
   fisheries: fisheries.html
   phylopath: phylopath.html
-last_built: 2024-04-11T02:50Z
+last_built: 2024-11-09T01:29Z
 urls:
   reference: https://james-thorson-noaa.github.io/phylosem/reference
   article: https://james-thorson-noaa.github.io/phylosem/articles
-

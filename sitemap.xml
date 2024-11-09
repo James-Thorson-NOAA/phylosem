@@ -1,96 +1,32 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/404.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/articles/comparison.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/articles/demonstration.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/articles/fisheries.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/articles/phylopath.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/index.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/Mlifehist_ver1_0.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/as_fitted_DAG.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/as_phylo4d.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/as_sem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/average.compare_phylosem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/average.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/best.compare_phylosem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/best.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/checkDepPackageVersion.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/choice.compare_phylosem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/choice.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/coef.phylosem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/compare_phylosem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/list_parameters.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/parse_path.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/phylosem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/phylosem_control.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/print.phylosem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/reinstalling.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/summary.phylosem.html</loc>
-  </url>
-  <url>
-    <loc>https://james-thorson-noaa.github.io/phylosem/reference/vcov.phylosem.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/404.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/articles/comparison.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/articles/demonstration.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/articles/fisheries.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/articles/index.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/articles/phylopath.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/authors.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/index.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/news/index.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/Mlifehist_ver1_0.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/as_fitted_DAG.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/as_phylo4d.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/as_sem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/average.compare_phylosem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/average.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/best.compare_phylosem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/best.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/choice.compare_phylosem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/choice.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/coef.phylosem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/compare_phylosem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/index.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/list_parameters.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/parse_path.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/phylosem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/phylosem_control.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/print.phylosem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/summary.phylosem.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/reference/vcov.phylosem.html</loc></url>
 </urlset>
+
