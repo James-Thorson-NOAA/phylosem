@@ -8,8 +8,8 @@
 <title>Comparison with other packages • phylosem</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Comparison with other packages">
 </head>
 <body>
@@ -151,7 +151,7 @@ are nearly identical for BM, OU, delta, and kappa models.</p>
 <span><span class="va">start_time</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">plm_bm</span> <span class="op">=</span> <span class="fu">phylolm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/phylolm/man/phylolm.html" class="external-link">phylolm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="va">x</span>, data<span class="op">=</span><span class="va">Data</span>, phy<span class="op">=</span><span class="va">tree</span>, model<span class="op">=</span><span class="st">"BM"</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.005969763 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.005264759 secs</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">plm_bm</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span>, digits<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -186,7 +186,7 @@ are nearly identical for BM, OU, delta, and kappa models.</p>
 <span>          tree <span class="op">=</span> <span class="va">tree</span>,</span>
 <span>          control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.1794102 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.135051 secs</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">psem_bm</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span>, digits<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -246,7 +246,7 @@ are nearly identical for BM, OU, delta, and kappa models.</p>
 <span><span class="va">start_time</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">plm_ou</span> <span class="op">=</span> <span class="fu">phylolm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/phylolm/man/phylolm.html" class="external-link">phylolm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="va">x</span>, data<span class="op">=</span><span class="va">Data</span>, phy<span class="op">=</span><span class="va">tree</span>, model<span class="op">=</span><span class="st">"OUrandomRoot"</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.01850104 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.01167011 secs</span></span>
 <span></span>
 <span><span class="va">start_time</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">psem_ou</span> <span class="op">=</span> <span class="fu"><a href="../reference/phylosem.html">phylosem</a></span><span class="op">(</span> sem <span class="op">=</span> <span class="st">"x -&gt; y, p"</span>,</span>
@@ -255,7 +255,7 @@ are nearly identical for BM, OU, delta, and kappa models.</p>
 <span>          estimate_ou <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>          control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.2159805 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.1475885 secs</span></span>
 <span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">psem_ou</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span>, digits<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -362,7 +362,7 @@ are nearly identical for BM, OU, delta, and kappa models.</p>
 <span><span class="va">start_time</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">plm_lambda</span> <span class="op">=</span> <span class="fu">phylolm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/phylolm/man/phylolm.html" class="external-link">phylolm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="va">x</span>, data<span class="op">=</span><span class="va">Data</span>, phy<span class="op">=</span><span class="va">tree</span>, model<span class="op">=</span><span class="st">"lambda"</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.03830099 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.02347755 secs</span></span>
 <span></span>
 <span><span class="va">start_time</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">psem_lambda</span> <span class="op">=</span> <span class="fu"><a href="../reference/phylosem.html">phylosem</a></span><span class="op">(</span> sem <span class="op">=</span> <span class="st">"x -&gt; y, p"</span>,</span>
@@ -371,7 +371,7 @@ are nearly identical for BM, OU, delta, and kappa models.</p>
 <span>          estimate_lambda <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>          control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.1794212 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.1226914 secs</span></span>
 <span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">psem_lambda</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span>, digits<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -478,7 +478,7 @@ are nearly identical for BM, OU, delta, and kappa models.</p>
 <span><span class="va">start_time</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">plm_kappa</span> <span class="op">=</span> <span class="fu">phylolm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/phylolm/man/phylolm.html" class="external-link">phylolm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="va">x</span>, data<span class="op">=</span><span class="va">Data</span>, phy<span class="op">=</span><span class="va">tree</span>, model<span class="op">=</span><span class="st">"kappa"</span>, lower.bound <span class="op">=</span> <span class="fl">0</span>, upper.bound <span class="op">=</span> <span class="fl">3</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.009204865 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.0066607 secs</span></span>
 <span></span>
 <span><span class="va">start_time</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">psem_kappa</span> <span class="op">=</span> <span class="fu"><a href="../reference/phylosem.html">phylosem</a></span><span class="op">(</span> sem <span class="op">=</span> <span class="st">"x -&gt; y, p"</span>,</span>
@@ -487,7 +487,7 @@ are nearly identical for BM, OU, delta, and kappa models.</p>
 <span>          estimate_kappa <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>          control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.1623685 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.1094129 secs</span></span>
 <span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">psem_kappa</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span>, digits<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -932,7 +932,7 @@ coefficients.</p>
 <span>                    model <span class="op">=</span> <span class="st">"BM"</span>,</span>
 <span>                    measurement_error <span class="op">=</span> <span class="cn">FALSE</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.02071357 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.009796381 secs</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-8-1.png" width="576"></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -950,7 +950,7 @@ coefficients.</p>
 <span>          tree <span class="op">=</span> <span class="va">rhino_tree</span>,</span>
 <span>          control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.4607205 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.3384206 secs</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span> <span class="fu"><a href="../reference/as_fitted_DAG.html">as_fitted_DAG</a></span><span class="op">(</span><span class="va">psem</span><span class="op">)</span> <span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-8-2.png" width="576"></p>
 </div>
@@ -1004,7 +1004,7 @@ match the assumed structure in <code>sem</code></p>
 <span><span class="va">start_time</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">Sem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sem/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">model</span>, data<span class="op">=</span><span class="va">Data</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.01308465 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.01723671 secs</span></span>
 <span></span>
 <span><span class="co"># Specify star phylogeny</span></span>
 <span><span class="va">tree_null</span> <span class="op">=</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">StarTree</a></span><span class="op">(</span><span class="va">n_obs</span><span class="op">)</span></span>
@@ -1018,7 +1018,7 @@ match the assumed structure in <code>sem</code></p>
 <span>          tree <span class="op">=</span> <span class="va">tree_null</span>,</span>
 <span>          control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.08467746 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 0.05810785 secs</span></span></code></pre></div>
 <p>We then compare estimated values for standardized coefficients</p>
 <table class="table">
 <thead><tr class="header">
@@ -1154,7 +1154,7 @@ structure.</p>
 <span>                  phylo_correlated <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  pheno_correlated <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.1044104 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.1049569 secs</span></span>
 <span></span>
 <span><span class="co"># Display estimates for missing values</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span> <span class="st">"Estimate"</span><span class="op">=</span><span class="va">pars</span><span class="op">$</span><span class="va">anc_recon</span><span class="op">[</span><span class="st">"t1"</span>,<span class="op">]</span>, <span class="st">"Var"</span><span class="op">=</span><span class="va">pars</span><span class="op">$</span><span class="va">anc_var</span><span class="op">[</span><span class="st">"t1"</span>,<span class="op">]</span> <span class="op">)</span>, digits<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
@@ -1202,7 +1202,7 @@ structure.</p>
 <span>                 covs <span class="op">=</span> <span class="st">"BM, NL, DD, RS, LS"</span>,</span>
 <span>                 control <span class="op">=</span> <span class="fu"><a href="../reference/phylosem_control.html">phylosem_control</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start_time</span></span>
-<span><span class="co">#&gt; Time difference of 0.669805 secs</span></span>
+<span><span class="co">#&gt; Time difference of 0.5145512 secs</span></span>
 <span></span>
 <span><span class="co"># Display estimates for missing values</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
