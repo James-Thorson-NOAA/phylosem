@@ -39,7 +39,8 @@ Suggests:
     adephylo
 Enhances:
     phytools,
-    DiagrammeR
+    DiagrammeR,
+    tmbstan
 LinkingTo:
     RcppEigen,
     TMB
@@ -52,7 +53,7 @@ Description: Applies phylogenetic comparative methods (PCM) and phylogenetic tra
     are described in Thorson and van der Bijl (2023) <doi:10.1111/jeb.14234>. 
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 URL: https://james-thorson-noaa.github.io/phylosem/
 BugReports: https://github.com/James-Thorson-NOAA/phylosem/issues

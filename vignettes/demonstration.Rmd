@@ -107,6 +107,20 @@ ggplot( rbind(pdat,pdat2), aes( x=Param, y = Estimate, ymin = lower, ymax = uppe
 
 These confidence intervals suggest that parameter lnkappa overlaps with 0.0, suggesting that Pagel's kappa overlaps with 1.0 and could be instead turned off and thereby fixed at that default value.
 
+We note in passing that we could instead estimate Bayesian credible intervals, using improper (flat) priors on all input parameters and using `tmbstan` to automate MCMC sampling.  To speed up the demonstration, we eliminate the tree transformations and only sample path coefficients:
+
+```{r, eval=have_packages, echo=TRUE, message=FALSE, fig.width=6, fig.height=6, out.width = "75%"}
+library(tmbstan)
+
+psem0 = phylosem( sem = model,
+          data = rhino[,c("BM","NL","DD","RS","LS")],
+          tree = rhino_tree,
+          control = phylosem_control(
+            run_model = TRUE,
+            quiet = TRUE) )
+MCMC = tmbstan( psem0$obj, init = "last.par.best" )
+```
+
 ## Scaling of runtime with increased tree size
 
 The package `phylolm` is expected to have a "linear runtime", i.e., a proportional increase in runtime with increasing tree size.  We therefore compare runtime for `phylosem` and `phylolm` using a simulated tree across three orders of magnitude (10, 100, 1000, or 10000 tips).

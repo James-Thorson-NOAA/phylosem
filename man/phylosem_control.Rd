@@ -13,7 +13,8 @@ phylosem_control(
   getsd = TRUE,
   quiet = FALSE,
   run_model = TRUE,
-  getJointPrecision = FALSE
+  getJointPrecision = FALSE,
+  profile = c()
 )
 }
 \arguments{
@@ -41,6 +42,9 @@ instead to return the model inputs and compiled TMB object without running;}
 
 \item{getJointPrecision}{whether to get the joint precision matrix.  Passed
 to \code{\link[TMB]{sdreport}}.}
+
+\item{Parameters}{to profile out of the likelihood (this subset will be
+appended to random with Laplace approximation disabled).}
 }
 \value{
 An S3 object of class "phylosem_control" that specifies detailed model settings,

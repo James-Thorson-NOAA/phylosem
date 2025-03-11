@@ -555,11 +555,11 @@ function( object,
   return( V )
 }
 
-# @title Extract the (marginal) log-likelihood of a phylosem model
-#
-# @return object of class \code{logLik} with attributes
-#   \item{val}{log-likelihood}
-#   \item{df}{number of parameters}
+#' @title Extract the (marginal) log-likelihood of a phylosem model
+#'
+#' @return object of class \code{logLik} with attributes
+#'   \item{val}{log-likelihood}
+#'   \item{df}{number of parameters}
 #' @importFrom stats logLik
 #' @export
 logLik.phylosem <- function(object, ...) {
