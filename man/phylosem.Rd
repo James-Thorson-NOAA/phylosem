@@ -25,9 +25,10 @@ the set of path coefficients and variance-covariance parameters}
 
 \item{tree}{phylogenetic structure, using class \code{\link[ape]{as.phylo}}}
 
-\item{data}{data-frame providing variables being modeled.  Missing values are inputted
+\item{data}{data-frame providing numeric values for variables being modeled.  Missing values are inputted
 as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
-then it still must be inputted as a column of \code{data} with entirely NA values.}
+then it still must be inputted as a column of \code{data} with entirely NA values.
+Bernoulli variables must be coded as 0s or 1s, and factors are not allowed.}
 
 \item{family}{Character-vector listing the distribution used for each column of \code{data}, where
 each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.

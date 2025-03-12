@@ -8,9 +8,10 @@
 #'        or \code{\link[sem]{specifyEquations}} and then parsed to control
 #'        the set of path coefficients and variance-covariance parameters
 #' @param tree phylogenetic structure, using class \code{\link[ape]{as.phylo}}
-#' @param data data-frame providing variables being modeled.  Missing values are inputted
+#' @param data data-frame providing numeric values for variables being modeled.  Missing values are inputted
 #'        as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
 #'        then it still must be inputted as a column of \code{data} with entirely NA values.
+#'        Bernoulli variables must be coded as 0s or 1s, and factors are not allowed.
 #' @param family Character-vector listing the distribution used for each column of \code{data}, where
 #'        each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
 #'        \code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
@@ -236,6 +237,7 @@ function( sem,
   familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, "gamma"=4, NA )
   if( any(is.na(familycode_j)) ) stop("Check `family`")
   if( any(is.nan(as.matrix(data))) ) stop("Please remove `NaN` values from data, presumably switching to `NA` values")
+  if( any(sapply(data, is.factor)) ) stop("Please remove factors from `data`")
 
   #
   SEM_model = tryCatch(
