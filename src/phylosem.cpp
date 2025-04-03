@@ -149,18 +149,44 @@ Type objective_function<Type>::operator() ()
   vector<Type> var_v( n_v );
   vector<Type> sigma_j( n_j );
   sigma_j = exp( lnsigma_j );
-  matrix<Type> Vtmp( n_j, n_j );
   matrix<Type> eps_vj( n_v, n_j );
   eps_vj.setZero();
 
-  // Assemble Evolutionary covariance
-  matrix<Type> V_jj( n_j, n_j );
-  matrix<Type> L_jj(n_j, n_j);
-  matrix<Type> Rho_jj(n_j, n_j);
-  matrix<Type> Gamma_jj(n_j, n_j);
-  matrix<Type> I_jj( n_j, n_j );
-  Rho_jj.setZero();
-  Gamma_jj.setZero();
+  //// Assemble Evolutionary covariance
+  //matrix<Type> Vtmp( n_j, n_j );
+  //matrix<Type> V_jj( n_j, n_j );
+  //matrix<Type> L_jj(n_j, n_j);
+  //matrix<Type> Rho_jj(n_j, n_j);
+  //matrix<Type> Gamma_jj(n_j, n_j);
+  //matrix<Type> I_jj( n_j, n_j );
+  //Rho_jj.setZero();
+  //Gamma_jj.setZero();
+  //I_jj.setIdentity();
+  //Type tmp;
+  //for(int r=0; r<RAM.rows(); r++){
+  //  // Extract estimated or fixed value
+  //  if(RAM(r,3)>=1){
+  //    tmp = beta_z(RAM(r,3)-1);
+  //  }else{
+  //    tmp = RAMstart(r);
+  //  }
+  //  // Assign to proper matrix
+  //  if(RAM(r,0)==1){
+  //    Rho_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+  //  }else{
+  //    Gamma_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+  //  }
+  //}
+  //L_jj = I_jj - Rho_jj;
+  //L_jj = atomic::matinv( L_jj );
+  //L_jj = L_jj * Gamma_jj;
+  //V_jj = L_jj * L_jj.transpose();
+
+  //// Assemble Evolutionary covariance
+  Eigen::SparseMatrix<Type> Qtmp( n_j, n_j );
+  Eigen::SparseMatrix<Type> Rho_jj(n_j, n_j);
+  Eigen::SparseMatrix<Type> Gamma_jj(n_j, n_j);
+  Eigen::SparseMatrix<Type> I_jj( n_j, n_j );
   I_jj.setIdentity();
   Type tmp;
   for(int r=0; r<RAM.rows(); r++){
@@ -172,15 +198,16 @@ Type objective_function<Type>::operator() ()
     }
     // Assign to proper matrix
     if(RAM(r,0)==1){
-      Rho_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+      Rho_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
     }else{
-      Gamma_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+      Gamma_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = tmp; // Cholesky of covariance, so -Inf to Inf;
     }
   }
-  L_jj = I_jj - Rho_jj;
-  L_jj = atomic::matinv( L_jj );
-  L_jj = L_jj * Gamma_jj;
-  V_jj = L_jj * L_jj.transpose();
+  Eigen::SparseMatrix<Type> IminusRho_jj = I_jj - Rho_jj;
+  Eigen::SparseMatrix<Type> V_jj = Gamma_jj.transpose() * Gamma_jj;
+  matrix<Type> Vinv_jj = invertSparseMatrix( V_jj );
+  Eigen::SparseMatrix<Type> Vinv2_jj = asSparseMatrix( Vinv_jj );
+  Eigen::SparseMatrix<Type> Q_jj = IminusRho_jj.transpose() * Vinv2_jj * IminusRho_jj;
 
   // Distribution of OU evolution -- Root
   // Correlation between i and parent(i) as distance -> INF
@@ -189,11 +216,13 @@ Type objective_function<Type>::operator() ()
     // SD of Ornstein-Uhlenbeck process as distance -> INF
     var_v(vroot) = Type(1.0) / (2*alpha);
     // conditional probability
-    Vtmp = V_jj * var_v(vroot);
     for(int j=0; j<n_j; j++){
       eps_vj(vroot,j) = x_vj(vroot,j) - xbar_j(j);
     }
-    jnll_v(vroot) = MVNORM(Vtmp)( eps_vj.row(vroot) );
+    //Vtmp = V_jj * var_v(vroot);
+    //jnll_v(vroot) = MVNORM(Vtmp)( eps_vj.row(vroot) );
+    Qtmp = Q_jj / var_v(vroot);
+    jnll_v(vroot) = GMRF(Qtmp)( eps_vj.row(vroot) );
     // Optionally fix the root at the mean
   }else{
     rho_v(vroot) = NAN;
@@ -215,18 +244,22 @@ Type objective_function<Type>::operator() ()
     // conditional probability
     if( estimate_lambda==1 ){
       if( vchild < n_tip ){
-        Vtmp = V_jj * ( lambda*var_v(vchild) + (1-lambda)*height_v(vchild) );
+        //Vtmp = V_jj * ( lambda*var_v(vchild) + (1-lambda)*height_v(vchild) );
+        Qtmp = Q_jj / ( lambda*var_v(vchild) + (1-lambda)*height_v(vchild) );
       }else{
-        Vtmp = V_jj * ( lambda*var_v(vchild) );
+        //Vtmp = V_jj * ( lambda*var_v(vchild) );
+        Qtmp = Q_jj / ( lambda*var_v(vchild) );
       }
     }else{
-      Vtmp = V_jj * var_v(vchild);
+      //Vtmp = V_jj * var_v(vchild);
+      Qtmp = Q_jj / var_v(vchild);
     }
     //xtmp_j = (x_vj.row(vchild).array()-xbar_j) - rho_v(vchild)*(x_vj.row(vparent).array()-xbar_j);
     for(int j=0; j<n_j; j++){
       eps_vj(vchild,j) = (x_vj(vchild,j)-xbar_j(j)) - rho_v(vchild)*(x_vj(vparent,j)-xbar_j(j));
     }
-    jnll_v(vchild) = MVNORM(Vtmp)( eps_vj.row(vchild) );
+    //jnll_v(vchild) = MVNORM(Vtmp)( eps_vj.row(vchild) );
+    jnll_v(vchild) = GMRF(Qtmp)( eps_vj.row(vchild) );
   }
   jnll += jnll_v.sum();
 
@@ -273,7 +306,7 @@ Type objective_function<Type>::operator() ()
   // Reporting
   REPORT( rho_v );
   REPORT( var_v );
-  REPORT( V_jj );
+  //REPORT( V_jj );
   REPORT( Rho_jj );
   REPORT( Gamma_jj );
   REPORT( jnll );
@@ -283,7 +316,7 @@ Type objective_function<Type>::operator() ()
   REPORT( x_vj );
   REPORT( yhat_ij );  // Testing for cAIC
   REPORT( eps_vj );
-  ADREPORT( Rho_jj );
+//  ADREPORT( Rho_jj );
   ADREPORT( alpha );
   ADREPORT( lambda );
   ADREPORT( kappa );

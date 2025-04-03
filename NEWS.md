@@ -1,3 +1,8 @@
+# phylosem 1.2.0
+* Adding error check for factors in `data` (which are not supported)
+* Switching to a sparseMatrix construction and GMRF for the conditional distribution,
+  to allow estimation with larger number (J>>10) of variables
+
 # phylosem 1.1.4
 * removing `checkDepPackageVersion(dep_pkg="Matrix", this_pkg="TMB")` from `.onLoad()`
   as requested by K. Kristensen
