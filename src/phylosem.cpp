@@ -327,6 +327,7 @@ Type objective_function<Type>::operator() ()
   REPORT( rho_v );
   REPORT( var_v );
   //REPORT( V_jj );
+  REPORT( Q_jj );
   REPORT( Rho_jj );
   REPORT( Gamma_jj );
   REPORT( jnll );
