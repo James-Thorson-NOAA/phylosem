@@ -30,7 +30,7 @@ test_that("phylosem example is working ", {
   logLik(psem)
   AIC(psem)
   summary(psem)
-  print(sem)
+  print(psem)
   coef(psem)
   vcov(psem, which="fixed")
   vcov(psem, which="random")
