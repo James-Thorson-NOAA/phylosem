@@ -96,6 +96,19 @@
 //}
 
 template<class Type>
+vector<Type> get_nonzero_elements( Eigen::SparseMatrix<Type> M ) {
+    std::vector<Type> values;
+
+    for (int k = 0; k < M.outerSize(); ++k) {
+        for (typename Eigen::SparseMatrix<Type>::InnerIterator it(M, k); it; ++it) {
+            values.push_back(it.value());
+        }
+    }
+
+    return values;  // Return vector of nonzero values if needed
+}
+
+template<class Type>
 Type objective_function<Type>::operator() ()
 {
   //using namespace Eigen;
@@ -303,6 +316,13 @@ Type objective_function<Type>::operator() ()
   REPORT( intercept_j );
   ADREPORT( intercept_j );
 
+  // Extract elements of sparse matrix
+  //vector<Type> nonzeroRho_z( Rho_jj.nonZeros() );
+  //for( int z = 0; z<Rho_jj.nonZeros(); z++ ){
+  //  nonzeroRho_z(z) = Rho_jj.coeffRef(z);
+  //}
+  vector<Type> nonzeroRho_z = get_nonzero_elements( Rho_jj );
+
   // Reporting
   REPORT( rho_v );
   REPORT( var_v );
@@ -317,6 +337,7 @@ Type objective_function<Type>::operator() ()
   REPORT( yhat_ij );  // Testing for cAIC
   REPORT( eps_vj );
 //  ADREPORT( Rho_jj );
+  ADREPORT( nonzeroRho_z );
   ADREPORT( alpha );
   ADREPORT( lambda );
   ADREPORT( kappa );

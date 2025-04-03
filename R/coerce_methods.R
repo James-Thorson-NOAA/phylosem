@@ -11,9 +11,11 @@ as_fitted_DAG <-
 function( object ){
 
   # extract and name identical to output from est_DAG
+  SE_Rho_jj = object$report$Rho_jj
+  SE_Rho_jj@x = as.vector(as.list(object$sdrep, what="Std. Error", report=TRUE)$nonzeroRho_z)
   out = list(
-    coef = t(object$report$Rho_jj),
-    se = t(as.list(object$sdrep, what="Std. Error", report=TRUE)$Rho_jj)
+    coef = t(as.matrix(object$report$Rho_jj)),
+    se = t(SE_Rho_jj)
   )
   dimnames(out$coef) = dimnames(out$se) = list( colnames(object$data), colnames(object$data) )
 
