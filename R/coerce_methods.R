@@ -15,7 +15,7 @@ function( object ){
   SE_Rho_jj@x = as.vector(as.list(object$sdrep, what="Std. Error", report=TRUE)$nonzeroRho_z)
   out = list(
     coef = t(as.matrix(object$report$Rho_jj)),
-    se = t(SE_Rho_jj)
+    se = t(as.matrix(SE_Rho_jj))
   )
   dimnames(out$coef) = dimnames(out$se) = list( colnames(object$data), colnames(object$data) )
 
