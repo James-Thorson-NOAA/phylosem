@@ -255,6 +255,11 @@ function( sem,
   }
   RAM = build_ram( SEM_model, colnames(data) )
 
+  # Check for errors in RAM
+  if( any(is.na(as.numeric(RAM[,5])) & (RAM[,4]==0)) ){
+    stop("Some starting value for a fixed parameter is NA.  Please fix")
+  }
+
   #
   n_tip = Ntip(tree)
   vroot = n_tip + 1
