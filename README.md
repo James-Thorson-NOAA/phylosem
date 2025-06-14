@@ -1,4 +1,6 @@
-## Phylogenetic structural equation models
+
+# phylosem <a href='https://github.com/James-Thorson-NOAA/phylosem'><img src='man/figures/logo.png' align="right" style="height:139px;"/></a>
+
 Package _phylosem_ combines features from structural equation models (SEM), phylogenetic comparative methods (PCM), and generalized linear mixed models (GLMM).  By doing so, it incorporates a broad feature-set:
 
 * Comparing multiple evolutionary models similar to _phylopath_
