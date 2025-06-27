@@ -2,6 +2,8 @@
 * Adding error check for factors in `data` (which are not supported)
 * Switching to a sparseMatrix construction and GMRF for the conditional distribution,
   to allow estimation with larger number (J>>10) of variables
+* Fit error in `as_fitted_DAG` occurring when `getsd=FALSE`, resulting in an
+  uniformative error message ... now adding branching logic for output (h/t Jack Oyston)
 
 # phylosem 1.1.4
 * removing `checkDepPackageVersion(dep_pkg="Matrix", this_pkg="TMB")` from `.onLoad()`

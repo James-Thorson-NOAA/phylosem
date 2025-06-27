@@ -11,13 +11,17 @@ as_fitted_DAG <-
 function( object ){
 
   # extract and name identical to output from est_DAG
-  SE_Rho_jj = object$report$Rho_jj
-  SE_Rho_jj@x = as.vector(as.list(object$sdrep, what="Std. Error", report=TRUE)$nonzeroRho_z)
   out = list(
-    coef = t(as.matrix(object$report$Rho_jj)),
-    se = t(as.matrix(SE_Rho_jj))
+    coef = t(as.matrix(object$report$Rho_jj))
   )
-  dimnames(out$coef) = dimnames(out$se) = list( colnames(object$data), colnames(object$data) )
+  dimnames(out$coef) = list( colnames(object$data), colnames(object$data) )
+
+  if( !is.null(object$sdrep) ){
+    SE_Rho_jj = object$report$Rho_jj
+    SE_Rho_jj@x = as.vector(as.list(object$sdrep, what="Std. Error", report=TRUE)$nonzeroRho_z)
+    out$se = t(as.matrix(SE_Rho_jj))
+    dimnames(out$se) = dimnames(out$coef)
+  }
 
   # pass out
   class(out) = "fitted_DAG"
