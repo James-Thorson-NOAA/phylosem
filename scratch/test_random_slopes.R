@@ -98,6 +98,9 @@ if( FALSE ){
 # Simulated example
 #############
 
+pak::pak( "James-Thorson-NOAA/phylosem@dev" )
+set.seed(123)
+
 library(phylosem)
 library(phytools)
 library(ape)
@@ -105,9 +108,9 @@ library(ape)
 n_tips <- 100
 tree <- pbtree(n = n_tips, scale = 1)  # phytools; scale=1 sets total tree depth to 1
 
-x <- rTraitCont( tree, sigma = 1, alpha = 1, model = "BM")
-w <- 1 + rTraitCont( tree, sigma = 0.1, alpha = 1, model = "BM")
-y = 1 + w * x + rTraitCont( tree, sigma = 0.1, alpha = 1, model = "BM")
+x <- rTraitCont( tree, sigma = 0.5, alpha = 1, model = "BM")
+w <- 1 + rTraitCont( tree, sigma = 0.5, alpha = 1, model = "BM")
+y = 1 + w * x + rTraitCont( tree, sigma = 0.5, alpha = 1, model = "BM")
 
 data = data.frame( x = x, y = y, w = NA )
 sem = "
