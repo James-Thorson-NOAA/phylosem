@@ -270,9 +270,9 @@ function( sem,
     stop("Some starting value for a fixed parameter is NA.  Please fix")
   }
   # Disable moderators for now
-  if( any(RAM[,1] %in% c(3)) ){
-    stop("Moderators not allowed")
-  }
+  #if( any(RAM[,1] %in% c(3)) ){
+  #  stop("Moderators not allowed")
+  #}
 
   #
   n_tip = Ntip(tree)
