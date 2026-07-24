@@ -95,65 +95,36 @@ if( FALSE ){
 }
 
 #############
-# Fit in RTMB
+# Simulated example
 #############
 
-# Whether to drop root for ISAR
-drop_bm_root = TRUE
-which_drop = ((n_tips+n_nodes) * (seq_along(ou_j)-1) + (n_tips+1))[(ou_j==FALSE)]
-assemble_version = 3
+library(phylosem)
+library(phytools)
+library(ape)
 
-#
-if( is.null(tree$node.label) & (n_nodes > 0) ){
-  tree$node.label = paste0("node_",seq_len(n_nodes))
-}
+n_tips <- 100
+tree <- pbtree(n = n_tips, scale = 1)  # phytools; scale=1 sets total tree depth to 1
 
-#
-SEM_model = specifyModel( text=sem,
-                          exog.variances=TRUE,
-                          endog.variances=TRUE,
-                          covs=colnames(data),
-                          quiet=TRUE )
-model = build_ram( model = SEM_model,
-           vars = colnames(data) )
+x <- rTraitCont( tree, sigma = 1, alpha = 1, model = "BM")
+w <- 1 + rTraitCont( tree, sigma = 0.1, alpha = 1, model = "BM")
+y = 1 + w * x + rTraitCont( tree, sigma = 0.1, alpha = 1, model = "BM")
 
-y_sj = as.matrix(data[match(c(tree$tip.label,tree$node.label),rownames(data)),,drop=FALSE])
-parlist = list(
-  y_sj = y_sj,
-  beta_p = rep(1,max(model$parameter)),
-  ln_theta = rep(0,ncol(data)),
-  xbar = rep(0,ncol(data))
-)
-map = list(
-  #ln_theta = factor( rep(1,ncol(data)) ),
-  y_sj = ifelse( is.na(parlist$y_sj), seq_len(prod(dim(parlist$y_sj))), NA ),
-  ln_theta = factor(ifelse(ou_j, seq_len(ncol(data)), NA))
-)
-if(isTRUE(drop_bm_root)) map$y_sj[which_drop] = NA
-map$y_sj = factor(map$y_sj)
+data = data.frame( x = x, y = y, w = NA )
+sem = "
+  x -> y, w
+"
 
-parlist$y_sj = ifelse( is.na(parlist$y_sj), 0, parlist$y_sj )
-
-#method = "GMRF"
-obj = MakeADFun( func = get_nll,
-                  random = "y_sj",
-                  map = map,
-                  parameters = parlist,
-                  silent = TRUE )
-opt = nlminb( obj$par, obj$fn, obj$gr,
-              control = list() )
-rep = obj$report()
-sdrep = sdreport(obj)
-
-# Compare with phylosem ... logLik matches exactly when shared ln_theta
-# map$ln_theta = factor(c(1,1,1))
-psem = phylosem::phylosem(
+fit = phylosem(
   data = data,
+  tree = tree,
   sem = sem,
-  estimate_ou = all(ou_j),
-  tree = tree
+  estimate_xbar = c("x", "y", "w"),
+  estimate_ou = FALSE,
+  control = phylosem_control(
+    trace = 1
+  )
 )
 
-# Compare SDs
-c( opt$par['beta_p'], psem$opt$par['beta_z'] )
+cor( w, fit$parhat$x_vj[seq_len(n_tips),3] )
+plot( w, fit$parhat$x_vj[seq_len(n_tips),3] )
 
