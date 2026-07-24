@@ -22,6 +22,11 @@
 #'        as listed in \doi{10.1093/sysbio/syu005}
 #' @param estimate_lambda Boolean indicating whether to estimate additional branch lengths for
 #'        phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}
+#' @param estimate_xbar character-vector listing columns of \code{data} for which to estimate the mean,
+#'        which is subtracted off of \code{data} prior to evaluating relationships among traits.
+#'        The default \code{estimate_xbar = NULL} estimates the mean for every column with at least one value
+#'        that is not \code{NA} (i.e., does *not* estimate the mean for latent variables).
+#'        If you want to have no \code{xbar} parameters, use \code{estimate_xbar = vector()}.
 #' @param estimate_kappa Boolean indicating whether to estimate a nonlinear scaling of branch
 #'        lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}
 #' @param data_labels For each row of \code{data}, listing the corresponding name from
@@ -179,6 +184,7 @@ function( sem,
           estimate_kappa = FALSE,
           data_labels = rownames(data),
           tmb_inputs = NULL,
+          estimate_xbar = NULL,
           control = phylosem_control() ){
 
   # Function that converts SEM model to a RAM, see `?sem` for more context
@@ -290,6 +296,17 @@ function( sem,
     stop("Check that all `data_labels` are present in `c(tree$tip.label,tree$node.label)`")
   }
 
+  # Process `estimate_xbar`
+  if( is.null(estimate_xbar) ){ # is TRUE for estimate_xbar = c()
+    estimate_xbar = na.omit( ifelse(colSums(!is.na(data))==0, NA, colnames(data)) )
+  }else{
+    if( isFALSE(control$quiet) ){
+      if( !all(estimate_xbar %in% colnames(data)) ){
+        warning("Some `estimate_xbar` is not in the column names of `data`")
+      }
+    }
+  }
+
   #
   if( is.null(tmb_inputs) ){
     # Build data
@@ -345,7 +362,8 @@ function( sem,
     if( estimate_ou==FALSE ){
       map_list$xbar_j = factor(rep( NA, length(parameters_list$xbar_j) ))
     }else{
-      map_list$xbar_j = factor( ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data)) )
+      #map_list$xbar_j = factor( ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data)) )
+      map_list$xbar_j = factor( ifelse(colnames(data) %in% estimate_xbar, seq_len(ncol(data)), NA) )
     }
     if( estimate_lambda==FALSE ){
       map_list$logitlambda = factor(NA)

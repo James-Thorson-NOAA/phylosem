@@ -15,6 +15,7 @@ phylosem(
   estimate_kappa = FALSE,
   data_labels = rownames(data),
   tmb_inputs = NULL,
+  estimate_xbar = NULL,
   control = phylosem_control()
 )
 }
@@ -61,6 +62,12 @@ lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}}
 
 \item{tmb_inputs}{optional tagged list that overrides the default constructor
 for TMB inputs (use at your own risk)}
+
+\item{estimate_xbar}{character-vector listing columns of \code{data} for which to estimate the mean,
+which is subtracted off of \code{data} prior to evaluating relationships among traits.
+The default \code{estimate_xbar = NULL} estimates the mean for every column with at least one value
+that is not \code{NA} (i.e., does *not* estimate the mean for latent variables).
+If you want to have no \code{xbar} parameters, use \code{estimate_xbar = vector()}.}
 
 \item{control}{Output from \code{\link{phylosem_control}}, used to define user
 settings, and see documentation for that function for details.}
