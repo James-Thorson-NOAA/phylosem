@@ -1,5 +1,7 @@
 
 
+#pak::pak("james-thorson-NOAA/phylosem@dev")
+
 library(RTMB)
 library(Matrix)
 library(mvtnorm)
@@ -53,6 +55,44 @@ plm = phylolm::phylolm(
   phy = tree,
   model = "OUrandomRoot"
 )
+
+
+#####################
+# Experiment with moderated slopes
+#####################
+
+library(phylosem)
+
+#
+sem = "
+  ln_size -> ln_metabolism, slope
+  ln_size -> ln_range, b2
+"
+
+data$slope = NA
+
+# map$ln_theta = factor(c(1,1,1))
+psem = phylosem::phylosem(
+  data = data,
+  sem = sem,
+  estimate_ou = TRUE,
+  tree = tree,
+  estimate_xbar = colnames(data)
+)
+
+if( FALSE ){
+  #sem
+  #tree
+  #data
+  family = rep("fixed", ncol(data))
+  covs = colnames(data)
+  estimate_ou = FALSE
+  estimate_lambda = FALSE
+  estimate_kappa = FALSE
+  data_labels = rownames(data)
+  tmb_inputs = NULL
+  control = phylosem_control()
+}
 
 #############
 # Fit in RTMB
@@ -116,31 +156,4 @@ psem = phylosem::phylosem(
 
 # Compare SDs
 c( opt$par['beta_p'], psem$opt$par['beta_z'] )
-
-
-#####################
-# Experiment with moderated slopes
-#####################
-
-library(phylosem)
-
-#
-sem = "
-  ln_size -> ln_metabolism, slope
-  ln_size -> ln_range, b2
-"
-
-data$slope = NA
-
-#sem
-#tree
-#data
-family = rep("fixed", ncol(data))
-covs = colnames(data)
-estimate_ou = FALSE
-estimate_lambda = FALSE
-estimate_kappa = FALSE
-data_labels = rownames(data)
-tmb_inputs = NULL
-control = phylosem_control()
 

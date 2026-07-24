@@ -4,6 +4,11 @@
   to allow estimation with larger number (J>>10) of variables
 * Fit error in `as_fitted_DAG` occurring when `getsd=FALSE`, resulting in an
   uniformative error message ... now adding branching logic for output (h/t Jack Oyston)
+* Adding option for moderator variables for one-headed path coefficients, including
+  latent variables representing varying slopes
+* Adding argument `estimate_xbar` to allow user specification of whether to estimate mean
+  xbar for each column of `data`, i.e., for use when estimating the mean for a latent variable
+  representing a varying path
 
 # phylosem 1.1.4
 * removing `checkDepPackageVersion(dep_pkg="Matrix", this_pkg="TMB")` from `.onLoad()`
