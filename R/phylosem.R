@@ -190,6 +190,7 @@ function( sem,
 
     # EXCERPT FROM `getAnywhere("sem.semmod")`
     heads = from = to = rep(0, n.paths)
+    moderator = rep( -1, n.paths )
     for (p in 1:n.paths) {
       #path = sem:::parse.path(model[p, 1])
       path = parse_path(model[p, 1])
@@ -203,8 +204,16 @@ function( sem,
     }
     missing_vars = setdiff( c(from,to), vars )
     if( length(missing_vars) > 0 ) stop( "Check `build_ram`:", paste0(missing_vars,sep=", ") )
-
     ram = data.frame(matrix(0, nrow=p, ncol=5))
+
+    # ADD LOGIC FOR MODERATOR VARIABLES
+    which_rows = par.names %in% vars
+    if( any(which_rows) ){
+      heads[which_rows] = ifelse( heads[which_rows] == 1, 3, heads[which_rows] )
+      moderator[which_rows] = match( par.names[which_rows], vars )
+      par.names[which_rows] = NA
+    }
+
     pars = na.omit(unique(par.names))
     ram[, 1] = heads
     ram[, 2] = apply(outer(vars, to, "=="), 2, which)
@@ -214,7 +223,8 @@ function( sem,
       ram[, 4] = unlist(lapply(par.nos, function(x) if (length(x)==0){0}else{x}))
     }
     ram[, 5] = startvalues
-    colnames(ram) = c("heads", "to", "from", "parameter", "start")
+    ram[, 6] = moderator
+    colnames(ram) = c("heads", "to", "from", "parameter", "start", "moderator")
     return(ram)
   }
 
@@ -256,8 +266,12 @@ function( sem,
   RAM = build_ram( SEM_model, colnames(data) )
 
   # Check for errors in RAM
-  if( any(is.na(as.numeric(RAM[,5])) & (RAM[,4]==0)) ){
+  if( any(is.na(as.numeric(RAM[,5])) & (RAM[,4]==0) & (RAM[,1] %in% c(1,2))) ){
     stop("Some starting value for a fixed parameter is NA.  Please fix")
+  }
+  # Disable moderators for now
+  if( any(RAM[,1] %in% c(3)) ){
+    stop("Moderators not allowed")
   }
 
   #
@@ -279,28 +293,32 @@ function( sem,
   #
   if( is.null(tmb_inputs) ){
     # Build data
-    data_list = list( "n_tip" = n_tip,
-                      "edge_ez" = edge_ez - 1,
-                      "length_e" = length_e,
-                      "RAM" = as.matrix(RAM[,1:4]),
-                      "RAMstart" = as.numeric(RAM[,5]),
-                      "estimate_ou" = estimate_ou,
-                      "estimate_lambda" = estimate_lambda,
-                      "estimate_kappa" = estimate_kappa,
-                      "height_v" = height_v,
-                      "y_ij" = as.matrix(data),
-                      "v_i" = v_i - 1,
-                      "familycode_j" = familycode_j )
+    data_list = list(
+      n_tip = n_tip,
+      edge_ez = edge_ez - 1,
+      length_e = length_e,
+      RAM = as.matrix(RAM[,c(1:4,6)]),
+      RAMstart = as.numeric( subset(RAM, heads %in% c(1,2))[,5] ),
+      estimate_ou = estimate_ou,
+      estimate_lambda = estimate_lambda,
+      estimate_kappa = estimate_kappa,
+      height_v = height_v,
+      y_ij = as.matrix(data),
+      v_i = v_i - 1,
+      familycode_j = familycode_j
+    )
 
     # Build parameters
     rmatrix = function(nrow, ncol) matrix(rnorm(nrow*ncol),nrow=nrow,ncol=ncol)
-    parameters_list = list( "beta_z" = rep(0.1, max(RAM[,4])),
-                            "lnsigma_j" = rep(0,ncol(data)),
-                            "lnalpha" = log(1),
-                            "logitlambda" = plogis(2),
-                            "lnkappa" = log(1),
-                            "x_vj" = 0.1 * rmatrix( nrow=nrow(edge_ez)+1, ncol=ncol(data) ),
-                            "xbar_j" = rep(0,ncol(data)) )
+    parameters_list = list(
+      beta_z = rep(0.1, max(RAM[,4])),
+      lnsigma_j = rep(0,ncol(data)),
+      lnalpha = log(1),
+      logitlambda = plogis(2),
+      lnkappa = log(1),
+      x_vj = 0.1 * rmatrix( nrow=nrow(edge_ez)+1, ncol=ncol(data) ),
+      xbar_j = rep(0,ncol(data))
+    )
     # Build map
     map_list = list()
     # Start off map_list$x_vj, which has multiple constraints
@@ -350,6 +368,9 @@ function( sem,
       stop("Check contents of `tmb_inputs`")
     }
   }
+
+  # Necessary when using variables as paths
+  TMB::config(tmbad.atomic_sparse_log_determinant = FALSE, DLL = "phylosem")
 
   # Build TMB object
   obj = MakeADFun( data = tmb_inputs$data_list,

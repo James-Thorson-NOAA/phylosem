@@ -212,18 +212,29 @@ Type objective_function<Type>::operator() ()
     // Assign to proper matrix
     if(RAM(r,0)==1){
       Rho_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
-    }else{
+    }
+    if(RAM(r,0)==2){
       Gamma_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = tmp; // Cholesky of covariance, so -Inf to Inf;
     }
+    if(RAM(r,0)==3){
+      // done by edge later
+    }
   }
-  Eigen::SparseMatrix<Type> IminusRho_jj = I_jj - Rho_jj;
   Eigen::SparseMatrix<Type> V_jj = Gamma_jj.transpose() * Gamma_jj;
   matrix<Type> Vinv_jj = invertSparseMatrix( V_jj );
   Eigen::SparseMatrix<Type> Vinv2_jj = asSparseMatrix( Vinv_jj );
-  Eigen::SparseMatrix<Type> Q_jj = IminusRho_jj.transpose() * Vinv2_jj * IminusRho_jj;
 
   // Distribution of OU evolution -- Root
   // Correlation between i and parent(i) as distance -> INF
+  // Load in moderators for root
+  for(int r=0; r<RAM.rows(); r++){
+    if(RAM(r,0)==3){
+      Rho_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = x_vj( vroot, RAM(r,4)-1 );
+    }
+  }
+  Eigen::SparseMatrix<Type> IminusRho_jj = I_jj - Rho_jj;
+  Eigen::SparseMatrix<Type> Q_jj = IminusRho_jj.transpose() * Vinv2_jj * IminusRho_jj;
+
   if( estimate_ou==1 ){
     rho_v(vroot) = 0;
     // SD of Ornstein-Uhlenbeck process as distance -> INF
@@ -245,6 +256,16 @@ Type objective_function<Type>::operator() ()
   for(int e=0; e<n_e; e++){ // PARALLEL_REGION
     vchild = edge_ez(e,1);
     vparent = edge_ez(e,0);
+
+    // Load in moderators
+    for(int r=0; r<RAM.rows(); r++){
+      if(RAM(r,0)==3){
+        Rho_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = 0.5 * ( x_vj( vchild, RAM(r,4)-1 ) + x_vj( vparent, RAM(r,4)-1 ) );
+      }
+    }
+    IminusRho_jj = I_jj - Rho_jj;
+    Q_jj = IminusRho_jj.transpose() * Vinv2_jj * IminusRho_jj;
+
     if( estimate_ou==1 ){
       // Correlation between i and parent(i)
       rho_v(vchild) = exp( -alpha * pow(length_e(e),kappa) );
