@@ -131,3 +131,57 @@ fit = phylosem(
 cor( w, fit$parhat$x_vj[seq_len(n_tips),3] )
 plot( w, fit$parhat$x_vj[seq_len(n_tips),3] )
 
+########################
+# Experiment with Fish data
+########################
+
+data(FishBase_and_Morphometrics, package = "FishLife")
+library(phylosem)
+library(ape)
+
+data = data.frame(
+  logLmatoverLinf = FishBase_and_Morphometrics$Y_ij[,'log(length_maturity)'] - FishBase_and_Morphometrics$Y_ij[,'log(length_infinity)'],
+  logMoverK = FishBase_and_Morphometrics$Y_ij[,'log(natural_mortality)'] - FishBase_and_Morphometrics$Y_ij[,'log(growth_coefficient)']
+)
+
+which_unique = match( unique(rownames(FishBase_and_Morphometrics$Y_ij)), rownames(FishBase_and_Morphometrics$Y_ij) )
+data = data[ which_unique, ]
+rownames(data) = rownames(FishBase_and_Morphometrics$Y_ij)[which_unique]
+#data = data[ rownames(data) != "predictive", ]
+
+tree = FishBase_and_Morphometrics$tree
+
+sem0 = "
+  logLmatoverLinf -> logMoverK, b1
+"
+fit0 = phylosem(
+  data = data,
+  sem = sem0,
+  tree = tree,
+  estimate_ou = TRUE,
+  control = phylosem_control(
+    trace = 1,
+    profile = "xbar_j"
+  )
+)
+fit0$parhat$xbar
+
+sem = "
+  logLmatoverLinf -> logMoverK, slope
+"
+fit = phylosem(
+  data = cbind(data, slope = NA),
+  sem = sem,
+  tree = tree,
+  estimate_ou = TRUE,
+  estimate_xbar = c( colnames(data), "slope" ),
+  control = phylosem_control(
+    trace = 1,
+    newton_loops = 0,
+    profile = "xbar_j"
+  )
+)
+summary( fit$parhat$x_vj )
+fit$parhat$xbar
+
+
