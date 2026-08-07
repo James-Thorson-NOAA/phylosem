@@ -1,4 +1,24 @@
 
+#' @title Organize stock-recruit time series
+#'
+#' @description Provide observed stock biomass and recruitment time-series data,
+#'   as well as unfished spawning potential ratio and adult natural mortality rate,
+#'   to allow estimating maximum annual spawners per spawner (MASPS), which can then
+#'   be converted to steepness.
+#'
+#' @param recruits Recruitment values for multiple stocks in a single named vector,
+#'   with \code{names(recruits)} identifying the stock
+#' @param spawners Spawning size (biomass or numbers) for multiple stocks in a
+#'   named vector, where \code{spawners[1]} corresponds to the spawners that
+#'   results in \code{recruits[1]}
+#' @param unfished_spawners_pre_recruit SPR0 with units matching \code{recruits}
+#'   and \code{spawners} for each stock, where \code{names(unfished_spawners_pre_recruit)}
+#'   identifies the stock
+#' @param natural_mortality annual adult natural mortality rate for each stock
+#' @param species taxon label for each stock, matching \code{tree$tip.label} in
+#'   the phylogenetic tree that will be used for analysis
+#'
+#' @export
 beverton_holt =
 function( recruits,
           spawners,

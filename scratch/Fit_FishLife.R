@@ -1,7 +1,7 @@
 
 library(phylosem)
 library(ape)
-library(checkmate)
+#library(checkmate)
 
 ######################
 # Morphometrics module
@@ -60,8 +60,8 @@ fit = phylosem(
 # SR module
 ##############################
 
-source( R'(C:\Users\jtuth\Documents\GitHub\phylosem\R\experiments.R)' )
-source( R'(C:\Users\jtuth\Documents\GitHub\phylosem\R\parse_path.R)' )
+#source( R'(C:\Users\jtuth\Documents\GitHub\phylosem\R\experiments.R)' )
+#source( R'(C:\Users\jtuth\Documents\GitHub\phylosem\R\parse_path.R)' )
 
 data( FishBase_and_RAM, package = "FishLife")
 FishBase_and_RAM$StockData
@@ -132,6 +132,20 @@ sd_j = apply(
   FUN = \(x) max(tapply(x, INDEX = Z_ik$Species, FUN = sd), na.rm=TRUE)
 )
 family = ifelse( sd_j == -Inf, "fixed", "normal")
+
+fit = phylosem(
+  sem = sem,
+  tree = tree,
+  data = data,
+  family = family,
+  data_labels = Z_ik$Species,
+  experiments = experiments,
+  control = phylosem_control(
+    trace = 1,
+    getsd = TRUE,
+    newton_loops = 0
+  )
+)
 
 
 #
