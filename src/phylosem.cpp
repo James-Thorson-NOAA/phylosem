@@ -128,6 +128,7 @@ Type objective_function<Type>::operator() ()
   DATA_UPDATE( y_ij ); // Experiment with cAIC
   DATA_IVECTOR( v_i );
   DATA_IVECTOR( familycode_j );
+  DATA_STRING( experiments_type );
 
   // Parameters
   PARAMETER_VECTOR( beta_z );
@@ -143,6 +144,8 @@ Type objective_function<Type>::operator() ()
   int n_v = x_vj.rows();      // vertices = edges + 1
   int n_j = x_vj.cols();      // variables
   int n_i = y_ij.rows();      // data
+  // n_p = number of populations ... optional
+  // n_k = number of experimental observations ... optional
   int vparent, vchild;
   int vroot = n_tip;          // vroot = n_tip+1 - 1, where latter -1 is converting from R to CPP indexing
 
@@ -221,7 +224,7 @@ Type objective_function<Type>::operator() ()
     }
   }
   Eigen::SparseMatrix<Type> V_jj = Gamma_jj.transpose() * Gamma_jj;
-  matrix<Type> Vinv_jj = invertSparseMatrix( V_jj );
+  matrix<Type> Vinv_jj = tmbutils::invertSparseMatrix( V_jj );
   Eigen::SparseMatrix<Type> Vinv2_jj = asSparseMatrix( Vinv_jj );
 
   // Distribution of OU evolution -- Root
@@ -328,6 +331,65 @@ Type objective_function<Type>::operator() ()
     }
   }}
   jnll += jnll_ij.sum();
+
+  if( experiments_type == "BH" ){
+    DATA_INTEGER( j_logMASPS );
+    DATA_IVECTOR( v_p );
+    DATA_IVECTOR( p_k );
+    DATA_MATRIX( W_kz ); // W_kz.col(0)=R;   W_kz.col(1)=S
+    DATA_MATRIX( U_pz ); // U_pz.col(0)=log_SPR0;   U_pz.col(1)=log_M
+    PARAMETER_VECTOR( logsigmaR_p );
+    PARAMETER_VECTOR( logb_p );
+    int n_k = W_kz.rows();
+    int n_p = U_pz.rows();
+
+    vector<Type> MLSPS_p( n_p );
+    vector<Type> loga_p( n_p );
+    for( int p=0; p < n_p; p++ ){
+      // Using 1 + value to ensure MLSPS > 1, matching FishLife v2
+      MLSPS_p(p) = 1.0 + exp(x_vj( v_p(p)-1, j_logMASPS-1 )) / (1 - exp(-1 * exp(U_pz(p,1))));
+      loga_p(p) = log(MLSPS_p(p)) - U_pz(p,0);
+    }
+
+    vector<Type> jnll_k( n_k );
+    vector<Type> logmu_k( n_k );
+    vector<Type> sigmaR_p = exp(logsigmaR_p);
+    vector<Type> b_p = exp(logb_p);
+    for( int k=0; k < n_k; k++ ){
+      logmu_k(k) = loga_p(p_k(k)-1) + log( W_kz(k,1) / (1.0 + W_kz(k,1) / b_p(p_k(k)-1) ) );
+      jnll_k(k) = -1 * dnorm( log(W_kz(k,0)), logmu_k(k), sigmaR_p(p_k(k)-1), true );
+    }
+    jnll += jnll_k.sum();
+    REPORT( logmu_k );
+    REPORT( MLSPS_p );
+    REPORT( jnll_k );
+
+    // Calculate CV in logmu_k by population
+    vector<Type> sum_logmu_p(n_p);
+    vector<Type> num_logmu_p(n_p);
+    vector<Type> var_logmu_p(n_p);
+    sum_logmu_p.setZero();
+    num_logmu_p.setZero();
+    var_logmu_p.setZero();
+    // Calculate mean of logmu_k by population
+    for( int k=0; k<n_k; k++ ){
+      num_logmu_p(p_k(k)-1) += 1;
+      sum_logmu_p(p_k(k)-1) += logmu_k(k);
+    }
+    vector<Type> mean_logmu_p = sum_logmu_p / num_logmu_p;
+    // Calculate SD of logmu_k by population
+    for( int k=0; k<n_k; k++ ){
+      var_logmu_p(p_k(k)-1) += pow( logmu_k(k) - mean_logmu_p(p_k(k)-1), 2 );
+    }
+    vector<Type> sd_logmu_p = pow( var_logmu_p, 0.5 );
+
+    // Penalize low variance in predictive recruitment
+    Type Pen_lowvar_lnRhat = 1;
+    //if( Pen_lowvar_lnRhat > 0 ){
+      jnll -= Pen_lowvar_lnRhat * sum(log(sd_logmu_p));
+    //}
+    REPORT( sd_logmu_p );
+  }
 
   // Calculate intercept
   vector<Type> root_j = x_vj.row(vroot);

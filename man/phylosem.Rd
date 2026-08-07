@@ -16,6 +16,7 @@ phylosem(
   data_labels = rownames(data),
   tmb_inputs = NULL,
   estimate_xbar = NULL,
+  experiments = NULL,
   control = phylosem_control()
 )
 }
@@ -68,6 +69,10 @@ which is subtracted off of \code{data} prior to evaluating relationships among t
 The default \code{estimate_xbar = NULL} estimates the mean for every column with at least one value
 that is not \code{NA} (i.e., does *not* estimate the mean for latent variables).
 If you want to have no \code{xbar} parameters, use \code{estimate_xbar = vector()}.}
+
+\item{experiments}{Optional output from \code{\link{beverton_holt}}, or other future options,
+representing experimental measurements that are used to estimate traits.
+Default \code{experiments=NULL} ignores this input.}
 
 \item{control}{Output from \code{\link{phylosem_control}}, used to define user
 settings, and see documentation for that function for details.}

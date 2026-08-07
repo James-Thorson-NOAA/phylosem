@@ -20,7 +20,8 @@ Imports:
     ape,
     phylobase,
     phylopath,
-    methods
+    methods,
+    checkmate
 Depends:
     TMB,
     R (>= 4.0.0),

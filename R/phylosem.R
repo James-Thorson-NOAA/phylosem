@@ -33,6 +33,9 @@
 #'        \code{tree$tip.label}.  Default pulls \code{data_labels} from \code{rownames(data)}
 #' @param tmb_inputs optional tagged list that overrides the default constructor
 #'        for TMB inputs (use at your own risk)
+#' @param experiments Optional output from \code{\link{beverton_holt}}, or other future options,
+#'        representing experimental measurements that are used to estimate traits.
+#'        Default \code{experiments=NULL} ignores this input.
 #' @param control Output from \code{\link{phylosem_control}}, used to define user
 #'        settings, and see documentation for that function for details.
 #'
@@ -53,6 +56,7 @@
 #'
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
 #' @importFrom sem sem pathDiagram specifyModel specifyEquations
+#' @importFrom checkmate assertNumeric assertCharacter
 #' @importFrom phylopath average_DAGs coef_plot
 #' @importFrom phylobase phylo4d
 #' @importFrom ape Ntip node.depth.edgelength rtree
@@ -185,6 +189,7 @@ function( sem,
           data_labels = rownames(data),
           tmb_inputs = NULL,
           estimate_xbar = NULL,
+          experiments = NULL,
           control = phylosem_control() ){
 
   # Function that converts SEM model to a RAM, see `?sem` for more context
@@ -242,6 +247,14 @@ function( sem,
   #  stop("measurement errors using `measurement_error=TRUE` are confounded with `estimate_lambda=TRUE`")
   #}
   # General error checks
+  if( is.null(experiments) ){
+    experiments = list( type = "none" )
+  }else if( experiments$type == "BH" ){
+    if( isFALSE( "logMASPS" %in% colnames(data)) ){
+      stop("`data` must include `logMASPS` if experiments$type = `BH`")
+    }
+  }
+
   if( isFALSE(is(control, "phylosem_control")) ) stop("`control` must be made by `phylosem_control()`")
 
   if( isFALSE(is(tree, "phylo")) ){
@@ -322,7 +335,8 @@ function( sem,
       height_v = height_v,
       y_ij = as.matrix(data),
       v_i = v_i - 1,
-      familycode_j = familycode_j
+      familycode_j = familycode_j,
+      experiments_type = experiments$type
     )
 
     # Build parameters
@@ -379,8 +393,46 @@ function( sem,
     # Build random
     random = c("x_vj")
 
+    if( experiments$type == "BH" ){
+      population_data = experiments$population_data
+      time_data = experiments$time_data
+
+      # match populations to tree
+      population_data$v_p = match( population_data[,'species'], c(tree$tip.label,tree$node.label) )
+      population_data = na.omit(population_data)
+      n_p = length(unique(population_data[,'population']))
+
+      # match time-series to population
+      time_data$p_k = match( time_data[,'population'], population_data[,'population'] )
+      time_data = na.omit(time_data)
+
+      # Augment data
+      data_list = c( data_list,
+        list(
+          j_logMASPS = which( colnames(data) == "logMASPS" ),
+          v_p = population_data$v_p,
+          p_k = time_data$p_k,
+          W_kz = as.matrix(time_data[,c('R','S')]),
+          U_pz = log(as.matrix(population_data[,c('SPR0','M')]))
+        )
+      )
+
+      # Augment parameters
+      parameters_list =   c( parameters_list,
+        list(
+          logsigmaR_p = rep(0, n_p),
+          logb_p = rep(0, n_p)
+        )
+      )
+    }
+
     # Bundle
-    tmb_inputs = list( map_list=map_list, parameters_list=parameters_list, data_list=data_list, random=random )
+    tmb_inputs = list(
+      map_list = map_list,
+      parameters_list = parameters_list,
+      data_list = data_list,
+      random = random
+    )
   }else{
     if(!all(c() %in% names(tmb_inputs)) ){
       stop("Check contents of `tmb_inputs`")
