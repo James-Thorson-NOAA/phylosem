@@ -126,12 +126,13 @@ sem = "
 "
 
 # Check family
-sd_j = apply(
-  data,
-  MARGIN = 2,
-  FUN = \(x) max(tapply(x, INDEX = Z_ik$Species, FUN = sd), na.rm=TRUE)
-)
-family = ifelse( sd_j == -Inf, "fixed", "normal")
+#sd_j = apply(
+#  data,
+#  MARGIN = 2,
+#  FUN = \(x) max(tapply(x, INDEX = Z_ik$Species, FUN = sd), na.rm=TRUE)
+#)
+#family = ifelse( sd_j == -Inf, "fixed", "normal")
+family = rep("normal", ncol(data))
 
 fit = phylosem(
   sem = sem,
