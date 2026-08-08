@@ -384,7 +384,7 @@ Type objective_function<Type>::operator() ()
     vector<Type> sd_logmu_p = pow( var_logmu_p, 0.5 );
 
     // Penalize low variance in predictive recruitment
-    Type Pen_lowvar_lnRhat = 1;
+    Type Pen_lowvar_lnRhat = 1;    // Value used in Thorson-2020
     //if( Pen_lowvar_lnRhat > 0 ){
       jnll -= Pen_lowvar_lnRhat * sum(log(sd_logmu_p));
     //}

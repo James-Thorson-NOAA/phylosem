@@ -132,7 +132,7 @@ sem = "
 #  FUN = \(x) max(tapply(x, INDEX = Z_ik$Species, FUN = sd), na.rm=TRUE)
 #)
 #family = ifelse( sd_j == -Inf, "fixed", "normal")
-family = rep("normal", ncol(data))
+family = ifelse( colnames(data) == "logMASPS", "fixed", "normal" )
 
 fit = phylosem(
   sem = sem,
@@ -178,34 +178,39 @@ if(FALSE){
   rep = obj$report()
   parhat = obj$env$parList()
   colnames(parhat$x_vj) = colnames(data)
-
-  #
-  logMLSPS = 1 + parhat$x_vj[,9] - log( 1 - exp(-1 * exp(parhat$x_vj[,6])) )
-  h = exp(logMLSPS) / ( 4 + exp(logMLSPS) )
-
-  #
-  plot( x = rep$logmu_k, y = log(recruits) )
-
-  # Plot old against new
-  which_col = 9
-  old = colnames(FishBase_and_RAM$beta_gv)[c(1:8,11)][which_col]
-  new = colnames(data)[which_col]
-  row_names = rownames(FishBase_and_RAM$beta_gv)
-  row_names = sapply(
-    row_names,
-    \(x){
-      y = strsplit(x, split = "_", fixed = TRUE)[[1]][4:5]
-      paste( y[1], y[2] )
-    }
-  )
-  match_rows = match( row_names, c(tree$tip.label,tree$node.label) )
-  match_table = na.omit( cbind(seq_along(match_rows), match_rows) )
-  plot(
-    x = FishBase_and_RAM$beta_gv[match_table[,1],old],
-    y = parhat$x_vj[match_table[,2],new]
-  )
-  abline( a = 0, b = 1, lty = "dotted" )
 }
+
+rep = fit$obj$report()
+parhat = fit$obj$env$parList()
+colnames(parhat$x_vj) = colnames(data)
+
+#
+logMLSPS = 1 + parhat$x_vj[,9] - log( 1 - exp(-1 * exp(parhat$x_vj[,6])) )
+h = exp(logMLSPS) / ( 4 + exp(logMLSPS) )
+
+#
+plot( x = rep$logmu_k, y = log(recruits) )
+
+# Plot old against new
+which_col = 9
+old = colnames(FishBase_and_RAM$beta_gv)[c(1:8,11)][which_col]
+new = colnames(data)[which_col]
+row_names = rownames(FishBase_and_RAM$beta_gv)
+row_names = sapply(
+  row_names,
+  \(x){
+    y = strsplit(x, split = "_", fixed = TRUE)[[1]][4:5]
+    paste( y[1], y[2] )
+  }
+)
+match_rows = match( row_names, c(tree$tip.label,tree$node.label) )
+match_table = na.omit( cbind(seq_along(match_rows), match_rows) )
+plot(
+  x = FishBase_and_RAM$beta_gv[match_table[,1],old],
+  y = parhat$x_vj[match_table[,2],new]
+)
+abline( a = 0, b = 1, lty = "dotted" )
+
 
 
 # Modeled traits:
