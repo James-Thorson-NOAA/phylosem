@@ -147,14 +147,6 @@ plot( my_fitted_DAG )
 (traits_est = as_phylo4d(psem))
 (traits_SE = as_phylo4d(psem, what="Std. Error"))
 
-# Convert to sem and plot
-library(sem)
-my_sem = as_sem(psem)
-pathDiagram( model = my_sem,
-                  style = "traditional",
-                  edge.labels = "values" )
-effects( my_sem )
-
 # Plot using semPlot
 if( require(semPlot) ){
   myplot = semPlotModel( my_sem )
