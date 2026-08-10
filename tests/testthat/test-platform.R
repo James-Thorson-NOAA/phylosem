@@ -53,9 +53,11 @@ test_that("phylosem example is working ", {
     NL -> DD, p4
     DD -> RS, p1
   "
-  myset = compare_phylosem( sem_set = list("one"=model,"two"=model2),
-          data = rhino[,c("BM","NL","DD","RS","LS")],
-          tree = rhino_tree )
+  myset = compare_phylosem(
+    sem_set = list("one"=model,"two"=model2),
+    data = rhino[,c("BM","NL","DD","RS","LS")],
+    tree = rhino_tree
+  )
   best(myset)
   choice(myset,1)
   average(myset)

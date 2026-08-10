@@ -17,7 +17,7 @@ compare_phylosem <-
 function( sem_set,
           tree,
           data,
-          family = rep("fixed", ncol(data)),
+          family = Map(function(.) fixed(), colnames(data)),
           covs,
           estimate_ou = FALSE,
           estimate_lambda = FALSE,
