@@ -48,7 +48,7 @@ jobs:
       - name: Run examples directly (live UBSan output)
         if: always()
         run: |
-          R -q -e 'library(dsem); example("dsem", ask=FALSE)'
+          R -q -e 'library(phylosem); example("phylosem", ask=FALSE)'
 
       - name: Upload check artifacts
         if: always()

@@ -192,7 +192,7 @@ knitr::kable(summary(pglmm), digits=3)
 #
 pgsem = phylosem( sem = "x -> y, p",
           data = Data,
-          family = c("fixed","poisson"),
+          family = list( x = fixed(), y = poisson() ),
           tree = tree,
           control = phylosem_control(quiet = TRUE) )
 knitr::kable(summary(pgsem)$coefficients, digits=3)
@@ -291,7 +291,7 @@ knitr::kable(summary(pglmm), digits=3)
 #
 pgsem = phylosem( sem = "x -> y, p",
           data = Data,
-          family = c("fixed","binomial"),
+          family = list( x = fixed(), y = binomial("logit") ),
           tree = tree,
           control = phylosem_control(quiet = TRUE) )
 knitr::kable(summary(pgsem)$coefficients, digits=3)
