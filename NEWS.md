@@ -1,4 +1,4 @@
-# phylosem 1.2.0
+# phylosem 2.0.0
 * Adding error check for factors in `data` (which are not supported)
 * Switching to a sparseMatrix construction and GMRF for the conditional distribution,
   to allow estimation with larger number (J>>10) of variables
@@ -9,6 +9,10 @@
 * Adding argument `estimate_xbar` to allow user specification of whether to estimate mean
   xbar for each column of `data`, i.e., for use when estimating the mean for a latent variable
   representing a varying path
+* Add `experiments` argument to allow user-specified experiment-level data that then estimates
+  species-specific trait values
+* Change family argument to allow fixed(), gaussian(), etc as named list (BREAKS BACKWARDS
+  COMPATIBILITY)
 
 # phylosem 1.1.4
 * removing `checkDepPackageVersion(dep_pkg="Matrix", this_pkg="TMB")` from `.onLoad()`

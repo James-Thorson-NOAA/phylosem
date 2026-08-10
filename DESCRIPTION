@@ -1,8 +1,8 @@
 Package: phylosem
 Type: Package
 Title: Phylogenetic Structural Equation Model
-Version: 1.2.0
-Date: 2025-04-03
+Version: 2.0.0
+Date: 2026-08-10
 Authors@R: 
     c(person(given = "James",
              family = "Thorson",

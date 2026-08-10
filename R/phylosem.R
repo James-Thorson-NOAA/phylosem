@@ -12,10 +12,20 @@
 #'        as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
 #'        then it still must be inputted as a column of \code{data} with entirely NA values.
 #'        Bernoulli variables must be coded as 0s or 1s, and factors are not allowed.
-#' @param family Character-vector listing the distribution used for each column of \code{data}, where
-#'        each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
-#'        \code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
-#'        Other options correspond to different specifications of measurement error.
+#' @param family A named list of families, each returning a class \code{family},
+#'        including [fixed()], [gaussian()], [binomial()], [Gamma()],
+#'        and [poisson()], with names that match levels of
+#'        \code{colnames(data)} to allow different
+#'        families by variable.  Family [fixed()] specifies that states
+#'        are known (i.e., measurements for that variable have no error).
+#'        Other families allow users to supply a link function including `identity`,
+#'        `log`, `logit`, or `cloglog`.  For example
+#'        \code{family = list(y = binomial("logit"), x = fixed())}
+#'        would specify logit-linked Bernoulli distribution for variable `data$y`
+#'        and a fixed (no measurement error) distribution for `data$x`.
+#'        For many variables, it is convenient to do e.g.,
+#'        \code{family = Map(function(.) gaussian(), colnames(tsdata))} rather than writing
+#'        them all manually.
 #' @param estimate_ou Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 #'        process using additional parameter \code{lnalpha},
 #'        corresponding to the \code{model="OUrandomRoot"} parameterization from \pkg{phylolm}
@@ -55,6 +65,7 @@
 #'      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 #'
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
+#' @importFrom stats rpois gaussian poisson binomial Gamma
 #' @importFrom sem sem pathDiagram specifyModel specifyEquations
 #' @importFrom checkmate assertNumeric assertCharacter
 #' @importFrom phylopath average_DAGs coef_plot
@@ -181,7 +192,7 @@ phylosem <-
 function( sem,
           tree,
           data,
-          family = rep("fixed", ncol(data)),
+          family = Map(function(.) fixed(), colnames(data)),
           covs = colnames(data),
           estimate_ou = FALSE,
           estimate_lambda = FALSE,
@@ -263,8 +274,6 @@ function( sem,
   if( !("edge.length" %in% names(tree)) ){
     stop("`tree` must include `edge.length` slot")
   }
-  familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, "gamma"=4, NA )
-  if( any(is.na(familycode_j)) ) stop("Check `family`")
   if( any(is.nan(as.matrix(data))) ) stop("Please remove `NaN` values from data, presumably switching to `NA` values")
   if( any(sapply(data, is.factor)) ) stop("Please remove factors from `data`")
 
@@ -320,6 +329,55 @@ function( sem,
     }
   }
 
+  # distribution/link
+  build_distributions <-
+  function( variables ){
+
+    # Construct log_sigma based on family
+    remove_last = function(x) x[-length(x)]
+
+    # Fixed values
+    sigma_j = lapply( family, FUN=function(x){
+                       switch( x$family[length(x$family)],
+                         "fixed" = c(),
+                         "gaussian" = NA,
+                         "poisson" = c(),
+                         "binomial" = c(),
+                         "Gamma" = NA
+                       )} )
+    Nsigma_j = sapply(sigma_j, length)
+    sigmastart_j = remove_last(cumsum(c(0,Nsigma_j)))
+    names(sigmastart_j) = variables
+
+    #
+    family_code = sapply( family, FUN=function(x){
+                       c("fixed" = 0,
+                         "gaussian" = 1,
+                         "binomial" = 2,
+                         "bernoulli" = 2,
+                         "poisson" = 3,
+                         "Gamma" = 4
+                       )[x$family]} )
+    link_code = sapply( family, FUN=function(x){
+                       c("identity" = 0,
+                         "log" = 1,
+                         "logit" = 2,
+                         "cloglog" = 3
+                       )[x$link]} )
+    out = list(
+      family_code = family_code,
+      link_code = link_code,
+      Nsigma_j = Nsigma_j,
+      sigmastart_j = sigmastart_j,
+      sigma_j = sigma_j
+    )
+    return(out)
+  }
+  family = family[match(colnames(data), names(family))]
+  distributions = build_distributions( colnames(data) )
+  #familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, "gamma"=4, NA )
+  if( any(is.na(distributions$familycode_j)) ) stop("Check `family`")
+
   #
   if( is.null(tmb_inputs) ){
     # Build data
@@ -335,7 +393,9 @@ function( sem,
       height_v = height_v,
       y_ij = as.matrix(data),
       v_i = v_i - 1,
-      familycode_j = familycode_j,
+      familycode_j = distributions$family_code,
+      linkcode_j = distributions$link_code,
+      sigmastart_j = distributions$sigmastart_j,
       experiments_type = experiments$type
     )
 
@@ -343,7 +403,7 @@ function( sem,
     rmatrix = function(nrow, ncol) matrix(rnorm(nrow*ncol),nrow=nrow,ncol=ncol)
     parameters_list = list(
       beta_z = rep(0.1, max(RAM[,4])),
-      lnsigma_j = rep(0,ncol(data)),
+      lnsigma_z = rep(0, sum(distributions$Nsigma_j)),
       lnalpha = log(1),
       logitlambda = plogis(2),
       lnkappa = log(1),
@@ -358,13 +418,13 @@ function( sem,
     map_list$x_vj[data_list$n_tip+1,] = ifelse( colSums(!is.na(data))==0, NA, map_list$x_vj[data_list$n_tip+1,] )
 
     # Settings
-    map_list$lnsigma_j = 1:length(parameters_list$lnsigma_j)
+    #map_list$lnsigma_j = 1:length(parameters_list$lnsigma_j)
     for( j in 1:ncol(data)){
       # Turn off SD of measurement error
-      if( familycode_j[j] %in% c(0,2,3) ){
-        map_list$lnsigma_j[j] = NA
+      if( data_list$familycode_j[j] %in% c(0,2,3) ){
+        #map_list$lnsigma_j[j] = NA
       }
-      if( familycode_j[j] == 0 ){
+      if( data_list$familycode_j[j] == 0 ){
         # Fix random-effects for tips at their observed values
         parameters_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), parameters_list$x_vj[v_i,j], data_list$y_ij[,j] )
         map_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), map_list$x_vj[v_i,j], NA )
@@ -388,7 +448,7 @@ function( sem,
 
     # wrap up map_list$x_vj
     map_list$x_vj = factor(map_list$x_vj)
-    map_list$lnsigma_j = factor(map_list$lnsigma_j)
+    #map_list$lnsigma_j = factor(map_list$lnsigma_j)
 
     # Build random
     random = c("x_vj")

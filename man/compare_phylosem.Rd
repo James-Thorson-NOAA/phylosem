@@ -29,10 +29,20 @@ as NA.  If an SEM includes a latent variable (i.e., variable with no available m
 then it still must be inputted as a column of \code{data} with entirely NA values.
 Bernoulli variables must be coded as 0s or 1s, and factors are not allowed.}
 
-\item{family}{Character-vector listing the distribution used for each column of \code{data}, where
-each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
-\code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
-Other options correspond to different specifications of measurement error.}
+\item{family}{A named list of families, each returning a class \code{family},
+including [fixed()], [gaussian()], [binomial()], [Gamma()],
+and [poisson()], with names that match levels of
+\code{colnames(data)} to allow different
+families by variable.  Family [fixed()] specifies that states
+are known (i.e., measurements for that variable have no error).
+Other families allow users to supply a link function including `identity`,
+`log`, `logit`, or `cloglog`.  For example
+\code{family = list(y = binomial("logit"), x = fixed())}
+would specify logit-linked Bernoulli distribution for variable `data$y`
+and a fixed (no measurement error) distribution for `data$x`.
+For many variables, it is convenient to do e.g.,
+\code{family = Map(function(.) gaussian(), colnames(tsdata))} rather than writing
+them all manually.}
 
 \item{covs}{optional: a character vector of one or more elements, with each element
   	giving a string of variable names, separated by commas. Variances and covariances
