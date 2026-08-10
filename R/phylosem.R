@@ -590,7 +590,7 @@ function( sem,
 #' @param quiet Boolean indicating whether to run model printing messages to terminal or not;
 #' @param getJointPrecision whether to get the joint precision matrix.  Passed
 #'        to \code{\link[TMB]{sdreport}}.
-#' @param Parameters to profile out of the likelihood (this subset will be
+#' @param profile Parameters to profile out of the likelihood (this subset will be
 #'        appended to random with Laplace approximation disabled).
 #'
 #' @return
@@ -714,6 +714,9 @@ function( object,
 }
 
 #' @title Extract the (marginal) log-likelihood of a phylosem model
+#'
+#' @param object Output from \code{phylosem}
+#' @param ... Not used
 #'
 #' @return object of class \code{logLik} with attributes
 #'   \item{val}{log-likelihood}

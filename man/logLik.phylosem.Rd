@@ -6,6 +6,11 @@
 \usage{
 \method{logLik}{phylosem}(object, ...)
 }
+\arguments{
+\item{object}{Output from \code{phylosem}}
+
+\item{...}{Not used}
+}
 \value{
 object of class \code{logLik} with attributes
   \item{val}{log-likelihood}

@@ -43,7 +43,7 @@ instead to return the model inputs and compiled TMB object without running;}
 \item{getJointPrecision}{whether to get the joint precision matrix.  Passed
 to \code{\link[TMB]{sdreport}}.}
 
-\item{Parameters}{to profile out of the likelihood (this subset will be
+\item{profile}{Parameters to profile out of the likelihood (this subset will be
 appended to random with Laplace approximation disabled).}
 }
 \value{
