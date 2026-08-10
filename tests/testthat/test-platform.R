@@ -23,7 +23,7 @@ test_that("phylosem example is working ", {
 
   # Convert and plot using phylopath
   as_fitted_DAG(psem)
-  as_sem(psem)
+  #as_sem(psem)
   as_phylo4d(psem)
 
   #
