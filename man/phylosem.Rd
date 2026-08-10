@@ -140,12 +140,14 @@ my_fitted_DAG = as_fitted_DAG(psem)
 coef_plot( my_fitted_DAG )
 plot( my_fitted_DAG )
 
+\dontrun{
 # Convert to phylo4d to extract estimated traits and Standard errors
 # for all ancestors and tips in the tree.
 # In this rhino example, note that species are labeled s1-s100
 # and ancestral nodes are not named.
 (traits_est = as_phylo4d(psem))
 (traits_SE = as_phylo4d(psem, what="Std. Error"))
+}
 
 }
 \references{
