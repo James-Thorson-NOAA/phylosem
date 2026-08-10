@@ -1,5 +1,5 @@
 
-context("Testing ´random slopes and parameter mapping")
+context("Testing random slopes and parameter mapping")
 
 # Eastern Bering Sea pollcok
 test_that("phylosem Poisson-PCGLMM is working ", {
