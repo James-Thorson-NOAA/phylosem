@@ -171,13 +171,6 @@
 #' (traits_est = as_phylo4d(psem))
 #' (traits_SE = as_phylo4d(psem, what="Std. Error"))
 #'
-#' # Plot using semPlot
-#' if( require(semPlot) ){
-#'   myplot = semPlotModel( my_sem )
-#'   semPaths( my_sem,
-#'                    nodeLabels = myplot@Vars$name )
-#' }
-#'
 #' @useDynLib phylosem, .registration = TRUE
 #' @export
 phylosem <-
