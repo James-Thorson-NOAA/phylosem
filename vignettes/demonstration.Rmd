@@ -11,7 +11,7 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-have_packages = all(sapply( c("ggplot2","phylopath","phylolm","ape"), FUN=requireNamespace))
+have_packages = all(sapply( c("ggplot2","phylopath","phylolm","ape","tmbstan"), FUN=requireNamespace))
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
