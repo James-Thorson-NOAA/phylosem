@@ -21,4 +21,30 @@ fixed <- function() {
   )
 }
 
+#' @title
+#' Family for categorical data
+#'
+#' @description
+#' Allows using \code{family = categorical()} to specify factor-valued traits
+#'
+#' @param group string indicating which trait a given category belongs to
+#'
+#' @export
+categorical <- function( group ) {
+  link1 = "mlogit"
+  l1 <- substitute(link1)
+  if (!is.character(l1)) l1 <- deparse(l1)
+  structure(
+    list(
+      link = l1,
+      group = as.character(group),
+      type = "categorical",
+      family = "categorical",
+      clean_name = "categorical"
+    ),
+    class = "family"
+  )
+}
+
+
 

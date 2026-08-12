@@ -351,9 +351,14 @@ function( sem,
                          "logit" = 2,
                          "cloglog" = 3
                        )[x$link]} )
+    group = sapply( family, FUN=function(x){
+                       ifelse(is.null(x$group),NA,x$group)} )
+    group = as.numeric(factor(group))
+    group = ifelse( is.na(group), 0, group )
     out = list(
       family_code = family_code,
       link_code = link_code,
+      group = group,
       Nsigma_j = Nsigma_j,
       sigmastart_j = sigmastart_j,
       sigma_j = sigma_j
@@ -384,6 +389,7 @@ function( sem,
       familycode_j = distributions$family_code,
       linkcode_j = distributions$link_code,
       sigmastart_j = distributions$sigmastart_j,
+      group_j = distributions$group,
       experiments_type = experiments$type
     )
 
