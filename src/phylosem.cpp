@@ -384,6 +384,8 @@ Type objective_function<Type>::operator() ()
           jnll_ij(i,j) -= log(mu_vj(v_i(i),j));
           sumobs_ig(i,group_j(j)-1) += y_ij(i,j);
         }
+      }else{
+        sumobs_ig(i,group_j(j)-1) = NAN;
       }
     }
   }}
@@ -392,8 +394,10 @@ Type objective_function<Type>::operator() ()
   // Likelihood for base level per group
   for(int i=0; i<n_i; i++){
   for(int g=0; g<n_g; g++){
-    if( sumobs_ig(i,g) == 0 ){
-      jnll_ig(i,g) = -1.0 * log( 1.0 / (1.0 + sumpred_vg(v_i(i),g)));
+    if(R_FINITE(asDouble(sumobs_ig(i,g)))){
+      if( sumobs_ig(i,g) == 0 ){
+        jnll_ig(i,g) = -1.0 * log( 1.0 / (1.0 + sumpred_vg(v_i(i),g)));
+      }
     }
   }}
   jnll += jnll_ig.sum();
