@@ -13,6 +13,8 @@
   species-specific trait values
 * Change family argument to allow fixed(), gaussian(), etc as named list (BREAKS BACKWARDS
   COMPATIBILITY)
+* Add `categorical(group = [string])` family option, using a multivariate logit-link
+  across levels of `[string]` for categorical traits
 
 # phylosem 1.1.4
 * removing `checkDepPackageVersion(dep_pkg="Matrix", this_pkg="TMB")` from `.onLoad()`

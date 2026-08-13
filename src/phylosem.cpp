@@ -130,6 +130,7 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR( familycode_j );
   DATA_IVECTOR( linkcode_j );
   DATA_IVECTOR( sigmastart_j );
+  DATA_IVECTOR( group_j );
   DATA_STRING( experiments_type );
 
   // Parameters
@@ -146,6 +147,7 @@ Type objective_function<Type>::operator() ()
   int n_v = x_vj.rows();      // vertices = edges + 1
   int n_j = x_vj.cols();      // variables
   int n_i = y_ij.rows();      // data
+  int n_g = group_j.maxCoeff();
   // n_p = number of populations ... optional
   // n_k = number of experimental observations ... optional
   int vparent, vchild;
@@ -155,19 +157,26 @@ Type objective_function<Type>::operator() ()
   Type jnll = 0;
   vector<Type> jnll_v( n_v );
   matrix<Type> jnll_ij( n_i, n_j );
+  matrix<Type> jnll_ig( n_i, n_g );
   jnll_ij.setZero();
   jnll_v.setZero();
+  jnll_ig.setZero();
 
   // Global vars
   Type alpha = exp( lnalpha );
   Type lambda = invlogit( logitlambda );
   Type kappa = exp( lnkappa );
   matrix<Type> yhat_ij( n_i, n_j );
+  matrix<Type> mu_vj( n_v, n_j );
   vector<Type> rho_v( n_v );
   vector<Type> var_v( n_v );
   vector<Type> sigma_z = exp( lnsigma_z );
   matrix<Type> eps_vj( n_v, n_j );
+  matrix<Type> sumpred_vg( n_v, n_g );
+  matrix<Type> sumobs_ig( n_i, n_g );
   eps_vj.setZero();
+  sumpred_vg.setZero();
+  sumobs_ig.setZero();
 
   //// Assemble Evolutionary covariance
   //matrix<Type> Vtmp( n_j, n_j );
@@ -302,26 +311,44 @@ Type objective_function<Type>::operator() ()
   jnll += jnll_v.sum();
 
   // Distribution for data
-  for(int i=0; i<n_i; i++){
-  for(int j=0; j<n_j; j++){ // PARALLEL_REGION
-    // Link function
-    if( linkcode_j(j)==0 ){
-      // identity link
-      yhat_ij(i,j) = x_vj(i,j);
+  for(int v=0; v<n_v; v++){
+    for(int j=0; j<n_j; j++){
+      // Link function
+      if( linkcode_j(j)==0 ){
+        // identity link
+        mu_vj(v,j) = x_vj(v,j);
+      }
+      if( linkcode_j(j)==1 ){
+        // log link
+        mu_vj(v,j) = exp(x_vj(v,j));
+      }
+      if( linkcode_j(j)==2 ){
+        // logit link
+        mu_vj(v,j) = invlogit(x_vj(v,j));
+      }
+      if( linkcode_j(j)==3 ){
+        // cloglog link
+        mu_vj(v,j) = Type(1.0) - exp( -1.0 * exp(x_vj(v,j)) );
+      }
+      if( linkcode_j(j)==4 ){
+        // multivariate-logit link
+        mu_vj(v,j) = exp(x_vj(v,j));
+        sumpred_vg(v,group_j(j)-1) += exp(x_vj(v,j));
+      }
     }
-    if( linkcode_j(j)==1 ){
-      // log link
-      yhat_ij(i,j) = exp(x_vj(i,j));
+    // Divide by total across levels for each group for categorical traits
+    for(int j=0; j<n_j; j++){
+      if( linkcode_j(j)==4 ){
+        // multivariate-logit link
+        mu_vj(v,j) /= 1.0 + sumpred_vg(v,group_j(j)-1) ;
+      }
     }
-    if( linkcode_j(j)==2 ){
-      // logit link
-      yhat_ij(i,j) = invlogit(x_vj(i,j));
-    }
-    if( linkcode_j(j)==3 ){
-      // cloglog link
-      yhat_ij(i,j) = Type(1.0) - exp( -1.0 * exp(x_vj(i,j)) );
-    }
+  }
 
+  // Distribution for data
+  for(int i=0; i<n_i; i++){
+  for(int j=0; j<n_j; j++){
+    yhat_ij(i,j) = mu_vj(v_i(i),j);
     // Likelihood
     //if( familycode_j(j)==0 ){
     // familycode = 0 :  don't include likelihood
@@ -329,29 +356,47 @@ Type objective_function<Type>::operator() ()
     if( familycode_j(j)==1 ){
       // familycode = 1 :  normal
       if(R_FINITE(asDouble(y_ij(i,j)))){
-        jnll_ij(i,j) -= dnorm( y_ij(i,j), yhat_ij(i,j), sigma_z(sigmastart_j(j)), true );
+        jnll_ij(i,j) -= dnorm( y_ij(i,j), mu_vj(v_i(i),j), sigma_z(sigmastart_j(j)), true );
       }
     }
     if( familycode_j(j)==2 ){
       // familycode = 2 :  binomial
       if(R_FINITE(asDouble(y_ij(i,j)))){
-        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), yhat_ij(i,j), true );
+        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), mu_vj(v_i(i),j), true );
       }
     }
     if( familycode_j(j)==3 ){
       // familycode = 3 :  Poisson
       if(R_FINITE(asDouble(y_ij(i,j)))){
-        jnll_ij(i,j) -= dpois( y_ij(i,j), yhat_ij(i,j), true );
+        jnll_ij(i,j) -= dpois( y_ij(i,j), mu_vj(v_i(i),j), true );
       }
     }
     if( familycode_j(j)==4 ){
       // familycode = 4 :  Gamma:   shape = 1/CV^2; scale = mean*CV^2
       if(R_FINITE(asDouble(y_ij(i,j)))){
-        jnll_ij(i,j) -= dgamma( y_ij(i,j), pow(sigma_z(sigmastart_j(j)),-2), yhat_ij(i,j)*pow(sigma_z(sigmastart_j(j)),2), true );
+        jnll_ij(i,j) -= dgamma( y_ij(i,j), pow(sigma_z(sigmastart_j(j)),-2), mu_vj(v_i(i),j)*pow(sigma_z(sigmastart_j(j)),2), true );
+      }
+    }
+    if( familycode_j(j)==5 ){
+      // familycode = 5 :  Categorical
+      if(R_FINITE(asDouble(y_ij(i,j)))){
+        if(y_ij(i,j) > 0){
+          jnll_ij(i,j) -= log(mu_vj(v_i(i),j));
+          sumobs_ig(i,group_j(j)-1) += y_ij(i,j);
+        }
       }
     }
   }}
   jnll += jnll_ij.sum();
+
+  // Likelihood for base level per group
+  for(int i=0; i<n_i; i++){
+  for(int g=0; g<n_g; g++){
+    if( sumobs_ig(i,g) == 0 ){
+      jnll_ig(i,g) = -1.0 * log( 1.0 / (1.0 + sumpred_vg(v_i(i),g)));
+    }
+  }}
+  jnll += jnll_ig.sum();
 
   if( experiments_type == "BH" ){
     DATA_INTEGER( j_logMASPS );
@@ -437,9 +482,15 @@ Type objective_function<Type>::operator() ()
   REPORT( jnll );
   REPORT( jnll_v );
   REPORT( jnll_ij );
+  if( n_g > 0 ){
+    REPORT( jnll_ig );
+    REPORT( sumobs_ig );
+    REPORT( sumpred_vg );
+  }
   REPORT( alpha );
   REPORT( x_vj );
   REPORT( yhat_ij );  // Testing for cAIC
+  REPORT( mu_vj );  // response-scale predictor (including categorical traits)
   REPORT( eps_vj );
 //  ADREPORT( Rho_jj );
   ADREPORT( nonzeroRho_z );

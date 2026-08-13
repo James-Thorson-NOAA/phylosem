@@ -190,6 +190,7 @@ function( sem,
           experiments = NULL,
           control = phylosem_control() ){
 
+  start_time = Sys.time()
   # Function that converts SEM model to a RAM, see `?sem` for more context
   build_ram = function( model, vars ){
     vars = sapply( vars, FUN=function(char){gsub("-", "", gsub(" ", "", char))} )
@@ -330,7 +331,8 @@ function( sem,
                          "gaussian" = NA,
                          "poisson" = c(),
                          "binomial" = c(),
-                         "Gamma" = NA
+                         "Gamma" = NA,
+                         "categorical" = c()
                        )} )
     Nsigma_j = sapply(sigma_j, length)
     sigmastart_j = remove_last(cumsum(c(0,Nsigma_j)))
@@ -343,13 +345,15 @@ function( sem,
                          "binomial" = 2,
                          "bernoulli" = 2,
                          "poisson" = 3,
-                         "Gamma" = 4
+                         "Gamma" = 4,
+                         "categorical" = 5
                        )[x$family]} )
     link_code = sapply( family, FUN=function(x){
                        c("identity" = 0,
                          "log" = 1,
                          "logit" = 2,
-                         "cloglog" = 3
+                         "cloglog" = 3,
+                         "mlogit" = 4
                        )[x$link]} )
     group = sapply( family, FUN=function(x){
                        ifelse(is.null(x$group),NA,x$group)} )
@@ -558,6 +562,7 @@ function( sem,
 
   results$report = obj$report()
   results$parhat = obj$env$parList()
+  results$run_time = Sys.time() - start_time
   class(results) = "phylosem"
   return( results )
 }
