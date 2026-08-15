@@ -22,6 +22,7 @@ test_that("phylosem Poisson-PCGLMM is working ", {
 
   # Construct, re-order, and reduce data
   Data = data.frame(x=x,y=y_pois)
+  Data = Data[ sample(seq_len(Ntree), size = 0.8*Ntree, replace = FALSE), ]
 
   #
   pglmm = phyr::pglmm_compare(
@@ -68,6 +69,7 @@ test_that("phylosem Binomial-PCGLMM is working ", {
 
   # Construct, re-order, and reduce data
   Data = data.frame(x=x,y=y_binom)
+  Data = Data[ sample(seq_len(Ntree), size = 0.8*Ntree, replace = FALSE), ]
 
   #
   pglmm = phyr::pglmm_compare(

@@ -155,9 +155,9 @@ Type objective_function<Type>::operator() ()
 
   // JNLL
   Type jnll = 0;
-  vector<Type> jnll_v( n_v );
-  matrix<Type> jnll_ij( n_i, n_j );
-  matrix<Type> jnll_ig( n_i, n_g );
+  vector<Type> jnll_v( n_v );         // Likelihood by phylogenetic edge
+  matrix<Type> jnll_ij( n_i, n_j );   // Likelihood by sample in y_ij (excluding base level for grouped categories)
+  matrix<Type> jnll_ig( n_i, n_g );   // Likelihood for base level per group of factor levels
   jnll_ij.setZero();
   jnll_v.setZero();
   jnll_ig.setZero();
