@@ -298,7 +298,12 @@ function( sem,
   height_v = node.depth.edgelength(tree)
   # seems like length_e + height_v should be equal in an ultrametric tree
   if(vroot %in% edge_ez[,2]) stop("Check for problems")
-  if(any(length_e==0)) stop("`tree` contains an edge with length of zero; please fix")
+  if( estimate_lambda==FALSE ){
+    if(any( length_e==0)) stop("if `estimate_lambda==FALSE`, `tree` cannot contains any edge with length of zero")
+  }
+  if( estimate_lambda==TRUE ){
+    if(any( (length_e==0) & (edge_ez[,2]>n_tip) )) stop("if `estimate_lambda==TRUE`, `tree` cannot contains any interior edge with length of zero")
+  }
 
   # associate each datum with tree
   v_i = match( data_labels, c(tree$tip.label,tree$node.label) )
