@@ -1,9 +1,10 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/comparison.html</loc></url>
-<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/demonstration.html</loc></url>
-<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/fisheries.html</loc></url>
 <url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/index.html</loc></url>
-<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/phylopath.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/model-description.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/web_only/comparison.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/web_only/demonstration.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/web_only/fisheries.html</loc></url>
+<url><loc>https://james-thorson-noaa.github.io/phylosem/dev/articles/web_only/phylopath.html</loc></url>
 <url><loc>https://james-thorson-noaa.github.io/phylosem/dev/authors.html</loc></url>
 <url><loc>https://james-thorson-noaa.github.io/phylosem/dev/index.html</loc></url>
 <url><loc>https://james-thorson-noaa.github.io/phylosem/dev/news/index.html</loc></url>
