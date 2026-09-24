@@ -4,3 +4,66 @@ development:
 template:
   bootstrap: 5
 
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - model-description
+  - web_only/description
+  - web_only/comparison
+  - web_only/phylopath
+  - web_only/fisheries
+
+reference:
+- title: internal
+  contents:
+  - list_parameters
+  - parse_path
+
+- title: 'Specification and fitting'
+  desc: |
+    Core tools for model fitting and diagnostics.
+  contents:
+  - phylosem
+  - phylosem_control
+  - beverton_holt
+
+- title: 'Families'
+  desc: |
+    Additional families beyond the standard R families.
+  contents:
+  - fixed
+  - categorical
+
+- title: 'Interpret output'
+  desc: |
+    Tools for interpreting output.
+  contents:
+  - summary.phylosem
+  - vcov.phylosem
+  - print.phylosem
+  - coef.phylosem
+  - as_fitted_DAG
+  - as_phylo4d
+  - as_sem
+  - logLik.phylosem
+
+- title: 'Model comparison'
+  desc: |
+    Tools for selecting and comparing models (based on phylopath)
+  contents:
+  - average
+  - choice
+  - best
+  - compare_phylosem
+  - best.compare_phylosem
+  - average
+  - average.compare_phylosem
+  - choice.compare_phylosem
+
+- title: 'Data sets'
+  desc: |
+    Data sets used for illustration and testing.
+  contents:
+  - Mlifehist_ver1_0
+

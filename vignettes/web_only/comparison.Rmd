@@ -29,29 +29,7 @@ library(phylosem)
 message("Must install ggplot2, phylopath, phylolm, Rphylopars, TreeTools")
 ```
 
-`phylosem` is an R package for fitting phylogenetic structural equation models (PSEMs).   The package generalizes features in existing R packages:
-
-* `sem` for structural equation models (SEMs);
-* `phylosem` for comparison among alternative path models;
-* `phylolm` for fitting large linear models that arise as when specifying a SEM with one endogenous variable and multiple exogenous and independent variables;
-* `Rphylopars` for interpolating missing values when specifying a SEM with an unstructured (full rank) covariance among variables;
-
-In model configurations that can be fitted by both `phylosem` and these other packages, we have confirmed that results are nearly identical or otherwise identified reasons that results differ.
-
-`phylosem` involves a simple user-interface that specifies the SEM using notation from package `sem` and the phylogenetic tree using package `ape`.  It allows uers to specify common models for the covariance including:
-
-* Brownian motion (BM);
-* Ornstein-Uhlenbeck (OU);
-* Pagel's lambda;
-* Pagel's kappa;
-
-Output can be coerced to standard formats so that `phylosem` can use plotting and summary functions form other packages.  Available output formats include:
-
-* `sem`, for plotting the estimated SEM and summarizing direct and indirect effects;
-* `phylopath`, for plotting and model comparison;
-* `phylo4d` in R-package `phylobase` for plotting estimated traits;
-
-Below, we specifically highlight the syntax, runtime, and output resulting from `phylosem` and other packages.
+`phylosem` is an R package for fitting phylogenetic structural equation models (PSEMs).   Below, we specifically highlight the syntax, runtime, and output resulting from `phylosem` and other packages.
 
 ## Comparison with phylolm
 
