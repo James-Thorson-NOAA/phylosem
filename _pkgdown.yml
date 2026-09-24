@@ -9,7 +9,7 @@ articles:
   navbar: ~
   contents:
   - model-description
-  - web_only/description
+  - web_only/demonstration
   - web_only/comparison
   - web_only/phylopath
   - web_only/fisheries
