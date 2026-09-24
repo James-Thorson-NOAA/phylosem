@@ -1,8 +1,10 @@
+[![Documentation](https://img.shields.io/badge/docs-phylosem-orange.svg?colorB=E91E63)](https://james-thorson-noaa.github.io/phylosem/)
+[![Documentation](https://img.shields.io/badge/docs-phylosem@dev-orange.svg?colorB=E91E63)](https://james-thorson-noaa.github.io/phylosem/dev/)
 [![](https://www.r-pkg.org/badges/version/phylosem)](https://cran.r-project.org/package=phylosem)
 [![](https://cranlogs.r-pkg.org/badges/phylosem)](https://cran.r-project.org/package=phylosem)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/phylosem)](https://cran.r-project.org/package=phylosem)
 [![Codecov test coverage](https://codecov.io/gh/James-Thorson-NOAA/phylosem/branch/remove-fit_tmb/graph/badge.svg)](https://app.codecov.io/gh/James-Thorson-NOAA/phylosem/tree/remove-fit_tmb)
-[![Documentation](https://img.shields.io/badge/documentation-phylosem-orange.svg?colorB=E91E63)](https://james-thorson-noaa.github.io/phylosem/)
+
 
 ## Phylogenetic structural equation models
 Package _phylosem_ combines features from structural equation models (SEM), phylogenetic comparative methods (PCM), and generalized linear mixed models (GLMM).  By doing so, it incorporates a broad feature-set:
