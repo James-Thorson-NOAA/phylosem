@@ -1,0 +1,87 @@
+# Changelog
+
+## phylosem 2.0.0
+
+- Adding error check for factors in `data` (which are not supported)
+- Switching to a sparseMatrix construction and GMRF for the conditional
+  distribution, to allow estimation with larger number (J\>\>10) of
+  variables
+- Fit error in `as_fitted_DAG` occurring when `getsd=FALSE`, resulting
+  in an uniformative error message … now adding branching logic for
+  output (h/t Jack Oyston)
+- Adding option for moderator variables for one-headed path
+  coefficients, including latent variables representing varying slopes
+- Adding argument `estimate_xbar` to allow user specification of whether
+  to estimate mean xbar for each column of `data`, i.e., for use when
+  estimating the mean for a latent variable representing a varying path
+- Add `experiments` argument to allow user-specified experiment-level
+  data that then estimates species-specific trait values
+- Change family argument to allow fixed(), gaussian(), etc as named list
+  (BREAKS BACKWARDS COMPATIBILITY)
+- Add `categorical(group = [string])` family option, using a
+  multivariate logit-link across levels of `[string]` for categorical
+  traits
+
+## phylosem 1.1.4
+
+CRAN release: 2024-04-02
+
+- removing `checkDepPackageVersion(dep_pkg="Matrix", this_pkg="TMB")`
+  from `.onLoad()` as requested by K. Kristensen
+
+## phylosem 1.1.3
+
+CRAN release: 2024-02-01
+
+- Removing fit_tmb to simplify code and remove unnecessary warnings
+- Adding codecov and extra tests
+- Fixing R-CMD-check to force build Matrix/TMB from source
+
+## phylosem 1.1.2
+
+CRAN release: 2023-12-20
+
+- Adding new functions to provide warning if Matrix version doesn’t
+  match what’s expected by TMB
+
+## phylosem 1.1.1
+
+CRAN release: 2023-11-26
+
+- Re-adding `phylosignal` as SUGGESTS
+- Re-adding `phylosignal` to Fisheries vignette
+- adding arguemnt `what` to `as_phylo4d` to allow easy extraction of
+  standard errors
+
+## phylosem 1.1.0
+
+CRAN release: 2023-10-06
+
+- Adding new S3 generic functions: logLik and vcov
+- Adding vignette “fisheries” associated with paper “Trees for fishes:
+  The neglected role for phylogenetic comparative methods in fisheries
+  science” accepted at Fish and Fisheries
+
+## phylosem 1.0.2
+
+CRAN release: 2023-09-22
+
+- Fixed bug arising when data are missing for observations in the
+  earliest tips and for the first inputted variable
+- Updating vignette to show confidence intervals on alpha/kappa/lambda
+  as well as lnalppha/lnkappa/logitlambda
+
+## phylosem 1.0.1
+
+CRAN release: 2023-09-19
+
+- Address request from CRAN to use Suggests packages conditionally in
+  examples
+- Continuing to use Suggests packages unconditionally in vignettes based
+  on Wickham guidance online
+
+## phylosem 1.0.0
+
+CRAN release: 2023-08-25
+
+- Attempting to fix warnings
