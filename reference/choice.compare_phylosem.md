@@ -1,0 +1,25 @@
+# Choose model
+
+Choose model
+
+## Usage
+
+``` r
+# S3 method for class 'compare_phylosem'
+choice(x, choice)
+```
+
+## Arguments
+
+- x:
+
+  output from `compare_phylosem`
+
+- choice:
+
+  Integer indicating model to extract
+
+## Value
+
+Returns chosen model from those fitted using
+[`compare_phylosem`](https://james-thorson-noaa.github.io/phylosem/reference/compare_phylosem.md)

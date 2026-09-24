@@ -1,0 +1,102 @@
+# NOAA Enterprise GitHub disclaimer
+
+## Phylogenetic structural equation models
+
+Package *phylosem* combines features from structural equation models
+(SEM), phylogenetic comparative methods (PCM), and generalized linear
+mixed models (GLMM). By doing so, it incorporates a broad feature-set:
+
+- Comparing multiple evolutionary models similar to *phylopath*
+- Estimating trade-offs among multiple traits similar to *phylolm*
+- Predicting missing trait values (and associated standard errors)
+  similar to *Rphylopars*
+- Estimating tradeoffs including recursive (cyclic) dependencies similar
+  to package *sem*
+- Applying ordination to multiple traits, similar to phylogenetic factor
+  analysis in package *FishLife*
+
+*phylosem* is specifically intended as a minimal implementation, and
+uses standard packages for input/output formatting:
+
+- Input: phylogenetic relatedness defined using class *phylo* in package
+  *ape*
+- Input: structural trade-offs specified using syntax defined by package
+  *sem*
+- Output: visualizing trade-offs using *semPlot*, *diagrammeR*, and
+  *ggraph*
+- Output: assembling trait predictions and standard errors using
+  *phylobase*
+- Output: plotting trait predictions using *phylosignal*
+
+Please see package vignettes for more details regarding syntax and
+features.
+
+This repository is a scientific product and is not official
+communication of the National Oceanic and Atmospheric Administration, or
+the United States Department of Commerce. All NOAA GitHub project code
+is provided on an ‘as is’ basis and the user assumes responsibility for
+its use. Any claims against the Department of Commerce or Department of
+Commerce bureaus stemming from the use of this GitHub project will be
+governed by all applicable Federal law. Any reference to specific
+commercial products, processes, or services by service mark, trademark,
+manufacturer, or otherwise, does not constitute or imply their
+endorsement, recommendation or favoring by the Department of Commerce.
+The Department of Commerce seal and logo, or the seal and logo of a DOC
+bureau, shall not be used in any manner to imply endorsement of any
+commercial product or activity by DOC or the United States Government.
+
+# Package index
+
+## All functions
+
+- [`Mlifehist_ver1_0`](https://james-thorson-noaa.github.io/phylosem/reference/Mlifehist_ver1_0.md)
+  : Fisheries natural mortality example
+- [`as_fitted_DAG()`](https://james-thorson-noaa.github.io/phylosem/reference/as_fitted_DAG.md)
+  : Convert phylosem to phylopath output
+- [`as_phylo4d()`](https://james-thorson-noaa.github.io/phylosem/reference/as_phylo4d.md)
+  : Convert phylosem to phylo4d
+- [`as_sem()`](https://james-thorson-noaa.github.io/phylosem/reference/as_sem.md)
+  : Convert phylosem to sem output
+- [`average()`](https://james-thorson-noaa.github.io/phylosem/reference/average.md)
+  : Choose model
+- [`average(`*`<compare_phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/reference/average.compare_phylosem.md)
+  : Choose model
+- [`best()`](https://james-thorson-noaa.github.io/phylosem/reference/best.md)
+  : Extract best fitted model
+- [`best(`*`<compare_phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/reference/best.compare_phylosem.md)
+  : Extract best fitted model
+- [`choice()`](https://james-thorson-noaa.github.io/phylosem/reference/choice.md)
+  : Choose model
+- [`choice(`*`<compare_phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/reference/choice.compare_phylosem.md)
+  : Choose model
+- [`coef(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/reference/coef.phylosem.md)
+  : Extract path coefficients
+- [`compare_phylosem()`](https://james-thorson-noaa.github.io/phylosem/reference/compare_phylosem.md)
+  : Compare phylogenetic structural equation models
+- [`list_parameters()`](https://james-thorson-noaa.github.io/phylosem/reference/list_parameters.md)
+  : List fixed and random effects
+- [`parse_path()`](https://james-thorson-noaa.github.io/phylosem/reference/parse_path.md)
+  : Parse path
+- [`phylosem()`](https://james-thorson-noaa.github.io/phylosem/reference/phylosem.md)
+  : Fit phylogenetic structural equation model
+- [`phylosem_control()`](https://james-thorson-noaa.github.io/phylosem/reference/phylosem_control.md)
+  : Detailed control for phylosem structure
+- [`print(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/reference/print.phylosem.md)
+  : Print parameter estimates and standard errors.
+- [`summary(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/reference/summary.phylosem.md)
+  : summarize phylosem
+- [`vcov(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/reference/vcov.phylosem.md)
+  : Extract Variance-Covariance Matrix
+
+# Articles
+
+### All vignettes
+
+- [Comparison with other
+  packages](https://james-thorson-noaa.github.io/phylosem/articles/comparison.md):
+- [Demonstration of selected
+  features](https://james-thorson-noaa.github.io/phylosem/articles/demonstration.md):
+- [Phylogenetic comparative methods in fisheries
+  science](https://james-thorson-noaa.github.io/phylosem/articles/fisheries.md):
+- [Detailed comparison with
+  \`phylopath\`](https://james-thorson-noaa.github.io/phylosem/articles/phylopath.md):

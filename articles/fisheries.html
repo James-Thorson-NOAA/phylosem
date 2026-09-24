@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Phylogenetic comparative methods in fisheries science • phylosem</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Phylogenetic comparative methods in fisheries science">
 </head>
@@ -356,8 +356,11 @@ post-process output.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot path diagram</span></span>
 <span><span class="va">my_fitted_DAG</span> <span class="op">=</span> <span class="fu"><a href="../reference/as_fitted_DAG.html">as_fitted_DAG</a></span><span class="op">(</span><span class="va">psem_best</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_fitted_DAG</span>, type<span class="op">=</span><span class="st">"color"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="fisheries_files/figure-html/unnamed-chunk-5-1.png" width="384"></p>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_fitted_DAG</span>, type<span class="op">=</span><span class="st">"color"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Cannot determine which variables of this model are binary, so the scale of its coefficients is unknown.</span></span>
+<span><span class="co">#&gt;   Paths into a binary variable are log odds ratios, while paths into a continuous variable are standardized regression coefficients.</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> This model was fitted by a version of phylopath older than 1.4.0, which did not record it. Refit it to label the coefficients, and to stop receiving this warning.</span></span></code></pre></div>
+<p><img src="fisheries_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="384"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Total, direct, and indirect effects</span></span>
@@ -388,7 +391,7 @@ currently unavailable on CRAN and therefore commented out:</p>
 <span><span class="co"># Plot using phylobase</span></span>
 <span><span class="va">my_phylo4d</span> <span class="op">=</span> <span class="fu"><a href="../reference/as_phylo4d.html">as_phylo4d</a></span><span class="op">(</span> <span class="va">psem_best</span> <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="va">my_phylo4d</span><span class="op">)</span></span></code></pre></div>
-<p><img src="fisheries_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
+<p><img src="fisheries_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="576"></p>
 </div>
 <div class="section level2">
 <h2 id="sensitivity-to-using-taxonomic-tree">Sensitivity to using taxonomic tree<a class="anchor" aria-label="anchor" href="#sensitivity-to-using-taxonomic-tree"></a>
@@ -436,8 +439,11 @@ coefficients are very similar to estimates when using phyogeny.</p>
 <span></span>
 <span><span class="co"># Plot path diagram</span></span>
 <span><span class="va">my_fitted_DAG</span> <span class="op">=</span> <span class="fu"><a href="../reference/as_fitted_DAG.html">as_fitted_DAG</a></span><span class="op">(</span><span class="va">psem_taxon</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_fitted_DAG</span>, type<span class="op">=</span><span class="st">"color"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="fisheries_files/figure-html/unnamed-chunk-7-1.png" width="384"></p>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">my_fitted_DAG</span>, type<span class="op">=</span><span class="st">"color"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Cannot determine which variables of this model are binary, so the scale of its coefficients is unknown.</span></span>
+<span><span class="co">#&gt;   Paths into a binary variable are log odds ratios, while paths into a continuous variable are standardized regression coefficients.</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> This model was fitted by a version of phylopath older than 1.4.0, which did not record it. Refit it to label the coefficients, and to stop receiving this warning.</span></span></code></pre></div>
+<p><img src="fisheries_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="384"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -450,7 +456,7 @@ coefficients are very similar to estimates when using phyogeny.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

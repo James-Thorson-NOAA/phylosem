@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Detailed comparison with `phylopath` • phylosem</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Detailed comparison with `phylopath`">
 </head>
@@ -107,11 +107,11 @@ here.</p>
 <code class="sourceCode R"><span><span class="va">rhino_std</span> <span class="op">&lt;-</span> <span class="va">rhino</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">rhino_std</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">rhino_std</span>, <span class="va">scale</span><span class="op">)</span></span></code></pre></div>
 <p>Now we can define what causal models we want to compare. First in
-<code>phylopath</code>, we use formulas and can use <code><a href="https://Ax3man.github.io/phylopath/reference/DAG.html" class="external-link">DAG()</a></code>
-to define a model, or <code><a href="https://Ax3man.github.io/phylopath/reference/define_model_set.html" class="external-link">define_model_set()</a></code> to create a list
+<code>phylopath</code>, we use formulas and can use <code><a href="https://ax3man.github.io/phylopath/reference/DAG.html" class="external-link">DAG()</a></code>
+to define a model, or <code><a href="https://ax3man.github.io/phylopath/reference/define_model_set.html" class="external-link">define_model_set()</a></code> to create a list
 of models:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">models_pp</span> <span class="op">&lt;-</span> <span class="fu">phylopath</span><span class="fu">::</span><span class="fu"><a href="https://Ax3man.github.io/phylopath/reference/define_model_set.html" class="external-link">define_model_set</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">models_pp</span> <span class="op">&lt;-</span> <span class="fu">phylopath</span><span class="fu">::</span><span class="fu"><a href="https://ax3man.github.io/phylopath/reference/define_model_set.html" class="external-link">define_model_set</a></span><span class="op">(</span></span>
 <span>  one   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">RS</span> <span class="op">~</span> <span class="va">DD</span><span class="op">)</span>,</span>
 <span>  two   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">DD</span> <span class="op">~</span> <span class="va">NL</span>, <span class="va">RS</span> <span class="op">~</span> <span class="va">LS</span> <span class="op">+</span> <span class="va">DD</span><span class="op">)</span>,</span>
 <span>  three <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">RS</span> <span class="op">~</span> <span class="va">NL</span><span class="op">)</span>,</span>
@@ -152,7 +152,7 @@ equation model itself.</p>
 the Brownian motion model (<code>"BM"</code>), which is the default for
 <code>compare_phylosem</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">result_pp</span> <span class="op">&lt;-</span> <span class="fu">phylopath</span><span class="fu">::</span><span class="fu"><a href="https://Ax3man.github.io/phylopath/reference/phylo_path.html" class="external-link">phylo_path</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">result_pp</span> <span class="op">&lt;-</span> <span class="fu">phylopath</span><span class="fu">::</span><span class="fu"><a href="https://ax3man.github.io/phylopath/reference/phylo_path.html" class="external-link">phylo_path</a></span><span class="op">(</span></span>
 <span>  <span class="va">models_pp</span>, data <span class="op">=</span> <span class="va">rhino_std</span>, tree <span class="op">=</span> <span class="va">rhino_tree</span>, model <span class="op">=</span> <span class="st">'BM'</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -166,14 +166,14 @@ the Brownian motion model (<code>"BM"</code>), which is the default for
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result_pp</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       model k  q     C        p  CICc delta_CICc        l        w</span></span>
 <span><span class="co">#&gt; five   five 4 11  60.7 3.39e-10  85.7        0.0 1.00e+00 1.00e+00</span></span>
-<span><span class="co">#&gt; eight eight 6  9 101.9 2.22e-16 121.9       36.2 1.38e-08 1.38e-08</span></span>
-<span><span class="co">#&gt; three three 6  9 111.8 0.00e+00 131.8       46.0 1.00e-10 1.00e-10</span></span>
-<span><span class="co">#&gt; nine   nine 5 10 110.7 0.00e+00 133.2       47.5 4.85e-11 4.85e-11</span></span>
-<span><span class="co">#&gt; six     six 5 10 111.0 0.00e+00 133.5       47.8 4.25e-11 4.25e-11</span></span>
-<span><span class="co">#&gt; one     one 6  9 113.9 0.00e+00 133.9       48.2 3.49e-11 3.49e-11</span></span>
-<span><span class="co">#&gt; four   four 5 10 113.7 0.00e+00 136.2       50.5 1.08e-11 1.08e-11</span></span>
-<span><span class="co">#&gt; two     two 5 10 115.2 0.00e+00 137.6       51.9 5.31e-12 5.31e-12</span></span>
-<span><span class="co">#&gt; seven seven 4 11 114.2 0.00e+00 139.2       53.5 2.45e-12 2.45e-12</span></span></code></pre></div>
+<span><span class="co">#&gt; eight eight 6  9 101.9 2.36e-16 121.9       36.2 1.38e-08 1.38e-08</span></span>
+<span><span class="co">#&gt; three three 6  9 111.8 2.69e-18 131.8       46.0 1.00e-10 1.00e-10</span></span>
+<span><span class="co">#&gt; nine   nine 5 10 110.7 3.80e-19 133.2       47.5 4.85e-11 4.85e-11</span></span>
+<span><span class="co">#&gt; six     six 5 10 111.0 3.36e-19 133.5       47.8 4.25e-11 4.25e-11</span></span>
+<span><span class="co">#&gt; one     one 6  9 113.9 1.03e-18 133.9       48.2 3.49e-11 3.49e-11</span></span>
+<span><span class="co">#&gt; four   four 5 10 113.7 9.38e-20 136.2       50.5 1.08e-11 1.08e-11</span></span>
+<span><span class="co">#&gt; two     two 5 10 115.2 4.85e-20 137.6       51.9 5.31e-12 5.31e-12</span></span>
+<span><span class="co">#&gt; seven seven 4 11 114.2 5.28e-21 139.2       53.5 2.45e-12 2.45e-12</span></span></code></pre></div>
 <p>For <em>phylosem</em>, we can extract the AIC values for each
 model:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -215,17 +215,17 @@ respective output types.</p>
 has already been done and the model is just extracted from the
 <code>compare_phylosem</code> object:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">best_pp</span> <span class="op">&lt;-</span> <span class="fu">phylopath</span><span class="fu">::</span><span class="fu"><a href="https://Ax3man.github.io/phylopath/reference/best.html" class="external-link">best</a></span><span class="op">(</span><span class="va">result_pp</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">best_pp</span> <span class="op">&lt;-</span> <span class="fu">phylopath</span><span class="fu">::</span><span class="fu"><a href="https://ax3man.github.io/phylopath/reference/best.html" class="external-link">best</a></span><span class="op">(</span><span class="va">result_pp</span><span class="op">)</span></span>
 <span><span class="va">best_ps</span> <span class="op">&lt;-</span> <span class="fu">phylosem</span><span class="fu">::</span><span class="fu"><a href="../reference/best.html">best</a></span><span class="op">(</span><span class="va">result_ps</span><span class="op">)</span></span></code></pre></div>
 <p>To compare the two, we can convert the <em>phylosem</em> result in to
 the DAG format that <em>phylopath</em> uses, and use the included plot
 functionality:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">best_pp</span><span class="op">)</span></span></code></pre></div>
-<p><img src="phylopath_files/figure-html/unnamed-chunk-9-1.png" width="50%"></p>
+<p><img src="phylopath_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="50%"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/as_fitted_DAG.html">as_fitted_DAG</a></span><span class="op">(</span><span class="va">best_ps</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="phylopath_files/figure-html/unnamed-chunk-9-2.png" width="50%"></p>
+<p><img src="phylopath_files/figure-html/unnamed-chunk-9-2.png" class="r-plt" alt="" width="50%"></p>
 <p><em>phylopath</em> is now actually fitting the causal model itself,
 not performing the d-separation procedure. Because this makes the
 methods much more closely aligned, we can see that the output matches
@@ -235,21 +235,21 @@ motion. If we deviate from that assumption by using (as an example)
 Pagel’s lambda model, which is the default in <em>phylopath</em>, this
 is no longer true:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">phylopath</span><span class="fu">::</span><span class="fu"><a href="https://Ax3man.github.io/phylopath/reference/est_DAG.html" class="external-link">est_DAG</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu">phylopath</span><span class="fu">::</span><span class="fu"><a href="https://ax3man.github.io/phylopath/reference/est_DAG.html" class="external-link">est_DAG</a></span><span class="op">(</span></span>
 <span>  <span class="va">models_pp</span><span class="op">$</span><span class="va">five</span>, data <span class="op">=</span> <span class="va">rhino_std</span>, tree <span class="op">=</span> <span class="va">rhino_tree</span>, model <span class="op">=</span> <span class="st">'lambda'</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="phylopath_files/figure-html/unnamed-chunk-10-1.png" width="50%"></p>
+<p><img src="phylopath_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="50%"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">phylosem</span><span class="fu">::</span><span class="fu"><a href="../reference/phylosem.html">phylosem</a></span><span class="op">(</span></span>
 <span>  <span class="va">models_ps</span><span class="op">$</span><span class="va">five</span>, tree <span class="op">=</span> <span class="va">rhino_tree</span>, data <span class="op">=</span> <span class="va">rhino_std</span>, estimate_lambda <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/as_fitted_DAG.html">as_fitted_DAG</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="phylopath_files/figure-html/unnamed-chunk-10-2.png" width="50%"></p>
+<p><img src="phylopath_files/figure-html/unnamed-chunk-10-2.png" class="r-plt" alt="" width="50%"></p>
 <p>The reason this happens is that <em>phylosem</em> implements these
 additional parameters by estimating them as a single estimated parameter
 for the all variables in the model. <em>phylopath</em>, on the other
 hand, estimates a separate lambda on the residuals of each regression
-ran. For <code><a href="https://Ax3man.github.io/phylopath/reference/est_DAG.html" class="external-link">est_DAG()</a></code> this means one lambda for each variable
-with a modelled cause, and for <code><a href="https://Ax3man.github.io/phylopath/reference/phylo_path.html" class="external-link">phylo_path()</a></code> this means one
+ran. For <code><a href="https://ax3man.github.io/phylopath/reference/est_DAG.html" class="external-link">est_DAG()</a></code> this means one lambda for each variable
+with a modelled cause, and for <code><a href="https://ax3man.github.io/phylopath/reference/phylo_path.html" class="external-link">phylo_path()</a></code> this means one
 lambda for each tested d-separation statement.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -263,7 +263,7 @@ lambda for each tested d-separation statement.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>
