@@ -21,7 +21,10 @@ Imports:
     phylobase,
     phylopath,
     methods,
-    checkmate
+    checkmate,
+    ggplot2,
+    igraph,
+    ggraph
 Depends:
     TMB,
     R (>= 4.0.0),
@@ -34,7 +37,6 @@ Suggests:
     phyr,
     knitr,
     rmarkdown,
-    ggplot2,
     testthat,
     phylosignal,
     adephylo

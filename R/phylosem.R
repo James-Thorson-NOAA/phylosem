@@ -73,6 +73,9 @@
 #' @importFrom ape Ntip node.depth.edgelength rtree
 #' @importFrom TMB compile dynlib MakeADFun sdreport
 #' @importFrom methods is
+#' @importFrom igraph plot.igraph graph_from_data_frame with_sugiyama layout_ graph.adjacency clusters
+#' @importFrom ggraph ggraph geom_edge_arc create_layout rectangle geom_node_text theme_graph
+#' @importFrom ggplot2 aes
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:
@@ -658,6 +661,7 @@ print.phylosem <- function(x, ...)
 #' @method coef phylosem
 #' @export
 coef.phylosem = function( object, standardized=FALSE, ... ){
+
   beta_z = object$opt$par[names(object$opt$par)=="beta_z"]
   RAM = object$obj$env$data$RAM
   if(nrow(RAM) != nrow(object$SEM_model)) stop("Check assumptions")
@@ -675,7 +679,14 @@ coef.phylosem = function( object, standardized=FALSE, ... ){
   }
   SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
   SEM_params = ifelse( is.na(SEM_params), as.numeric(object$SEM_model[,3]), SEM_params )
-  return( data.frame(Path=object$SEM_model[,1], Parameter=object$SEM_model[,2], Estimate=SEM_params ) )
+  out = data.frame(
+    Path = object$SEM_model[,1],
+    from = names(fit$data)[RAM[,'from']],
+    to = names(fit$data)[RAM[,'to']],
+    Parameter = object$SEM_model[,2],
+    Estimate = SEM_params
+  )
+  return( out )
 }
 
 #' @title Extract Variance-Covariance Matrix
@@ -804,6 +815,107 @@ summary.phylosem = function( object, ... ){
   # Return stuff
   class(out) = "summary.phylosem"
   return(out)
+}
+
+#' @title Plot phylosem
+#'
+#' @description Plot from a fitted \code{phylosem} model
+#'
+#' @param x Output from \code{\link{phylosem}}
+#' @param y Not used
+#' @param edge_label Whether to plot parameter names, estimated values,
+#'        or estimated values along with stars indicating significance at
+#'        0.05, 0.01, or 0.001 levels (based on two-sided Wald tests)
+#' @param keep_twoheaded whether to included two-headed arrows
+#' @param digits integer indicating the number of decimal places to be used
+#' @param style Whether to make a graph using \code{igraph} or \code{ggraph}
+#' @param ... arguments passed to \code{\link[igraph]{plot.igraph}}
+#'
+#' @details
+#' This function coerces output from a graph and then plots the graph.
+#'
+#' @return
+#' Invisibly returns the output from \code{\link[igraph]{graph_from_data_frame}}
+#' which was passed to \code{\link[igraph]{plot.igraph}} for plotting.
+#'
+#' @method plot phylosem
+#' @export
+plot.phylosem <-
+function( x,
+          y,
+          edge_label = c("name","value"),
+          digits = 2,
+          vertices = NULL,
+          keep_twoheaded = FALSE,
+          style = c("ggraph","igraph"),
+          ... ){
+
+  style = match.arg(style)
+  edge_label = match.arg(edge_label)
+
+  # Extract stuff
+  out = coef(x)
+
+  # Format inputs
+  DF = data.frame(from=out$from, to=out$to, label=out$Parameter)
+  if( edge_label=="value"){
+    DF$label = round(out$Estimate, digits=digits)
+  }
+  #if( edge_label == "value_and_stars" ){
+  #  DF$label = round(out$Estimate, digits=digits)
+  #  add_stars = cut(out[,'p_value'], breaks=c(1,0.05,0.01,0.001,0) )
+  #  add_stars = c("***","**","*","")[as.numeric(add_stars)]
+  #  DF$label = paste0(DF$label, add_stars)
+  #}
+  if( isFALSE(keep_twoheaded) ){
+    DF = subset( DF, from != to )
+  }
+
+  if( is.null(vertices) ){
+    vertices = union( out$to, out$from )
+  }else{
+    DF = subset( DF, (from %in% vertices) & (to %in% vertices) )
+  }
+
+  # Create and plotgraph
+  pg <- graph_from_data_frame( d = DF,
+                               directed = TRUE,
+                               vertices = data.frame(vertices) )
+  out = list( DF = DF, pg = pg )
+
+  # Two plot styles
+  if(style=="igraph"){
+    coords = layout_(pg, with_sugiyama())
+    plot( pg, layout = coords, ... )
+  }
+  if(style=="ggraph"){
+    # Modified from phylopath::plot.DAG
+    algorithm = 'sugiyama'
+    manual_layout = NULL
+    text_size = 6
+    box_x = 12
+    box_y = 8
+    edge_width = 1
+    curvature = 0
+    rotation = 0
+    flip_x = FALSE
+    flip_y = FALSE
+    label = DF$label
+    l = ggraph::create_layout(pg, 'igraph', algorithm = algorithm)
+    arrow = grid::arrow(type = 'closed', 18, grid::unit(15, 'points'))
+    gplot = ggraph::ggraph(l) +
+      ggraph::geom_edge_arc(
+        aes(label = label),
+        strength = curvature, arrow = arrow, edge_width = edge_width,
+        end_cap = ggraph::rectangle(box_x, box_y, 'mm'),
+        start_cap = ggraph::rectangle(box_x, box_y, 'mm')
+      ) +
+      ggraph::geom_node_text(ggplot2::aes_(label = ~name), size = text_size) +
+      ggraph::theme_graph(base_family = 'sans')
+    plot(gplot)
+    out$gplot = gplot
+  }
+  return(invisible(out))
 }
 
 #' @title predict values for new tip

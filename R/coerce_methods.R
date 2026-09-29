@@ -42,6 +42,7 @@ function( object ){
 
   Sprime = as.matrix(solve(object$report$Q_jj))
     rownames(Sprime) = colnames(Sprime) = colnames(object$data)
+    Sprime = (Sprime + t(Sprime))/2      # Force symmetric
   out = sem( object$SEM_model,
              S = Sprime,
              N = nrow(object$data) )
