@@ -681,8 +681,8 @@ coef.phylosem = function( object, standardized=FALSE, ... ){
   SEM_params = ifelse( is.na(SEM_params), as.numeric(object$SEM_model[,3]), SEM_params )
   out = data.frame(
     Path = object$SEM_model[,1],
-    from = names(fit$data)[RAM[,'from']],
-    to = names(fit$data)[RAM[,'to']],
+    from = names(object$data)[RAM[,'from']],
+    to = names(object$data)[RAM[,'to']],
     Parameter = object$SEM_model[,2],
     Estimate = SEM_params
   )
