@@ -221,15 +221,15 @@ is the
 vector of stacked columns.</p>
 <p>PSEM can be written in structural vector-autoregressive (SVAR)
 notation as a lag-1 SVAR model :</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐱</mi><msub><mi>c</mi><mi>e</mi></msub></msub><mo>=</mo><munder><munder><mrow><mi>𝐏</mi><msub><mi>𝐱</mi><msub><mi>c</mi><mi>e</mi></msub></msub></mrow><mo accent="true">⏟</mo></munder><mtext mathvariant="normal">Relationships among traits</mtext></munder><mo>+</mo><munder><munder><mrow><mi>ρ</mi><msub><mi>𝐱</mi><msub><mi>p</mi><mi>e</mi></msub></msub></mrow><mo accent="true">⏟</mo></munder><mtext mathvariant="normal">Relationship among taxa</mtext></munder><mo>+</mo><msub><mi>𝛜</mi><msub><mi>c</mi><mi>e</mi></msub></msub></mrow><annotation encoding="application/x-tex">
-\mathbf{x}_{c_e} = \underbrace{\mathbf{P} \mathbf{x}_{c_e}}_{\text{Relationships among traits}} + \underbrace{\rho \mathbf{x}_{p_e}}_{\text{Relationship among taxa}} + \mathbf{\epsilon}_{c_e}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐱</mi><mrow><mi>c</mi><mo stretchy="false" form="prefix">[</mo><mi>e</mi><mo stretchy="false" form="postfix">]</mo></mrow></msub><mo>=</mo><munder><munder><mrow><mi>𝐏</mi><msub><mi>𝐱</mi><mrow><mi>c</mi><mo stretchy="false" form="prefix">[</mo><mi>e</mi><mo stretchy="false" form="postfix">]</mo></mrow></msub></mrow><mo accent="true">⏟</mo></munder><mtext mathvariant="normal">Relationships among traits</mtext></munder><mo>+</mo><munder><munder><mrow><msub><mi>ρ</mi><mi>e</mi></msub><msub><mi>𝐱</mi><mrow><mi>p</mi><mo stretchy="false" form="prefix">[</mo><mi>e</mi><mo stretchy="false" form="postfix">]</mo></mrow></msub></mrow><mo accent="true">⏟</mo></munder><mtext mathvariant="normal">Relationship among taxa</mtext></munder><mo>+</mo><msub><mi>𝛜</mi><mrow><mi>c</mi><mo stretchy="false" form="prefix">[</mo><mi>e</mi><mo stretchy="false" form="postfix">]</mo></mrow></msub></mrow><annotation encoding="application/x-tex">
+\mathbf{x}_{c[e]} = \underbrace{\mathbf{P} \mathbf{x}_{c[e]}}_{\text{Relationships among traits}} + \underbrace{\rho_e \mathbf{x}_{p[e]}}_{\text{Relationship among taxa}} + \mathbf{\epsilon}_{c[e]}
 </annotation></semantics></math> where this expression is evaluated for
 each edge
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>e</mi><annotation encoding="application/x-tex">e</annotation></semantics></math>
 of the phylogenetic tree connecting child
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>e</mi></msub><annotation encoding="application/x-tex">c_e</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo stretchy="false" form="prefix">[</mo><mi>e</mi><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">c[e]</annotation></semantics></math>
 with parent
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>e</mi></msub><annotation encoding="application/x-tex">p_e</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false" form="prefix">[</mo><mi>e</mi><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">p[e]</annotation></semantics></math>.
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐏</mi><annotation encoding="application/x-tex">\mathbf{P}</annotation></semantics></math>
 is the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>×</mo><mi>V</mi></mrow><annotation encoding="application/x-tex">V \times V</annotation></semantics></math>

@@ -105,10 +105,10 @@ PSEM can be written in structural vector-autoregressive (SVAR) notation
 as a lag-1 SVAR model :
 
 ``` math
-\mathbf{x}_{c_e} = \underbrace{\mathbf{P} \mathbf{x}_{c_e}}_{\text{Relationships among traits}} + \underbrace{\rho \mathbf{x}_{p_e}}_{\text{Relationship among taxa}} + \mathbf{\epsilon}_{c_e}
+\mathbf{x}_{c[e]} = \underbrace{\mathbf{P} \mathbf{x}_{c[e]}}_{\text{Relationships among traits}} + \underbrace{\rho_e \mathbf{x}_{p[e]}}_{\text{Relationship among taxa}} + \mathbf{\epsilon}_{c[e]}
 ```
 where this expression is evaluated for each edge $`e`$ of the
-phylogenetic tree connecting child $`c_e`$ with parent $`p_e`$.
+phylogenetic tree connecting child $`c[e]`$ with parent $`p[e]`$.
 $`\mathbf{P}`$ is the $`V \times V`$ matrix of relationships among
 traits, and $`\mathbf{\epsilon}_v`$ is exogenous covariation for vertex
 $`v`$:

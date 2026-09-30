@@ -26,6 +26,8 @@ Tools for interpreting output.
 
 - [`summary(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/summary.phylosem.md)
   : summarize phylosem
+- [`plot(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/plot.phylosem.md)
+  : Plot phylosem
 - [`vcov(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/vcov.phylosem.md)
   : Extract Variance-Covariance Matrix
 - [`print(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/print.phylosem.md)
