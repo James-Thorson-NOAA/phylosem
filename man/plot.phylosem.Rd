@@ -9,6 +9,7 @@
   y,
   edge_label = c("name", "value"),
   digits = 2,
+  vertices = NULL,
   keep_twoheaded = FALSE,
   style = c("ggraph", "igraph"),
   ...
@@ -24,6 +25,9 @@ or estimated values along with stars indicating significance at
 0.05, 0.01, or 0.001 levels (based on two-sided Wald tests)}
 
 \item{digits}{integer indicating the number of decimal places to be used}
+
+\item{vertices}{optional charater vector, listing variables to plot
+and subsetting edges to only plot those connecting those vertices}
 
 \item{keep_twoheaded}{whether to included two-headed arrows}
 

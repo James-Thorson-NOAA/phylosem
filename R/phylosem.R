@@ -65,7 +65,7 @@
 #'      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 #'
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
-#' @importFrom stats rpois gaussian poisson binomial Gamma
+#' @importFrom stats rpois gaussian poisson binomial Gamma coef
 #' @importFrom sem sem pathDiagram specifyModel specifyEquations
 #' @importFrom checkmate assertNumeric assertCharacter
 #' @importFrom phylopath average_DAGs coef_plot
@@ -826,6 +826,8 @@ summary.phylosem = function( object, ... ){
 #' @param edge_label Whether to plot parameter names, estimated values,
 #'        or estimated values along with stars indicating significance at
 #'        0.05, 0.01, or 0.001 levels (based on two-sided Wald tests)
+#' @param vertices optional charater vector, listing variables to plot
+#'        and subsetting edges to only plot those connecting those vertices
 #' @param keep_twoheaded whether to included two-headed arrows
 #' @param digits integer indicating the number of decimal places to be used
 #' @param style Whether to make a graph using \code{igraph} or \code{ggraph}
@@ -868,13 +870,13 @@ function( x,
   #  DF$label = paste0(DF$label, add_stars)
   #}
   if( isFALSE(keep_twoheaded) ){
-    DF = subset( DF, from != to )
+    DF = DF[ which(DF$from != DF$to), ]
   }
 
   if( is.null(vertices) ){
     vertices = union( out$to, out$from )
   }else{
-    DF = subset( DF, (from %in% vertices) & (to %in% vertices) )
+    DF = DF[ which((DF$from %in% vertices) & (DF$to %in% vertices)), ]
   }
 
   # Create and plotgraph
