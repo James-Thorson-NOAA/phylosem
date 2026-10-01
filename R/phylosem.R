@@ -663,10 +663,16 @@ print.phylosem <- function(x, ...)
 coef.phylosem = function( object, standardized=FALSE, ... ){
 
   beta_z = object$opt$par[names(object$opt$par)=="beta_z"]
+  if( is.null(object$sdrep) | isTRUE(standardized) ){
+    se_z = NA * beta_z
+  }else{
+    se_z = diag(object$sdrep$cov.fixed)[names(object$sdrep$par.fixed)=="beta_z"]
+  }
+
   RAM = object$obj$env$data$RAM
   if(nrow(RAM) != nrow(object$SEM_model)) stop("Check assumptions")
   for( i in which(RAM[,1]==1) ){
-    if( standardized==TRUE ){
+    if( isTRUE(standardized) ){
       beta_z[i] = beta_z[i] * abs(beta_z[which( RAM[,'from']==RAM[i,'from'] & RAM[,'to']==RAM[i,'from'] )])
       beta_z[i] = beta_z[i] / abs(beta_z[which( RAM[,'from']==RAM[i,'to'] & RAM[,'to']==RAM[i,'to'] )])
     }
@@ -675,6 +681,7 @@ coef.phylosem = function( object, standardized=FALSE, ... ){
   for( i in which(RAM[,1]==2) ){
     if( RAM[i,'from'] == RAM[i,'to'] ){
       beta_z[i] = beta_z[i]^2
+      se_z[i] = NA
     }
   }
   SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
@@ -684,7 +691,8 @@ coef.phylosem = function( object, standardized=FALSE, ... ){
     from = names(object$data)[RAM[,'from']],
     to = names(object$data)[RAM[,'to']],
     Parameter = object$SEM_model[,2],
-    Estimate = SEM_params
+    Estimate = SEM_params,
+    SE = se_z
   )
   return( out )
 }

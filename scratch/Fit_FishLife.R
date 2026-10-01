@@ -1,4 +1,6 @@
 
+#pak::local_install( R'(C:\Users\jtuth\Documents\GitHub\phylosem)' )
+
 library(phylosem)
 library(ape)
 #library(checkmate)
@@ -9,33 +11,40 @@ library(ape)
 
 data(FishBase_and_Morphometrics, package = "FishLife")
 
-data = FishBase_and_Morphometrics$Y_ij[,1:17]
+data = FishBase_and_Morphometrics$Y_ij
 tree = FishBase_and_Morphometrics$tree
 
 #sem = paste( FishBase_and_Morphometrics$SEM_model[1:21,1], collapse = "\n" )
-sem = "
-temperature -> log(length_infinity), b1
-temperature -> log(growth_coefficient), b2
-temperature -> log(natural_mortality), b3
-temperature -> log(weight_infinity), b4
-log(length_infinity) -> log(growth_coefficient), varying
-log(length_infinity) -> log(natural_mortality), b6
-log(length_infinity) -> log(length_max), b7
-log(length_infinity) -> log(weight_infinity), b8
-log(natural_mortality) -> log(length_maturity), b9
-log(natural_mortality) -> log(age_maturity), b10
-log(natural_mortality) -> log(age_max), b11
-log(growth_coefficient) -> log(length_maturity), b12
-log(growth_coefficient) -> log(age_maturity), b13
-log(weight_infinity) -> trophic_level, b14
-log(weight_infinity) -> log(fecundity), b15
-log(weight_infinity) -> log(offspring_size), b16
-log(length_infinity) -> log(aspect_ratio), b17
-log(aspect_ratio) -> log(max_body_width), b18
-log(aspect_ratio) -> log(max_body_depth), b19
-log(aspect_ratio) -> log(lower_jaw_length), b20
-log(aspect_ratio) -> log(min_caudal_pedoncule_depth), b21
-"
+#sem = "
+#temperature -> log(length_infinity), b1
+#temperature -> log(growth_coefficient), b2
+#temperature -> log(natural_mortality), b3
+#temperature -> log(weight_infinity), b4
+#log(length_infinity) -> log(growth_coefficient), b5
+#log(length_infinity) -> log(natural_mortality), b6
+#log(length_infinity) -> log(length_max), b7
+#log(length_infinity) -> log(weight_infinity), b8
+#log(natural_mortality) -> log(length_maturity), b9
+#log(natural_mortality) -> log(age_maturity), b10
+#log(natural_mortality) -> log(age_max), b11
+#log(growth_coefficient) -> log(length_maturity), b12
+#log(growth_coefficient) -> log(age_maturity), b13
+#log(weight_infinity) -> trophic_level, b14
+#log(weight_infinity) -> log(fecundity), b15
+#log(weight_infinity) -> log(offspring_size), b16
+#log(length_infinity) -> log(aspect_ratio), b17
+#log(aspect_ratio) -> log(max_body_width), b18
+#log(aspect_ratio) -> log(max_body_depth), b19
+#log(aspect_ratio) -> log(lower_jaw_length), b20
+#log(aspect_ratio) -> log(min_caudal_pedoncule_depth), b21
+#
+#log(length_infinity) -> spawning_typeguarders, b22
+#log(length_infinity) -> spawning_typebearers, b23
+#spawning_typebearers <-> spawning_typeguarders, cov1
+#
+#"
+
+sem = FishBase_and_Morphometrics$text
 
 # Check family
 sd_j = apply(
@@ -43,20 +52,170 @@ sd_j = apply(
   MARGIN = 2,
   FUN = \(x) max(tapply(x, INDEX = rownames(data), FUN = sd), na.rm=TRUE)
 )
-family = ifelse( sd_j == -Inf, "fixed", "normal")
+#family = ifelse( sd_j == -Inf, "fixed", "normal")
+family = list(fixed(), gaussian())[ifelse( sd_j == -Inf, 1, 2 )]
+names(family) = colnames(data)
+for( i in 18:19 ){
+  family[[i]] = categorical( group = "spawning_type" )
+}
+for( i in 20:23 ){
+  family[[i]] = categorical( group = "habitat" )
+}
+for( i in 24:25 ){
+  family[[i]] = categorical( group = "feeding_mode" )
+}
+for( i in 26:29 ){
+  family[[i]] = categorical( group = "body_shape" )
+}
 
 fit = phylosem(
   sem = sem,
   tree = tree,
-  data = cbind(data, varying=NA),
+  data = cbind(data), #", varying=NA),
   family = family,
   control = phylosem_control(
     trace = 1,
-    newton_loops = 0
+    newton_loops = 0,
+    nlminb_loops = 1,
+    getsd = TRUE
   )
 )
 
-##############################
+fit$parhat$x_vj
+
+data.frame( FishBase_and_Morphometrics$SEM_model[1:76,1:2], L_z = FishBase_and_Morphometrics$ParHat$L_z )
+
+#############################
+# Morphometrics (small)
+#############################
+
+data(FishBase_and_Morphometrics, package = "FishLife")
+
+#vars = c( "temperature", "log(length_infinity)", "feeding_modeplanktivorous_or_other", "feeding_modemacrofauna" )
+vars = c(
+  "temperature", "log(length_infinity)",
+  #"spawning_typeguarders", "spawning_typebearers",
+  #"habitatbathymetric", "habitatbenthopelagic", "habitatreefassociated", "habitatpelagic",
+  #"feeding_modeplanktivorous_or_other", "feeding_modemacrofauna",
+  "body_shapeelongated", "body_shapeshort_and_or_deep", "body_shapeeellike", "body_shapeother"
+)
+data = FishBase_and_Morphometrics$Y_ij[,vars]
+tree = FishBase_and_Morphometrics$tree
+
+# prune tree for speed
+#tree = ape::collapse.singles(tree)
+#tree = keep.tip(
+#  phy = tree,
+#  tip = intersect( tree$tip.label, rownames(data) )
+#)
+
+#sem = paste( FishBase_and_Morphometrics$SEM_model[1:21,1], collapse = "\n" )
+sem = "
+temperature -> log(length_infinity), b1
+#temperature -> log(growth_coefficient), b2
+#temperature -> log(natural_mortality), b3
+#temperature -> log(weight_infinity), b4
+#log(length_infinity) -> log(growth_coefficient), b5
+#log(length_infinity) -> log(natural_mortality), b6
+#log(length_infinity) -> log(length_max), b7
+#log(length_infinity) -> log(weight_infinity), b8
+#log(natural_mortality) -> log(length_maturity), b9
+#log(natural_mortality) -> log(age_maturity), b10
+#log(natural_mortality) -> log(age_max), b11
+#log(growth_coefficient) -> log(length_maturity), b12
+#log(growth_coefficient) -> log(age_maturity), b13
+#log(weight_infinity) -> trophic_level, b14
+#log(weight_infinity) -> log(fecundity), b15
+#log(weight_infinity) -> log(offspring_size), b16
+#log(length_infinity) -> log(aspect_ratio), b17
+#log(aspect_ratio) -> log(max_body_width), b18
+#log(aspect_ratio) -> log(max_body_depth), b19
+#log(aspect_ratio) -> log(lower_jaw_length), b20
+#log(aspect_ratio) -> log(min_caudal_pedoncule_depth), b21
+
+#log(length_infinity) -> spawning_typeguarders, b22
+#log(length_infinity) -> spawning_typebearers, b23
+#spawning_typebearers <-> spawning_typeguarders, cov1
+
+#log(length_infinity) -> habitatpelagic, c1
+#log(length_infinity) -> habitatbenthopelagic, c2
+#log(length_infinity) -> habitatreefassociated, c3
+#log(length_infinity) -> habitatbathymetric, c4
+#habitatbenthopelagic <-> habitatpelagic, c5
+#habitatreefassociated <-> habitatpelagic, c6
+#habitatbathymetric <-> habitatpelagic, c7
+#habitatreefassociated <-> habitatbenthopelagic, c8
+#habitatbathymetric <-> habitatbenthopelagic, c9
+#habitatbathymetric <-> habitatreefassociated, c10
+
+#log(length_infinity) -> feeding_modeplanktivorous_or_other, d1
+#log(length_infinity) -> feeding_modemacrofauna, d2
+#feeding_modemacrofauna <-> feeding_modeplanktivorous_or_other, d3
+
+log(length_infinity) -> body_shapeelongated, e1
+log(length_infinity) -> body_shapeother, e2
+log(length_infinity) -> body_shapeshort_and_or_deep, e3
+log(length_infinity) -> body_shapeeellike, e4
+body_shapeother <-> body_shapeelongated, e5
+body_shapeshort_and_or_deep <-> body_shapeelongated, e6
+body_shapeeellike <-> body_shapeelongated, e7
+body_shapeshort_and_or_deep <-> body_shapeother, e8
+body_shapeeellike <-> body_shapeother, e9
+body_shapeeellike <-> body_shapeshort_and_or_deep, e10
+"
+
+#sem = FishBase_and_Morphometrics$text
+
+# Check family
+n_continuous = 2
+sd_j = apply(
+  data[,1:n_continuous],
+  MARGIN = 2,
+  FUN = \(x) max(tapply(x, INDEX = rownames(data), FUN = sd), na.rm=TRUE)
+)
+#family = ifelse( sd_j == -Inf, "fixed", "normal")
+family = list(fixed(), gaussian())[ifelse( sd_j == -Inf, 1, 2 )]
+#for( i in (length(family)+1:2) ){
+#  family[[i]] = categorical( group = "spawning_type" )
+#}
+#for( i in (length(family)+1:4) ){
+#  family[[i]] = categorical( group = "habitat" )
+#}
+#for( i in (length(family)+1:2) ){
+#  family[[i]] = categorical( group = "feeding_mode" )
+#}
+for( i in (length(family)+1:4) ){
+  family[[i]] = categorical( group = "body_shape" )
+}
+names(family) = colnames(data)
+
+fit = phylosem(
+  sem = sem,
+  tree = tree,
+  data = cbind(data), #", varying=NA),
+  family = family,
+  control = phylosem_control(
+    trace = 1,
+    newton_loops = 0,
+    nlminb_loops = 0,
+    getsd = FALSE
+  )
+)
+
+obj = fit$obj
+opt = nlminb( obj$par, obj$fn, obj$gr, control = list(trace = 1))
+rep = obj$report( obj$env$last.par.best )
+
+H = obj$env$spHess( obj$env$last.par.best, random = TRUE )
+
+fit$parhat$x_vj
+
+data.frame( FishBase_and_Morphometrics$SEM_model[1:76,1:2], L_z = FishBase_and_Morphometrics$ParHat$L_z )
+
+head( cbind(data, fit$rep$jnll_ig), 100 )
+
+
+#############################
 # SR module
 ##############################
 
