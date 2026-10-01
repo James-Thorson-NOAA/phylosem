@@ -666,7 +666,7 @@ coef.phylosem = function( object, standardized=FALSE, ... ){
   if( is.null(object$sdrep) | isTRUE(standardized) ){
     se_z = NA * beta_z
   }else{
-    se_z = diag(object$sdrep$cov.fixed)[names(object$sdrep$par.fixed)=="beta_z"]
+    se_z = sqrt(diag(object$sdrep$cov.fixed))[names(object$sdrep$par.fixed)=="beta_z"]
   }
 
   RAM = object$obj$env$data$RAM
