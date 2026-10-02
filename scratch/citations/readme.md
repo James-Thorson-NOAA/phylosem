@@ -1,5 +1,7 @@
 # Journal articles
 
+Beneat, M., Morell, A., Moullec, F., Barrier, N., Shin, Y.-J., \& Ernande, B. (2026). Filling a metabolism data gap in marine fish reveals dual pace-of-life and reproductive strategy axes (p. 2026.09.28.755002). bioRxiv. https://doi.org/10.64898/2026.09.28.755002
+
 Ferguson, S. H., Feyrer, L. J., Greef, E. de, \& Higdon, J. W. (2026). How toothed whales divide up the world: Phylogeny and ecology shape life-history strategies of odontocetes. Research Square. https://doi.org/10.21203/rs.3.rs-8535046/v1
 
 Oyston, J. W., Thorson, J. T., Knapp, A., Marek, R. D., \& Felice, R. N. (2026). Structural Equation Modeling Reveals How Allometry Shapes Integration in Avian Cranial Evolution. Integrative and Comparative Biology, 66, icag106. https://doi.org/10.1093/icb/icag106
