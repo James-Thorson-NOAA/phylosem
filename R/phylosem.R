@@ -669,31 +669,39 @@ coef.phylosem = function( object, standardized=FALSE, ... ){
     se_z = sqrt(diag(object$sdrep$cov.fixed))[names(object$sdrep$par.fixed)=="beta_z"]
   }
 
-  RAM = object$obj$env$data$RAM
-  if(nrow(RAM) != nrow(object$SEM_model)) stop("Check assumptions")
-  for( i in which(RAM[,1]==1) ){
+  # RAM has different length than beta_z
+  RAM_i = object$obj$env$data$RAM
+  if(nrow(RAM_i) != nrow(object$SEM_model)) stop("Check assumptions")
+
+  # Get betas and SEs for length of RAM_i
+  beta_i = beta_z[ifelse(RAM_i[,4]==0, NA, RAM_i[,4])]
+    beta_i = ifelse( is.na(beta_i), as.numeric(object$SEM_model[,3]), beta_i )
+  se_i = se_z[ifelse(RAM_i[,4]==0, NA, RAM_i[,4])]
+
+  # change for standardized values
+  for( i in which(RAM_i[,1]==1) ){
     if( isTRUE(standardized) ){
-      beta_z[i] = beta_z[i] * abs(beta_z[which( RAM[,'from']==RAM[i,'from'] & RAM[,'to']==RAM[i,'from'] )])
-      beta_z[i] = beta_z[i] / abs(beta_z[which( RAM[,'from']==RAM[i,'to'] & RAM[,'to']==RAM[i,'to'] )])
+      beta_i[i] = beta_i[i] * abs(beta_i[which( RAM_i[,'from']==RAM_i[i,'from'] & RAM_i[,'to']==RAM_i[i,'from'] )])
+      beta_i[i] = beta_i[i] / abs(beta_i[which( RAM_i[,'from']==RAM_i[i,'to'] & RAM_i[,'to']==RAM_i[i,'to'] )])
     }
   }
+
   # Report variances
-  for( i in which(RAM[,1]==2) ){
-    if( RAM[i,'from'] == RAM[i,'to'] ){
-      beta_z[i] = beta_z[i]^2
-      se_z[i] = NA
+  for( i in which(RAM_i[,1]==2) ){
+    if( RAM_i[i,'from'] == RAM_i[i,'to'] ){
+      beta_i[i] = beta_i[i]^2
+      se_i[i] = NA
     }
   }
-  SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
-    SEM_params = ifelse( is.na(SEM_params), as.numeric(object$SEM_model[,3]), SEM_params )
-  SEM_se = se_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
+
+  # Compile
   out = data.frame(
     Path = object$SEM_model[,1],
-    from = names(object$data)[RAM[,'from']],
-    to = names(object$data)[RAM[,'to']],
+    from = names(object$data)[RAM_i[,'from']],
+    to = names(object$data)[RAM_i[,'to']],
     Parameter = object$SEM_model[,2],
-    Estimate = SEM_params,
-    SE = SEM_se
+    Estimate = beta_i,
+    SE = se_i
   )
   return( out )
 }
