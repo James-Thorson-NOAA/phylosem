@@ -685,14 +685,15 @@ coef.phylosem = function( object, standardized=FALSE, ... ){
     }
   }
   SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
-  SEM_params = ifelse( is.na(SEM_params), as.numeric(object$SEM_model[,3]), SEM_params )
+    SEM_params = ifelse( is.na(SEM_params), as.numeric(object$SEM_model[,3]), SEM_params )
+  SEM_se = se_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
   out = data.frame(
     Path = object$SEM_model[,1],
     from = names(object$data)[RAM[,'from']],
     to = names(object$data)[RAM[,'to']],
     Parameter = object$SEM_model[,2],
     Estimate = SEM_params,
-    SE = se_z
+    SE = SEM_se
   )
   return( out )
 }
