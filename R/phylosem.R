@@ -76,6 +76,7 @@
 #' @importFrom igraph plot.igraph graph_from_data_frame with_sugiyama layout_ graph.adjacency clusters
 #' @importFrom ggraph ggraph geom_edge_arc create_layout rectangle geom_node_text theme_graph
 #' @importFrom ggplot2 aes
+#' @importFrom Matrix sparseMatrix solve Cholesky crossprod
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:

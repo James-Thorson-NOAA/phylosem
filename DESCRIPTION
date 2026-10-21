@@ -24,7 +24,8 @@ Imports:
     checkmate,
     ggplot2,
     igraph,
-    ggraph
+    ggraph,
+    Matrix
 Depends:
     TMB,
     R (>= 4.0.0),
