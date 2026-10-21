@@ -41,6 +41,7 @@ reference:
   contents:
   - summary.phylosem
   - plot.phylosem
+  - predict.phylosem
   - vcov.phylosem
   - print.phylosem
   - coef.phylosem

@@ -561,9 +561,14 @@ function( sem,
   if( isTRUE(control$getsd) ){
     if( isFALSE(control$quiet) ) message("Running sdreport")
     Hess_fixed = optimHess( par=results$opt$par, fn=obj$fn, gr=obj$gr )
-    results$sdrep = sdreport( obj,
-                              hessian.fixed=Hess_fixed,
-                              getJointPrecision = control$getJointPrecision )
+    results$sdrep = sdreport(
+      obj,
+      hessian.fixed = Hess_fixed,
+      getJointPrecision = control$getJointPrecision
+    )
+    if( isTRUE(control$getJointPrecision) ){
+      results$L_jointPrecision = Matrix::Cholesky( results$sdrep$jointPrecision, LDL = FALSE )
+    }
   }else{
     results$sdrep = NULL
   }
@@ -936,6 +941,88 @@ function( x,
   }
   return(invisible(out))
 }
+
+#' @title predict phylosem
+#'
+#' @description extract the predictive mean and covariance
+#'        for nodes or tips based on names from tree,
+#'        \code{x$tree$tip.label} and \code{x$tree$node.label}
+#'
+#' @param x Output from \code{\link{phylosem}}
+#' @param taxon taxon name (matched against tree) to predict traits
+#' @param what What output to calculate
+#'        (currently only the linear predictor is supported)
+#' @param se.fit Whether to report predictive covariance, where
+#'        \code{sqrt(diag(pred$cov))} is the standard errors
+#' @param include_fixed Whether to include uncertainty in fixed effects
+#'        when calculating predictive covariance
+#' @param ... Not used
+#'
+#' @return
+#' When \code{se.fit = FALSE}, it returns a vector of predicted traits.
+#' When \code{se.fit = TRUE}, it returns a list:
+#' \describe{
+#' \item{est}{vector of predicted traits}
+#' \item{cov}{matrix of predictive covariance among traits}
+#' }
+#'
+#' @method predict phylosem
+#' @export
+predict.phylosem <-
+function( x,
+          taxon,
+          what = c("p_g"),
+          se.fit = TRUE,
+          include_fixed = TRUE,
+          ... ){
+
+  what = match.arg(what)
+  vi = which( c(x$tree$tip.label,x$tree$node.label) == taxon )
+  if(length(vi)!=1) stop("`taxon` not found in `tree$tip.label` or `tree$node.label`")
+
+  # Return existing prediction
+  out = x$report$x_vj[vi,]
+  names(out) = colnames(x$data)
+
+  #
+  if( isTRUE(se.fit) ){
+    if( isTRUE(include_fixed) ){
+      if( is.null(fit$sdrep$jointPrecision) ){
+        stop("rerun with `getJointPrecision = TRUE`")
+      }
+      Q = fit$sdrep$jointPrecision
+      L = fit$L_jointPrecision
+    }else{
+      stop("Option not added yet")
+    }
+
+    # Extract cells of joint covariance including NA for fixed values that are missing
+    xmap_vj = matrix( as.numeric(x$tmb_inputs$map_list$x_vj), ncol = ncol(x$data), byrow = TRUE )
+    xmap_j = xmap_vj[vi,]
+
+    #
+    p = na.omit(xmap_j)
+    n <- nrow(Q)
+    k <- length(p)
+    E <- Matrix::sparseMatrix(i = p, j = seq_len(k), x = 1, dims = c(n, k))
+    #Z <- Matrix::solve(L, E, system = "A")      # Q^{-1} E
+    #V <- as.matrix(Z[p, , drop = FALSE])
+    PE <- Matrix::solve(L, E, system = "P")
+    W  <- Matrix::solve(L, PE, system = "L")   # forward solve only
+    V  <- as.matrix(Matrix::crossprod(W))
+    pfull = as.numeric(factor(xmap_j))
+    Vfull <- V[pfull, pfull]
+    Vfull[is.na(Vfull)] <- 0
+    dimnames(Vfull) = list( colnames(x$data), colnames(x$data) )
+    out = list(
+      est = out,
+      cov = Vfull
+    )
+  }
+
+  return( out )
+}
+
 
 #' @title predict values for new tip
 #'
