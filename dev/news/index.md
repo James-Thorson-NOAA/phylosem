@@ -23,6 +23,7 @@
   traits
 - start model-description vignette, add phylosem_citations.bib, and
   scratch/citations/readme.md
+- add `predict` S3 method
 
 ## phylosem 1.1.4
 
