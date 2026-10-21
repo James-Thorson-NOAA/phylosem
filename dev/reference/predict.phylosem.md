@@ -7,15 +7,17 @@ names from tree, `x$tree$tip.label` and `x$tree$node.label`
 
 ``` r
 # S3 method for class 'phylosem'
-predict(x, taxon, what = c("p_g"), se.fit = TRUE, include_fixed = TRUE, ...)
+predict(
+  object,
+  taxon,
+  what = c("p_g"),
+  se.fit = TRUE,
+  include_fixed = TRUE,
+  ...
+)
 ```
 
 ## Arguments
-
-- x:
-
-  Output from
-  [`phylosem`](https://james-thorson-noaa.github.io/phylosem/dev/reference/phylosem.md)
 
 - taxon:
 
@@ -39,6 +41,11 @@ predict(x, taxon, what = c("p_g"), se.fit = TRUE, include_fixed = TRUE, ...)
 - ...:
 
   Not used
+
+- x:
+
+  Output from
+  [`phylosem`](https://james-thorson-noaa.github.io/phylosem/dev/reference/phylosem.md)
 
 ## Value
 
