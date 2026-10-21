@@ -969,7 +969,7 @@ function( x,
 #' @method predict phylosem
 #' @export
 predict.phylosem <-
-function( x,
+function( object,
           taxon,
           what = c("p_g"),
           se.fit = TRUE,
@@ -977,12 +977,12 @@ function( x,
           ... ){
 
   what = match.arg(what)
-  vi = which( c(x$tree$tip.label,x$tree$node.label) == taxon )
+  vi = which( c(object$tree$tip.label,object$tree$node.label) == taxon )
   if(length(vi)!=1) stop("`taxon` not found in `tree$tip.label` or `tree$node.label`")
 
   # Return existing prediction
-  out = x$report$x_vj[vi,]
-  names(out) = colnames(x$data)
+  out = object$report$x_vj[vi,]
+  names(out) = colnames(object$data)
 
   #
   if( isTRUE(se.fit) ){
@@ -997,7 +997,7 @@ function( x,
     }
 
     # Extract cells of joint covariance including NA for fixed values that are missing
-    xmap_vj = matrix( as.numeric(x$tmb_inputs$map_list$x_vj), ncol = ncol(x$data), byrow = TRUE )
+    xmap_vj = matrix( as.numeric(object$tmb_inputs$map_list$x_vj), ncol = ncol(object$data), byrow = TRUE )
     xmap_j = xmap_vj[vi,]
 
     #
@@ -1013,7 +1013,7 @@ function( x,
     pfull = as.numeric(factor(xmap_j))
     Vfull <- V[pfull, pfull]
     Vfull[is.na(Vfull)] <- 0
-    dimnames(Vfull) = list( colnames(x$data), colnames(x$data) )
+    dimnames(Vfull) = list( colnames(object$data), colnames(object$data) )
     out = list(
       est = out,
       cov = Vfull

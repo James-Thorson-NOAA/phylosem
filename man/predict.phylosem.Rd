@@ -4,11 +4,16 @@
 \alias{predict.phylosem}
 \title{predict phylosem}
 \usage{
-\method{predict}{phylosem}(x, taxon, what = c("p_g"), se.fit = TRUE, include_fixed = TRUE, ...)
+\method{predict}{phylosem}(
+  object,
+  taxon,
+  what = c("p_g"),
+  se.fit = TRUE,
+  include_fixed = TRUE,
+  ...
+)
 }
 \arguments{
-\item{x}{Output from \code{\link{phylosem}}}
-
 \item{taxon}{taxon name (matched against tree) to predict traits}
 
 \item{what}{What output to calculate
@@ -21,6 +26,8 @@
 when calculating predictive covariance}
 
 \item{...}{Not used}
+
+\item{x}{Output from \code{\link{phylosem}}}
 }
 \value{
 When \code{se.fit = FALSE}, it returns a vector of predicted traits.
