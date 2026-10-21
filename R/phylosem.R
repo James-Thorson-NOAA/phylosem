@@ -949,7 +949,7 @@ function( x,
 #'        for nodes or tips based on names from tree,
 #'        \code{x$tree$tip.label} and \code{x$tree$node.label}
 #'
-#' @param x Output from \code{\link{phylosem}}
+#' @param object Output from \code{\link{phylosem}}
 #' @param taxon taxon name (matched against tree) to predict traits
 #' @param what What output to calculate
 #'        (currently only the linear predictor is supported)
