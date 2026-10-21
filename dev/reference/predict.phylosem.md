@@ -19,6 +19,11 @@ predict(
 
 ## Arguments
 
+- object:
+
+  Output from
+  [`phylosem`](https://james-thorson-noaa.github.io/phylosem/dev/reference/phylosem.md)
+
 - taxon:
 
   taxon name (matched against tree) to predict traits
@@ -41,11 +46,6 @@ predict(
 - ...:
 
   Not used
-
-- x:
-
-  Output from
-  [`phylosem`](https://james-thorson-noaa.github.io/phylosem/dev/reference/phylosem.md)
 
 ## Value
 

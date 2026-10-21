@@ -42,7 +42,7 @@ Data = data.frame(x=x,y=y_normal)[]
 start_time = Sys.time()
 plm_bm = phylolm::phylolm(y ~ 1 + x, data=Data, phy=tree, model="BM" )
 Sys.time() - start_time
-#> Time difference of 0.004529476 secs
+#> Time difference of 0.003690243 secs
 knitr::kable(summary(plm_bm)$coefficients, digits=3)
 ```
 
@@ -60,7 +60,7 @@ psem_bm = phylosem( sem = "x -> y, p",
           tree = tree,
           control = phylosem_control(quiet = TRUE) )
 Sys.time() - start_time
-#> Time difference of 0.1283219 secs
+#> Time difference of 0.09107709 secs
 knitr::kable(summary(psem_bm)$coefficients, digits=3)
 ```
 
@@ -79,7 +79,7 @@ knitr::kable(summary(psem_bm)$coefficients, digits=3)
 start_time = Sys.time()
 plm_ou = phylolm::phylolm(y ~ 1 + x, data=Data, phy=tree, model="OUrandomRoot" )
 Sys.time() - start_time
-#> Time difference of 0.01800704 secs
+#> Time difference of 0.01382709 secs
 
 start_time = Sys.time()
 psem_ou = phylosem( sem = "x -> y, p",
@@ -88,7 +88,7 @@ psem_ou = phylosem( sem = "x -> y, p",
           estimate_ou = TRUE,
           control = phylosem_control(quiet = TRUE) )
 Sys.time() - start_time
-#> Time difference of 0.1589203 secs
+#> Time difference of 0.1069336 secs
 
 knitr::kable(summary(psem_ou)$coefficients, digits=3)
 ```
@@ -129,7 +129,7 @@ knitr::kable(c( "phylolm_alpha"=plm_ou$optpar,
 start_time = Sys.time()
 plm_lambda = phylolm::phylolm(y ~ 1 + x, data=Data, phy=tree, model="lambda" )
 Sys.time() - start_time
-#> Time difference of 0.02824116 secs
+#> Time difference of 0.02187824 secs
 
 start_time = Sys.time()
 psem_lambda = phylosem( sem = "x -> y, p",
@@ -138,7 +138,7 @@ psem_lambda = phylosem( sem = "x -> y, p",
           estimate_lambda = TRUE,
           control = phylosem_control(quiet = TRUE) )
 Sys.time() - start_time
-#> Time difference of 0.1154695 secs
+#> Time difference of 0.07745767 secs
 
 knitr::kable(summary(psem_lambda)$coefficients, digits=3)
 ```
@@ -179,7 +179,7 @@ knitr::kable(c( "phylolm_lambda"=plm_lambda$optpar,
 start_time = Sys.time()
 plm_kappa = phylolm::phylolm(y ~ 1 + x, data=Data, phy=tree, model="kappa", lower.bound = 0, upper.bound = 3 )
 Sys.time() - start_time
-#> Time difference of 0.007339001 secs
+#> Time difference of 0.005553961 secs
 
 start_time = Sys.time()
 psem_kappa = phylosem( sem = "x -> y, p",
@@ -188,7 +188,7 @@ psem_kappa = phylosem( sem = "x -> y, p",
           estimate_kappa = TRUE,
           control = phylosem_control(quiet = TRUE) )
 Sys.time() - start_time
-#> Time difference of 0.1131947 secs
+#> Time difference of 0.07955742 secs
 
 knitr::kable(summary(psem_kappa)$coefficients, digits=3)
 ```
@@ -481,7 +481,7 @@ result <- est_DAG( DAG = dag,
                     model = "BM",
                     measurement_error = FALSE )
 Sys.time() - start_time
-#> Time difference of 0.008841038 secs
+#> Time difference of 0.007565022 secs
 plot(result)
 ```
 
@@ -503,7 +503,7 @@ psem = phylosem( sem = model,
           tree = rhino_tree,
           control = phylosem_control(quiet = TRUE) )
 Sys.time() - start_time
-#> Time difference of 0.6375508 secs
+#> Time difference of 0.5466464 secs
 plot( as_fitted_DAG(psem) )
 #> Warning: Cannot determine which variables of this model are binary, so the scale of its coefficients is unknown.
 #>   Paths into a binary variable are log odds ratios, while paths into a continuous variable are standardized regression coefficients.
@@ -562,7 +562,7 @@ model <- specifyEquations(text=equations, exog.variances=TRUE, endog.variances=T
 start_time = Sys.time()
 Sem <- sem(model, data=Data)
 Sys.time() - start_time
-#> Time difference of 0.008682251 secs
+#> Time difference of 0.006618261 secs
 
 # Specify star phylogeny
 tree_null = TreeTools::StarTree(n_obs)
@@ -576,7 +576,7 @@ psem = phylosem( data = Data,
           tree = tree_null,
           control = phylosem_control(quiet = TRUE) )
 Sys.time() - start_time
-#> Time difference of 0.04035926 secs
+#> Time difference of 0.0262475 secs
 ```
 
 We then compare estimated values for standardized coefficients
@@ -637,7 +637,7 @@ pars <- phylopars( trait_data = cbind(species=rownames(Data),Data),
                   phylo_correlated = TRUE,
                   pheno_correlated = FALSE)
 Sys.time() - start_time
-#> Time difference of 0.07395935 secs
+#> Time difference of 0.0582068 secs
 
 # Display estimates for missing values
 knitr::kable(cbind( "Estimate"=pars$anc_recon["t1",], "Var"=pars$anc_var["t1",] ), digits=3)
@@ -662,7 +662,7 @@ psem = phylosem( data = Data,
                  covs = "BM, NL, DD, RS, LS",
                  control = phylosem_control(quiet = TRUE) )
 Sys.time() - start_time
-#> Time difference of 0.4928122 secs
+#> Time difference of 0.3055508 secs
 
 # Display estimates for missing values
 knitr::kable(cbind(
