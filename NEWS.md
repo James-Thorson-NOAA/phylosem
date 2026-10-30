@@ -16,7 +16,8 @@
 * Add `categorical(group = [string])` family option, using a multivariate logit-link
   across levels of `[string]` for categorical traits
 * start model-description vignette, add phylosem_citations.bib, and scratch/citations/readme.md
-* add `predict` S3 method
+* add `predict.phylosem` S3 method
+* add `plot.predict_phylosem` S3 method
 
 # phylosem 1.1.4
 * removing `checkDepPackageVersion(dep_pkg="Matrix", this_pkg="TMB")` from `.onLoad()`

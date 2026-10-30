@@ -65,9 +65,9 @@
 #'      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 #'
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
-#' @importFrom stats rpois gaussian poisson binomial Gamma coef
+#' @importFrom stats rpois gaussian poisson binomial Gamma coef dnorm
 #' @importFrom sem sem pathDiagram specifyModel specifyEquations
-#' @importFrom checkmate assertNumeric assertCharacter
+#' @importFrom checkmate assertNumeric assertCharacter assertSubset
 #' @importFrom phylopath average_DAGs coef_plot
 #' @importFrom phylobase phylo4d
 #' @importFrom ape Ntip node.depth.edgelength rtree
@@ -77,6 +77,7 @@
 #' @importFrom ggraph ggraph geom_edge_arc create_layout rectangle geom_node_text theme_graph
 #' @importFrom ggplot2 aes
 #' @importFrom Matrix sparseMatrix solve Cholesky crossprod
+#' @importFrom graphics curve
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:
@@ -1021,7 +1022,57 @@ function( object,
     )
   }
 
+  class(out) = "predict_phylosem"
   return( out )
+}
+
+#' @title plot predictions from phylosem
+#'
+#' @description plot the predictive distribution for one or two variables
+#'   extracted using \code{\link{predict.phylosem}}
+#'
+#' @param object Output from \code{\link{phylosem}}
+#' @param ... Not used
+#'
+#' @method plot predict_phylosem
+#' @export
+plot.predict_phylosem <-
+function( object,
+          variables = 1,
+          ... ){
+
+  #
+  if( all(is.numeric(variables)) ){
+    variables = names(object$est)[variables]
+  }
+  assertCharacter(variables, any.missing = FALSE, min.len = 1, max.len = 2 )
+  assertSubset(variables, names(object$est))
+
+  # Avoid numerical singularity
+  cov = object$cov + 1e-12 * diag(nrow(object$cov))
+
+  if( length(variables) == 1 ){
+    curve(
+      dnorm(x, mean = object$est[variables], sd = sqrt(object$cov[variables,variables])),
+      from = object$est[variables] - 3 * sqrt(object$cov[variables,variables]),
+      to = object$est[variables] + 3 * sqrt(object$cov[variables,variables]),
+      ylab = "Prediction for mean",
+      xlab = variables
+    )
+  }else if( length(variables) == 2 ){
+    make_ellipse = function(mu, Sigma, n = 200) {   # p = 0.95,
+      theta = seq(0, 2*pi, length.out = n)
+      circle = rbind(cos(theta), sin(theta))  # * sqrt(qchisq(p, df = 2))
+      t(mu + t(chol(Sigma)) %*% circle)   # n x 2 matrix of points
+    }
+
+    # set up the plot region to fit the largest ellipse
+    plot(
+      make_ellipse(object$est[variables], cov[variables,variables]),
+      type = "l", xlab = variables[1], ylab = variables[2]
+    )
+    points(object$est[variables][1], object$est[variables][2], pch = 3)
+  }
 }
 
 

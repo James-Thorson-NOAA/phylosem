@@ -25,7 +25,8 @@ Imports:
     ggplot2,
     igraph,
     ggraph,
-    Matrix
+    Matrix,
+    graphics
 Depends:
     TMB,
     R (>= 4.0.0),
