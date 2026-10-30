@@ -979,7 +979,7 @@ function( object,
 
   what = match.arg(what)
   vi = which( c(object$tree$tip.label,object$tree$node.label) == taxon )
-  if(length(vi)!=1) stop("`taxon` not found in `tree$tip.label` or `tree$node.label`")
+  if(length(vi)!=1) stop("`taxon` not uniquely found in `tree$tip.label` or `tree$node.label`")
 
   # Return existing prediction
   out = object$report$x_vj[vi,]
@@ -998,7 +998,7 @@ function( object,
     }
 
     # Extract cells of joint covariance including NA for fixed values that are missing
-    xmap_vj = matrix( as.numeric(object$tmb_inputs$map_list$x_vj), ncol = ncol(object$data), byrow = TRUE )
+    xmap_vj = matrix( as.numeric(object$tmb_inputs$map_list$x_vj), ncol = ncol(object$data), byrow = FALSE )
     xmap_j = xmap_vj[vi,]
 
     #
