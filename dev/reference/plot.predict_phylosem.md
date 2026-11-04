@@ -8,7 +8,7 @@ using
 
 ``` r
 # S3 method for class 'predict_phylosem'
-plot(x, y, variables = 1, data, data_labels, ...)
+plot(x, y, variables = 1, data, data_labels, distance_threshold = 0, tree, ...)
 ```
 
 ## Arguments
@@ -34,6 +34,15 @@ plot(x, y, variables = 1, data, data_labels, ...)
 
   For each row of `data`, listing the corresponding name from
   `tree$tip.label`. Default pulls `data_labels` from `rownames(data)`
+
+- distance_threshold:
+
+  distance from taxa to use when plotting data
+
+- tree:
+
+  phylogenetic structure, using class
+  [`as.phylo`](https://rdrr.io/pkg/ape/man/as.phylo.html)
 
 - ...:
 
