@@ -152,6 +152,7 @@ node_to_tip_dist <- function(phy, node) {
 #' @param y Not used
 #' @param variables which variables to plot (can only plot one or two at a time)
 #' @param data optional data.frame of fitted data e.g., \code{fit$data}
+#' @param distance_threshold distance from taxa to use when plotting data
 #' @param ... Not used
 #'
 #' @method plot predict_phylosem
@@ -175,17 +176,20 @@ function( x,
   taxa = dimnames(x$cov)[[3]]
 
   #
-  if( !missing(data) & !missing(data_labels) & !missing(tree) ){
-    which_rows = lapply(
-      taxa,
-      FUN = \(taxon){
-        D = node_to_tip_dist( tree, taxon )
-        near = tree$tip.label[which(D <= distance_threshold)]
-        which(data_labels %in% near)
-      }
-    )
-    #which_rows = which(data_labels %in% taxa)
-    obs = data[ unlist(which_rows), variables]
+  if( !missing(data) & !missing(data_labels) ){
+    if( missing(tree) ){
+      which_rows = which(data_labels %in% taxa)
+    }else{
+      which_rows = lapply(
+        taxa,
+        FUN = \(taxon){
+          D = node_to_tip_dist( tree, taxon )
+          near = tree$tip.label[which(D <= distance_threshold)]
+          which(data_labels %in% near)
+        }
+      )
+    }
+    obs = data[ unlist(which_rows), variables ]
     obs_labels = rep( taxa, each = sapply(which_rows,length) )
   }else{
     obs = data.frame(Map(function(.) numeric(0), variables))
