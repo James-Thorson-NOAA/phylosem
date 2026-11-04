@@ -4,10 +4,19 @@
 \alias{plot.predict_phylosem}
 \title{plot predictions from phylosem}
 \usage{
-\method{plot}{predict_phylosem}(object, variables = 1, ...)
+\method{plot}{predict_phylosem}(x, y, variables = 1, data, data_labels, ...)
 }
 \arguments{
-\item{object}{Output from \code{\link{phylosem}}}
+\item{x}{Output from \code{\link{predict.phylosem}}}
+
+\item{y}{Not used}
+
+\item{variables}{which variables to plot (can only plot one or two at a time)}
+
+\item{data}{optional data.frame of fitted data e.g., \code{fit$data}}
+
+\item{data_labels}{For each row of \code{data}, listing the corresponding name from
+\code{tree$tip.label}.  Default pulls \code{data_labels} from \code{rownames(data)}}
 
 \item{...}{Not used}
 }

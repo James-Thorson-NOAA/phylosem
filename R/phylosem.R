@@ -77,7 +77,8 @@
 #' @importFrom ggraph ggraph geom_edge_arc create_layout rectangle geom_node_text theme_graph
 #' @importFrom ggplot2 aes
 #' @importFrom Matrix sparseMatrix solve Cholesky crossprod
-#' @importFrom graphics curve
+#' @importFrom viridisLite viridis
+#' @importFrom graphics abline
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:
@@ -518,12 +519,15 @@ function( sem,
                         profile = control$profile,
                         DLL = "phylosem" )
   if(control$quiet==FALSE) list_parameters(obj)
-  results = list( "data" = data,
-                  "SEM_model" = SEM_model,
-                  "obj" = obj,
-                  "call" = match.call(),
-                  "tree" = tree,
-                  "tmb_inputs" = tmb_inputs )
+  results = list(
+    "data" = data,
+    "data_labels" = data_labels,
+    "SEM_model" = SEM_model,
+    "obj" = obj,
+    "call" = match.call(),
+    "tree" = tree,
+    "tmb_inputs" = tmb_inputs
+  )
 
   # Export stuff
   if( control$run_model==FALSE ){
@@ -951,7 +955,7 @@ function( x,
 #'        \code{x$tree$tip.label} and \code{x$tree$node.label}
 #'
 #' @param object Output from \code{\link{phylosem}}
-#' @param taxon taxon name (matched against tree) to predict traits
+#' @param taxon vector of taxon names (matched against tree) to predict traits
 #' @param what What output to calculate
 #'        (currently only the linear predictor is supported)
 #' @param se.fit Whether to report predictive covariance, where
@@ -961,11 +965,11 @@ function( x,
 #' @param ... Not used
 #'
 #' @return
-#' When \code{se.fit = FALSE}, it returns a vector of predicted traits.
+#' When \code{se.fit = FALSE}, it returns a matrix of predicted traits (rows) by taxon (column).
 #' When \code{se.fit = TRUE}, it returns a list:
 #' \describe{
-#' \item{est}{vector of predicted traits}
-#' \item{cov}{matrix of predictive covariance among traits}
+#' \item{est}{matrix of predicted traits}
+#' \item{cov}{array of predictive covariance among traits (1st and 2nd dims) by taxon (3rd dim)}
 #' }
 #'
 #' @method predict phylosem
@@ -979,46 +983,61 @@ function( object,
           ... ){
 
   what = match.arg(what)
-  vi = which( c(object$tree$tip.label,object$tree$node.label) == taxon )
-  if(length(vi)!=1) stop("`taxon` not uniquely found in `tree$tip.label` or `tree$node.label`")
+  vi = match( taxon, c(object$tree$tip.label,object$tree$node.label) )
+  ni = length(vi)
+  nj = ncol(object$data)
+  if(length(vi) != length(taxon)) stop("`taxon` not found in `tree$tip.label` or `tree$node.label`")
 
   # Return existing prediction
-  out = object$report$x_vj[vi,]
-  names(out) = colnames(object$data)
+  out = t(object$report$x_vj[vi,,drop=FALSE])
+  dimnames(out) = list( variable = colnames(object$data), taxon = taxon )
 
   #
   if( isTRUE(se.fit) ){
     if( isTRUE(include_fixed) ){
-      if( is.null(fit$sdrep$jointPrecision) ){
+      if( is.null(object$sdrep$jointPrecision) ){
         stop("rerun with `getJointPrecision = TRUE`")
       }
-      Q = fit$sdrep$jointPrecision
-      L = fit$L_jointPrecision
+      Q_nn = object$sdrep$jointPrecision
+      L_nn = object$L_jointPrecision
     }else{
       stop("Option not added yet")
     }
 
     # Extract cells of joint covariance including NA for fixed values that are missing
-    xmap_vj = matrix( as.numeric(object$tmb_inputs$map_list$x_vj), ncol = ncol(object$data), byrow = FALSE )
-    xmap_j = xmap_vj[vi,]
+    xmap_vj = matrix( as.numeric(object$tmb_inputs$map_list$x_vj), ncol = nj, byrow = FALSE )
+    xmap_j = as.vector(xmap_vj[vi,])
 
-    #
+    # Indexing
     p = na.omit(xmap_j)
-    n <- nrow(Q)
-    k <- length(p)
-    E <- Matrix::sparseMatrix(i = p, j = seq_len(k), x = 1, dims = c(n, k))
-    #Z <- Matrix::solve(L, E, system = "A")      # Q^{-1} E
-    #V <- as.matrix(Z[p, , drop = FALSE])
-    PE <- Matrix::solve(L, E, system = "P")
-    W  <- Matrix::solve(L, PE, system = "L")   # forward solve only
-    V  <- as.matrix(Matrix::crossprod(W))
+    n = nrow(Q_nn)
+    nk = length(p)
+
+    # Do one forward solve
+    E_nk = Matrix::sparseMatrix(i = p, j = seq_len(nk), x = 1, dims = c(n, nk))
+    PE_nk = Matrix::solve(L_nn, E_nk, system = "P")
+    W_nk  = Matrix::solve(L_nn, PE_nk, system = "L")
+    V_kk  = as.matrix(Matrix::crossprod(W_nk))
+
+    # Add zeros for fixed variables
     pfull = as.numeric(factor(xmap_j))
-    Vfull <- V[pfull, pfull]
-    Vfull[is.na(Vfull)] <- 0
-    dimnames(Vfull) = list( colnames(object$data), colnames(object$data) )
+    Vfull = V_kk[pfull, pfull]
+    Vfull[is.na(Vfull)] = 0
+
+    # Make array
+    V = array(
+      sapply(seq_len(ni), function(i) {
+        idx = seq( nj*(i - 1) + 1, i * nj )
+        Vfull[idx, idx]
+      }),
+      dim = c(nj, nj, ni)
+    )
+    dimnames(V) = list( variable = colnames(object$data), variable = colnames(object$data), taxon = taxon )
+
+    # Add to output
     out = list(
       est = out,
-      cov = Vfull
+      cov = V
     )
   }
 
@@ -1031,33 +1050,72 @@ function( object,
 #' @description plot the predictive distribution for one or two variables
 #'   extracted using \code{\link{predict.phylosem}}
 #'
-#' @param object Output from \code{\link{phylosem}}
+#' @inheritParams phylosem
+#'
+#' @param x Output from \code{\link{predict.phylosem}}
+#' @param y Not used
+#' @param variables which variables to plot (can only plot one or two at a time)
+#' @param data optional data.frame of fitted data e.g., \code{fit$data}
 #' @param ... Not used
 #'
 #' @method plot predict_phylosem
 #' @export
 plot.predict_phylosem <-
-function( object,
+function( x,
+          y,
           variables = 1,
+          data,
+          data_labels,
           ... ){
 
   #
   if( all(is.numeric(variables)) ){
-    variables = names(object$est)[variables]
+    variables = rownames(x$est)[variables]
   }
   assertCharacter(variables, any.missing = FALSE, min.len = 1, max.len = 2 )
-  assertSubset(variables, names(object$est))
+  assertSubset(variables, rownames(x$est) )
+  taxon = dimnames(x$cov)[[3]]
+
+  #
+  if( !missing(data) & !missing(data_labels) ){
+    which_rows = which(data_labels %in% taxon)
+    obs = data[ which_rows, variables]
+    obs_labels = data_labels[ which_rows ]
+  }else{
+    obs = data.frame(Map(function(.) numeric(0), variables))
+    obs_labels = vector(length=0)
+  }
+
 
   # Avoid numerical singularity
-  cov = object$cov + 1e-12 * diag(nrow(object$cov))
+  nj = dim(x$cov)[[1]]
+  ni = dim(x$cov)[[3]]
+  cov = x$cov + 1e-12 * diag(nj) %o% rep(1,ni)
 
   if( length(variables) == 1 ){
-    curve(
-      dnorm(x, mean = object$est[variables], sd = sqrt(object$cov[variables,variables])),
-      from = object$est[variables] - 3 * sqrt(object$cov[variables,variables]),
-      to = object$est[variables] + 3 * sqrt(object$cov[variables,variables]),
-      ylab = "Prediction for mean",
+    from = x$est[variables,] - 3 * sqrt(x$cov[variables,variables,])
+    to = x$est[variables,] + 3 * sqrt(x$cov[variables,variables,])
+    xval = seq( min(c(from,obs[[1]]),na.rm=TRUE), max(c(to,obs[[1]]),na.rm=TRUE), length = 1000 )
+    yval = sapply(
+      seq_len(ni),
+      function(i) dnorm(xval, x$est[variables,i], sqrt(x$cov[variables,variables,i]) )
+    )
+
+    # plot densities
+    matplot(
+      x = xval,
+      y = yval,
+      type = "l", lty = "solid",
+      col = viridisLite::viridis(n = ni),
+      ylab = "Distribution for mean",
       xlab = variables
+    )
+    legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxon, bty = "n" )
+
+    # Plot data
+    points(
+      x = obs, y = obs*0,
+      col = viridisLite::viridis(n = ni)[match(obs_labels,taxon)]
     )
   }else if( length(variables) == 2 ){
     make_ellipse = function(mu, Sigma, n = 200) {   # p = 0.95,
@@ -1067,11 +1125,36 @@ function( object,
     }
 
     # set up the plot region to fit the largest ellipse
-    plot(
-      make_ellipse(object$est[variables], cov[variables,variables]),
-      type = "l", xlab = variables[1], ylab = variables[2]
+    ellipse_i = array(NA, dim = c(200,2,ni))
+    for(i in seq_len(ni)){
+      ellipse_i[,,i] = make_ellipse(x$est[variables,i], cov[variables,variables,i])
+    }
+    xylim = apply( ellipse_i, MARGIN = 2, FUN = range ) # rows: min, max.  cols: x, y
+
+    # Plot stuff
+    plot( 1, type = "n", xlim = xylim[,1], ylim = xylim[,2], xlab = variables[1], ylab = variables[2] )
+    for(i in seq_len(ni)){
+      lines(
+        ellipse_i[,,i],
+        col = viridisLite::viridis(n = ni)[i]
+      )
+      points(
+        x$est[variables[1],i],
+        x$est[variables[2],i],
+        pch = 3, col = viridisLite::viridis(n = ni)[i]
+      )
+    }
+    legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxon, bty = "n" )
+
+    # Plot data
+    points(
+      x = rep(xylim[1,1], nrow(obs)), y = obs[,2],
+      col = viridisLite::viridis(n = ni)[match(obs_labels,taxon)]
     )
-    points(object$est[variables][1], object$est[variables][2], pch = 3)
+    points(
+      x = obs[,1], y = rep(xylim[1,2], nrow(obs)),
+      col = viridisLite::viridis(n = ni)[match(obs_labels,taxon)]
+    )
   }
 }
 

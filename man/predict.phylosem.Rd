@@ -16,7 +16,7 @@
 \arguments{
 \item{object}{Output from \code{\link{phylosem}}}
 
-\item{taxon}{taxon name (matched against tree) to predict traits}
+\item{taxon}{vector of taxon names (matched against tree) to predict traits}
 
 \item{what}{What output to calculate
 (currently only the linear predictor is supported)}
@@ -30,11 +30,11 @@ when calculating predictive covariance}
 \item{...}{Not used}
 }
 \value{
-When \code{se.fit = FALSE}, it returns a vector of predicted traits.
+When \code{se.fit = FALSE}, it returns a matrix of predicted traits (rows) by taxon (column).
 When \code{se.fit = TRUE}, it returns a list:
 \describe{
-\item{est}{vector of predicted traits}
-\item{cov}{matrix of predictive covariance among traits}
+\item{est}{matrix of predicted traits}
+\item{cov}{array of predictive covariance among traits (1st and 2nd dims) by taxon (3rd dim)}
 }
 }
 \description{
