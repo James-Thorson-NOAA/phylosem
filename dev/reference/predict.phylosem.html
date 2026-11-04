@@ -72,7 +72,7 @@
 
 
 <dt id="arg-taxon">taxon<a class="anchor" aria-label="anchor" href="#arg-taxon"></a></dt>
-<dd><p>taxon name (matched against tree) to predict traits</p></dd>
+<dd><p>vector of taxon names (matched against tree) to predict traits</p></dd>
 
 
 <dt id="arg-what">what<a class="anchor" aria-label="anchor" href="#arg-what"></a></dt>
@@ -96,12 +96,12 @@ when calculating predictive covariance</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>When <code>se.fit = FALSE</code>, it returns a vector of predicted traits.
+    <p>When <code>se.fit = FALSE</code>, it returns a matrix of predicted traits (rows) by taxon (column).
 When <code>se.fit = TRUE</code>, it returns a list:</p><dl><dt>est</dt>
-<dd><p>vector of predicted traits</p></dd>
+<dd><p>matrix of predicted traits</p></dd>
 
 <dt>cov</dt>
-<dd><p>matrix of predictive covariance among traits</p></dd>
+<dd><p>array of predictive covariance among traits (1st and 2nd dims) by taxon (3rd dim)</p></dd>
 
 
 </dl></div>

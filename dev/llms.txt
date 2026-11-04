@@ -68,6 +68,8 @@ Tools for interpreting output.
   : Plot phylosem
 - [`predict(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/predict.phylosem.md)
   : predict phylosem
+- [`plot(`*`<predict_phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/plot.predict_phylosem.md)
+  : plot predictions from phylosem
 - [`vcov(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/vcov.phylosem.md)
   : Extract Variance-Covariance Matrix
 - [`print(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/print.phylosem.md)

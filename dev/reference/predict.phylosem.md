@@ -26,7 +26,7 @@ predict(
 
 - taxon:
 
-  taxon name (matched against tree) to predict traits
+  vector of taxon names (matched against tree) to predict traits
 
 - what:
 
@@ -49,13 +49,14 @@ predict(
 
 ## Value
 
-When `se.fit = FALSE`, it returns a vector of predicted traits. When
-`se.fit = TRUE`, it returns a list:
+When `se.fit = FALSE`, it returns a matrix of predicted traits (rows) by
+taxon (column). When `se.fit = TRUE`, it returns a list:
 
 - est:
 
-  vector of predicted traits
+  matrix of predicted traits
 
 - cov:
 
-  matrix of predictive covariance among traits
+  array of predictive covariance among traits (1st and 2nd dims) by
+  taxon (3rd dim)
