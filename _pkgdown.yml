@@ -42,6 +42,7 @@ reference:
   - summary.phylosem
   - plot.phylosem
   - predict.phylosem
+  - plot.predict_phylosem
   - vcov.phylosem
   - print.phylosem
   - coef.phylosem
