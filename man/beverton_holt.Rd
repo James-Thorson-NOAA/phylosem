@@ -11,7 +11,7 @@ beverton_holt(
   unfished_spawners_per_recruit,
   natural_mortality,
   variation_in_compensation = FALSE,
-  form = c("MAER", "MLER"),
+  form = c("MLER", "MAER"),
   SD_logb = NA
 )
 }
@@ -32,6 +32,14 @@ and \code{spawners} for each stock, where \code{names(unfished_spawners_per_recr
 identifies the stock}
 
 \item{natural_mortality}{annual adult natural mortality rate for each stock}
+
+\item{variation_in_compensation}{whether phi varies among populations within tips}
+
+\item{form}{whether phi represents maximum lifetime or maximum annual
+excess replacement}
+
+\item{SD_logb}{the SD for a normally distributed penalty on curvature parameter
+for the Beverton-Holt function (NA ignores such a penalty)}
 }
 \description{
 Provide observed stock biomass and recruitment time-series data,

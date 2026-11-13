@@ -18,6 +18,11 @@
 #'   and \code{spawners} for each stock, where \code{names(unfished_spawners_per_recruit)}
 #'   identifies the stock
 #' @param natural_mortality annual adult natural mortality rate for each stock
+#' @param variation_in_compensation whether phi varies among populations within tips
+#' @param form whether phi represents maximum lifetime or maximum annual
+#'   excess replacement
+#' @param SD_logb the SD for a normally distributed penalty on curvature parameter
+#'   for the Beverton-Holt function (NA ignores such a penalty)
 #'
 #' @export
 beverton_holt =
@@ -27,7 +32,7 @@ function( species,
           unfished_spawners_per_recruit,
           natural_mortality,
           variation_in_compensation = FALSE,
-          form = c("MAER", "MLER"),
+          form = c("MLER", "MAER"),
           SD_logb = NA ){
 
   form = match.arg(form)

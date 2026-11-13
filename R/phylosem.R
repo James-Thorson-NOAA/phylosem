@@ -65,7 +65,7 @@
 #'      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 #'
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
-#' @importFrom stats rpois gaussian poisson binomial Gamma coef dnorm
+#' @importFrom stats rpois gaussian poisson binomial Gamma coef dnorm pchisq
 #' @importFrom sem sem pathDiagram specifyModel specifyEquations
 #' @importFrom checkmate assertNumeric assertCharacter assertSubset
 #' @importFrom phylopath average_DAGs coef_plot
@@ -78,7 +78,7 @@
 #' @importFrom ggplot2 aes
 #' @importFrom Matrix sparseMatrix solve Cholesky crossprod
 #' @importFrom viridisLite viridis
-#' @importFrom graphics abline
+#' @importFrom graphics abline legend lines matplot points
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:
