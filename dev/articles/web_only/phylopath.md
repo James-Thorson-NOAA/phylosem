@@ -135,7 +135,7 @@ For *phylosem*, we can extract the AIC values for each model:
 ``` r
 
 sapply(result_ps, AIC) |> sort()
-#>     five    eight     four      six     nine      two    seven      one 
+#>     five    eight      six     four     nine      two    seven      one 
 #> 1680.150 1730.808 1732.720 1732.720 1732.739 1733.104 1734.716 1735.057 
 #>    three 
 #> 1736.103

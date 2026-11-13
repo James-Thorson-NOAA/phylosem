@@ -15,7 +15,7 @@ beverton_holt(
   unfished_spawners_per_recruit,
   natural_mortality,
   variation_in_compensation = FALSE,
-  form = c("MAER", "MLER"),
+  form = c("MLER", "MAER"),
   SD_logb = NA
 )
 ```
@@ -47,3 +47,17 @@ beverton_holt(
 - natural_mortality:
 
   annual adult natural mortality rate for each stock
+
+- variation_in_compensation:
+
+  whether phi varies among populations within tips
+
+- form:
+
+  whether phi represents maximum lifetime or maximum annual excess
+  replacement
+
+- SD_logb:
+
+  the SD for a normally distributed penalty on curvature parameter for
+  the Beverton-Holt function (NA ignores such a penalty)

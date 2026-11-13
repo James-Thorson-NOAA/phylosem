@@ -62,7 +62,7 @@
 <span>  <span class="va">unfished_spawners_per_recruit</span>,</span>
 <span>  <span class="va">natural_mortality</span>,</span>
 <span>  variation_in_compensation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  form <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MAER"</span>, <span class="st">"MLER"</span><span class="op">)</span>,</span>
+<span>  form <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MLER"</span>, <span class="st">"MAER"</span><span class="op">)</span>,</span>
 <span>  SD_logb <span class="op">=</span> <span class="cn">NA</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -96,6 +96,20 @@ identifies the stock</p></dd>
 
 <dt id="arg-natural-mortality">natural_mortality<a class="anchor" aria-label="anchor" href="#arg-natural-mortality"></a></dt>
 <dd><p>annual adult natural mortality rate for each stock</p></dd>
+
+
+<dt id="arg-variation-in-compensation">variation_in_compensation<a class="anchor" aria-label="anchor" href="#arg-variation-in-compensation"></a></dt>
+<dd><p>whether phi varies among populations within tips</p></dd>
+
+
+<dt id="arg-form">form<a class="anchor" aria-label="anchor" href="#arg-form"></a></dt>
+<dd><p>whether phi represents maximum lifetime or maximum annual
+excess replacement</p></dd>
+
+
+<dt id="arg-sd-logb">SD_logb<a class="anchor" aria-label="anchor" href="#arg-sd-logb"></a></dt>
+<dd><p>the SD for a normally distributed penalty on curvature parameter
+for the Beverton-Holt function (NA ignores such a penalty)</p></dd>
 
 </dl></div>
 
