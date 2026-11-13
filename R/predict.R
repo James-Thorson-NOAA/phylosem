@@ -108,7 +108,7 @@ node_to_tip_dist <- function(phy, node) {
   el   <- phy$edge.length
 
   # Put edges in an order where parents are processed before children
-  phy <- ape::reorder(phy, "cladewise")
+  phy <- ape::reorder.phylo(phy, "cladewise")
   anc <- phy$edge[, 1]; desc <- phy$edge[, 2]; el <- phy$edge.length
 
   parent  <- integer(Nn)
@@ -182,7 +182,7 @@ function( x,
     }else{
       which_rows = lapply(
         taxa,
-        FUN = \(taxon){
+        FUN = function(taxon){
           D = node_to_tip_dist( tree, taxon )
           near = tree$tip.label[which(D <= distance_threshold)]
           which(data_labels %in% near)

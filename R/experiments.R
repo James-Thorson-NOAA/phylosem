@@ -6,31 +6,40 @@
 #'   to allow estimating maximum annual spawners per spawner (MASPS), which can then
 #'   be converted to steepness.
 #'
+#' @param species taxon label for each stock, matching \code{tree$tip.label} in
+#'   the phylogenetic tree that will be used for analysis, where \code{names(species)}
+#'   identifies the stock
 #' @param recruits Recruitment values for multiple stocks in a single named vector,
 #'   with \code{names(recruits)} identifying the stock
 #' @param spawners Spawning size (biomass or numbers) for multiple stocks in a
 #'   named vector, where \code{spawners[1]} corresponds to the spawners that
 #'   results in \code{recruits[1]}
-#' @param unfished_spawners_pre_recruit SPR0 with units matching \code{recruits}
-#'   and \code{spawners} for each stock, where \code{names(unfished_spawners_pre_recruit)}
+#' @param unfished_spawners_per_recruit SPR0 with units matching \code{recruits}
+#'   and \code{spawners} for each stock, where \code{names(unfished_spawners_per_recruit)}
 #'   identifies the stock
 #' @param natural_mortality annual adult natural mortality rate for each stock
-#' @param species taxon label for each stock, matching \code{tree$tip.label} in
-#'   the phylogenetic tree that will be used for analysis
 #'
 #' @export
 beverton_holt =
-function( recruits,
+function( species,
+          recruits,
           spawners,
-          unfished_spawners_pre_recruit,
+          unfished_spawners_per_recruit,
           natural_mortality,
-          species ){
+          variation_in_compensation = FALSE,
+          form = c("MAER", "MLER"),
+          SD_logb = NA ){
 
+  form = match.arg(form)
+  assertCharacter( species, names = "named" )
   assertNumeric( recruits, names = "named", finite = TRUE )
+  assertSubset( names(recruits), choices = names(species) )
   assertNumeric( spawners, names = "named", len = length(recruits), finite = TRUE )
-  assertNumeric( unfished_spawners_pre_recruit, names = "named", finite = TRUE )
-  assertNumeric( natural_mortality, names = "named", len = length(unfished_spawners_pre_recruit), finite = TRUE )
-  assertCharacter( species, names = "named", len = length(unfished_spawners_pre_recruit) )
+  assertSubset( names(spawners), choices = names(species) )
+  assertNumeric( unfished_spawners_per_recruit, names = "named", len = length(species), finite = TRUE )
+  assertSubset( names(unfished_spawners_per_recruit), choices = names(species) )
+  assertNumeric( natural_mortality, names = "named", len = length(species), finite = TRUE )
+  assertSubset( names(natural_mortality), choices = names(species) )
 
   time_data = data.frame(
     population = names(recruits),
@@ -39,18 +48,23 @@ function( recruits,
   )
 
   population_data = merge(
-    data.frame( population = names(unfished_spawners_pre_recruit), SPR0 = unfished_spawners_pre_recruit),
-    data.frame( population = names(natural_mortality), M = natural_mortality)
+    data.frame( population = names(unfished_spawners_per_recruit), SPR0 = unfished_spawners_per_recruit),
+    data.frame( population = names(natural_mortality), M = natural_mortality),
+    sort = FALSE   # Keep data.frame in original row order
   )
   population_data = merge(
     data.frame( population = names(species), species = species),
-    population_data
+    population_data,
+    sort = FALSE  # Keep data.frame in original row order
   )
 
   out = list(
     type = "BH",
     time_data = time_data,
-    population_data = population_data
+    population_data = population_data,
+    variation_in_compensation = variation_in_compensation,
+    form = form,
+    SD_logb = SD_logb
   )
   return(out)
 }

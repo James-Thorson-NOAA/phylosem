@@ -395,43 +395,81 @@ Type objective_function<Type>::operator() ()
   for(int i=0; i<n_i; i++){
   for(int g=0; g<n_g; g++){
     if(R_FINITE(asDouble(sumobs_ig(i,g)))){
-      if( sumobs_ig(i,g) == 0 ){
-        jnll_ig(i,g) = -1.0 * log( 1.0 / (1.0 + sumpred_vg(v_i(i),g)));
+      if( sumobs_ig(i,g) == 0 ){    // Include term only if this is the level for the factor
+        jnll_ig(i,g) -= log( 1.0 / (1.0 + sumpred_vg(v_i(i),g)));
       }
     }
   }}
   jnll += jnll_ig.sum();
 
   if( experiments_type == "BH" ){
-    DATA_INTEGER( j_logMASPS );
-    DATA_IVECTOR( v_p );
-    DATA_IVECTOR( p_k );
+    // Extra data
+    DATA_INTEGER( j_phi );  // R-index for column of phi
+    DATA_IVECTOR( v_p );    // R-index for vertex for each population
+    DATA_IVECTOR( p_k );    // R-index for population for each SR sample
     DATA_MATRIX( W_kz ); // W_kz.col(0)=R;   W_kz.col(1)=S
     DATA_MATRIX( U_pz ); // U_pz.col(0)=log_SPR0;   U_pz.col(1)=log_M
+    DATA_INTEGER( variation_in_compensation ); // 0: no variation.  1: yes variation
+    DATA_STRING( form ); // "MAER" (maximum annual excess replacement) or "MLER" (maximum lifetime excess replacement)
+    DATA_SCALAR( SD_logb );
+    int n_k = W_kz.rows();   // Number of SR samples
+    int n_p = U_pz.rows();   // Number of populations
+
+    // Extra parameters
     PARAMETER_VECTOR( logsigmaR_p );
     PARAMETER_VECTOR( logb_p );
-    int n_k = W_kz.rows();
-    int n_p = U_pz.rows();
 
-    vector<Type> MLSPS_p( n_p );
-    vector<Type> loga_p( n_p );
+    // Denominator, to convert annual to lifetime if necessary
+    vector<Type> denom_p( n_p );
     for( int p=0; p < n_p; p++ ){
-      // Using 1 + value to ensure MLSPS > 1, matching FishLife v2
-      MLSPS_p(p) = 1.0 + exp(x_vj( v_p(p)-1, j_logMASPS-1 )) / (1 - exp(-1 * exp(U_pz(p,1))));
-      loga_p(p) = log(MLSPS_p(p)) - U_pz(p,0);
+      if( form == "MAER" ){
+        denom_p(p) = 1.0 - exp(-1 * exp(U_pz(p,1)));
+      }else{
+        denom_p(p) = 1.0;
+      }
+    }
+
+    // Stock-specific variation in maximum lifetime replacement rate
+    // Using 1 + value to ensure MLRR > 1, matching FishLife v2 (i.e., Thorson 2020)
+    vector<Type> MLRR_p( n_p );
+    if( variation_in_compensation == 1 ){
+      PARAMETER_VECTOR( phi_p );   // Stock-specific variation in density dependence, log(MAER) or log(MLER)
+      PARAMETER( logsigmaphi );
+      for( int p=0; p < n_p; p++ ){
+        jnll -= dnorm( phi_p(p), x_vj( v_p(p)-1, j_phi-1 ), exp(logsigmaphi), true);
+        MLRR_p(p) = 1.0 + exp(phi_p(p)) / denom_p(p);
+      }
+    }else{
+      for( int p=0; p < n_p; p++ ){
+        MLRR_p(p) = 1.0 + exp(x_vj( v_p(p)-1, j_phi-1 )) / denom_p(p);
+      }
+    }
+
+    // convert to slope at the origin and steepness
+    vector<Type> loga_p( n_p );
+    vector<Type> h_p( n_p );
+    for( int p=0; p < n_p; p++ ){
+      loga_p(p) = log(MLRR_p(p)) - U_pz(p,0);
+      h_p(p) = MLRR_p(p) / (4.0 + MLRR_p(p));
     }
 
     vector<Type> jnll_k( n_k );
+    jnll_k.setZero();
     vector<Type> logmu_k( n_k );
     vector<Type> sigmaR_p = exp(logsigmaR_p);
     vector<Type> b_p = exp(logb_p);
     for( int k=0; k < n_k; k++ ){
       logmu_k(k) = loga_p(p_k(k)-1) + log( W_kz(k,1) / (1.0 + W_kz(k,1) / b_p(p_k(k)-1) ) );
-      jnll_k(k) = -1 * dnorm( log(W_kz(k,0)), logmu_k(k), sigmaR_p(p_k(k)-1), true );
+      jnll_k(k) -= dnorm( log(W_kz(k,0)), logmu_k(k), sigmaR_p(p_k(k)-1), true );
     }
     jnll += jnll_k.sum();
+    // Include dnorm(logb, 0, 10) penalty to match Thorson 2020
+    if( R_FINITE(asDouble(SD_logb)) ){
+      jnll -= sum( dnorm(logb_p, 0.0, SD_logb, true) );
+    }
     REPORT( logmu_k );
-    REPORT( MLSPS_p );
+    REPORT( MLRR_p );
+    REPORT( h_p );
     REPORT( jnll_k );
 
     // Calculate CV in logmu_k by population
@@ -454,9 +492,9 @@ Type objective_function<Type>::operator() ()
     vector<Type> sd_logmu_p = pow( var_logmu_p, 0.5 );
 
     // Penalize low variance in predictive recruitment
-    Type Pen_lowvar_lnRhat = 1;    // Value used in Thorson-2020
+    //Type Pen_lowvar_lnRhat = 1;    // Value used in Thorson-2020
     //if( Pen_lowvar_lnRhat > 0 ){
-      jnll -= Pen_lowvar_lnRhat * sum(log(sd_logmu_p));
+    //  jnll -= Pen_lowvar_lnRhat * sum(log(sd_logmu_p));
     //}
     REPORT( sd_logmu_p );
   }

@@ -70,7 +70,7 @@
 #' @importFrom checkmate assertNumeric assertCharacter assertSubset
 #' @importFrom phylopath average_DAGs coef_plot
 #' @importFrom phylobase phylo4d
-#' @importFrom ape Ntip node.depth.edgelength rtree
+#' @importFrom ape Ntip node.depth.edgelength rtree reorder.phylo
 #' @importFrom TMB compile dynlib MakeADFun sdreport
 #' @importFrom methods is
 #' @importFrom igraph plot.igraph graph_from_data_frame with_sugiyama layout_ graph.adjacency clusters
@@ -255,8 +255,8 @@ function( sem,
   if( is.null(experiments) ){
     experiments = list( type = "none" )
   }else if( experiments$type == "BH" ){
-    if( isFALSE( "logMASPS" %in% colnames(data)) ){
-      stop("`data` must include `logMASPS` if experiments$type = `BH`")
+    if( isFALSE( "phi" %in% colnames(data)) ){
+      stop("`data` must include `phi` if experiments$type = `BH`")
     }
   }
 
@@ -476,23 +476,33 @@ function( sem,
       time_data = na.omit(time_data)
 
       # Augment data
-      data_list = c( data_list,
+      data_list = c(
+        data_list,
         list(
-          j_logMASPS = which( colnames(data) == "logMASPS" ),
+          j_phi = which( colnames(data) == "phi" ),
           v_p = population_data$v_p,
           p_k = time_data$p_k,
           W_kz = as.matrix(time_data[,c('R','S')]),
-          U_pz = log(as.matrix(population_data[,c('SPR0','M')]))
+          U_pz = log(as.matrix(population_data[,c('SPR0','M')])),
+          variation_in_compensation = experiments$variation_in_compensation,
+          form = experiments$form,
+          SD_logb = experiments$SD_logb
         )
       )
 
       # Augment parameters
-      parameters_list =   c( parameters_list,
+      parameters_list = c(
+        parameters_list,
         list(
           logsigmaR_p = rep(0, n_p),
           logb_p = rep(0, n_p)
         )
       )
+      if( isTRUE(experiments$variation_in_compensation) ){
+        parameters_list$phi_p = rep(0, n_p)
+        parameters_list$logsigmaphi = 0
+        random = c(random, "phi_p")
+      }
     }
 
     # Bundle
@@ -512,21 +522,24 @@ function( sem,
   TMB::config(tmbad.atomic_sparse_log_determinant = FALSE, DLL = "phylosem")
 
   # Build TMB object
-  obj = MakeADFun( data = tmb_inputs$data_list,
-                        parameters = tmb_inputs$parameters_list,
-                        map = tmb_inputs$map_list,
-                        random = tmb_inputs$random,
-                        profile = control$profile,
-                        DLL = "phylosem" )
+  obj = MakeADFun(
+    data = tmb_inputs$data_list,
+    parameters = tmb_inputs$parameters_list,
+    map = tmb_inputs$map_list,
+    random = tmb_inputs$random,
+    profile = control$profile,
+    DLL = "phylosem"
+  )
   if(control$quiet==FALSE) list_parameters(obj)
   results = list(
-    "data" = data,
-    "data_labels" = data_labels,
-    "SEM_model" = SEM_model,
-    "obj" = obj,
-    "call" = match.call(),
-    "tree" = tree,
-    "tmb_inputs" = tmb_inputs
+    data = data,
+    experiments = experiments,
+    data_labels = data_labels,
+    SEM_model = SEM_model,
+    obj = obj,
+    call = match.call(),
+    tree = tree,
+    tmb_inputs = tmb_inputs
   )
 
   # Export stuff
@@ -546,12 +559,16 @@ function( sem,
   results$opt = list( "par"=obj$par )
   for( i in seq_len(max(0,control$nlminb_loops)) ){
     if( isFALSE(control$quiet) ) message("Running nlminb_loop #", i)
-    results$opt = nlminb( start = results$opt$par,
-                  objective = obj$fn,
-                  gradient = obj$gr,
-                  control = list( eval.max = control$eval.max,
-                                  iter.max = control$iter.max,
-                                  trace = control$trace ) )
+    results$opt = nlminb(
+      start = results$opt$par,
+      objective = obj$fn,
+      gradient = obj$gr,
+      control = list(
+        eval.max = control$eval.max,
+        iter.max = control$iter.max,
+        trace = control$trace
+      )
+    )
   }
 
   # Newtonsteps
@@ -887,10 +904,18 @@ function( x,
   out = coef(x)
 
   # Format inputs
-  DF = data.frame(from=out$from, to=out$to, label=out$Parameter)
-  if( edge_label=="value"){
-    DF$label = round(out$Estimate, digits=digits)
-  }
+  DF = data.frame(
+    from = out$from, 
+    to = out$to, 
+    name = out$Parameter, 
+    estimate = out$Estimate,
+    round_estimate = round(out$Estimate, digits=digits),
+    SE = out$SE,
+    wald_pvalue = (1 - pchisq( (out$Estimate / out$SE)^2, df = 1 ))
+  )
+  #if( edge_label=="value"){
+  #  DF$label = 
+  #}
   #if( edge_label == "value_and_stars" ){
   #  DF$label = round(out$Estimate, digits=digits)
   #  add_stars = cut(out[,'p_value'], breaks=c(1,0.05,0.01,0.001,0) )
@@ -901,6 +926,12 @@ function( x,
     DF = DF[ which(DF$from != DF$to), ]
   }
 
+  if( edge_label=="value"){
+    DF$label = DF$round_estimate
+  }else if( edge_label=="name"){
+    DF$label = DF$name
+  }
+  
   if( is.null(vertices) ){
     vertices = union( out$to, out$from )
   }else{
@@ -908,9 +939,11 @@ function( x,
   }
 
   # Create and plotgraph
-  pg <- graph_from_data_frame( d = DF,
-                               directed = TRUE,
-                               vertices = data.frame(vertices) )
+  pg <- graph_from_data_frame( 
+    d = DF,
+    directed = TRUE,
+    vertices = data.frame(vertices) 
+  )
   out = list( DF = DF, pg = pg )
 
   # Two plot styles

@@ -5,14 +5,21 @@
 \title{Organize stock-recruit time series}
 \usage{
 beverton_holt(
+  species,
   recruits,
   spawners,
-  unfished_spawners_pre_recruit,
+  unfished_spawners_per_recruit,
   natural_mortality,
-  species
+  variation_in_compensation = FALSE,
+  form = c("MAER", "MLER"),
+  SD_logb = NA
 )
 }
 \arguments{
+\item{species}{taxon label for each stock, matching \code{tree$tip.label} in
+the phylogenetic tree that will be used for analysis, where \code{names(species)}
+identifies the stock}
+
 \item{recruits}{Recruitment values for multiple stocks in a single named vector,
 with \code{names(recruits)} identifying the stock}
 
@@ -20,14 +27,11 @@ with \code{names(recruits)} identifying the stock}
 named vector, where \code{spawners[1]} corresponds to the spawners that
 results in \code{recruits[1]}}
 
-\item{unfished_spawners_pre_recruit}{SPR0 with units matching \code{recruits}
-and \code{spawners} for each stock, where \code{names(unfished_spawners_pre_recruit)}
+\item{unfished_spawners_per_recruit}{SPR0 with units matching \code{recruits}
+and \code{spawners} for each stock, where \code{names(unfished_spawners_per_recruit)}
 identifies the stock}
 
 \item{natural_mortality}{annual adult natural mortality rate for each stock}
-
-\item{species}{taxon label for each stock, matching \code{tree$tip.label} in
-the phylogenetic tree that will be used for analysis}
 }
 \description{
 Provide observed stock biomass and recruitment time-series data,
