@@ -56,11 +56,14 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">beverton_holt</span><span class="op">(</span></span>
+<span>  <span class="va">species</span>,</span>
 <span>  <span class="va">recruits</span>,</span>
 <span>  <span class="va">spawners</span>,</span>
-<span>  <span class="va">unfished_spawners_pre_recruit</span>,</span>
+<span>  <span class="va">unfished_spawners_per_recruit</span>,</span>
 <span>  <span class="va">natural_mortality</span>,</span>
-<span>  <span class="va">species</span></span>
+<span>  variation_in_compensation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  form <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MAER"</span>, <span class="st">"MLER"</span><span class="op">)</span>,</span>
+<span>  SD_logb <span class="op">=</span> <span class="cn">NA</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -68,7 +71,13 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-recruits">recruits<a class="anchor" aria-label="anchor" href="#arg-recruits"></a></dt>
+<dl><dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
+<dd><p>taxon label for each stock, matching <code>tree$tip.label</code> in
+the phylogenetic tree that will be used for analysis, where <code>names(species)</code>
+identifies the stock</p></dd>
+
+
+<dt id="arg-recruits">recruits<a class="anchor" aria-label="anchor" href="#arg-recruits"></a></dt>
 <dd><p>Recruitment values for multiple stocks in a single named vector,
 with <code>names(recruits)</code> identifying the stock</p></dd>
 
@@ -79,19 +88,14 @@ named vector, where <code>spawners[1]</code> corresponds to the spawners that
 results in <code>recruits[1]</code></p></dd>
 
 
-<dt id="arg-unfished-spawners-pre-recruit">unfished_spawners_pre_recruit<a class="anchor" aria-label="anchor" href="#arg-unfished-spawners-pre-recruit"></a></dt>
+<dt id="arg-unfished-spawners-per-recruit">unfished_spawners_per_recruit<a class="anchor" aria-label="anchor" href="#arg-unfished-spawners-per-recruit"></a></dt>
 <dd><p>SPR0 with units matching <code>recruits</code>
-and <code>spawners</code> for each stock, where <code>names(unfished_spawners_pre_recruit)</code>
+and <code>spawners</code> for each stock, where <code>names(unfished_spawners_per_recruit)</code>
 identifies the stock</p></dd>
 
 
 <dt id="arg-natural-mortality">natural_mortality<a class="anchor" aria-label="anchor" href="#arg-natural-mortality"></a></dt>
 <dd><p>annual adult natural mortality rate for each stock</p></dd>
-
-
-<dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
-<dd><p>taxon label for each stock, matching <code>tree$tip.label</code> in
-the phylogenetic tree that will be used for analysis</p></dd>
 
 </dl></div>
 

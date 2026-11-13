@@ -9,15 +9,24 @@ can then be converted to steepness.
 
 ``` r
 beverton_holt(
+  species,
   recruits,
   spawners,
-  unfished_spawners_pre_recruit,
+  unfished_spawners_per_recruit,
   natural_mortality,
-  species
+  variation_in_compensation = FALSE,
+  form = c("MAER", "MLER"),
+  SD_logb = NA
 )
 ```
 
 ## Arguments
+
+- species:
+
+  taxon label for each stock, matching `tree$tip.label` in the
+  phylogenetic tree that will be used for analysis, where
+  `names(species)` identifies the stock
 
 - recruits:
 
@@ -30,16 +39,11 @@ beverton_holt(
   vector, where `spawners[1]` corresponds to the spawners that results
   in `recruits[1]`
 
-- unfished_spawners_pre_recruit:
+- unfished_spawners_per_recruit:
 
   SPR0 with units matching `recruits` and `spawners` for each stock,
-  where `names(unfished_spawners_pre_recruit)` identifies the stock
+  where `names(unfished_spawners_per_recruit)` identifies the stock
 
 - natural_mortality:
 
   annual adult natural mortality rate for each stock
-
-- species:
-
-  taxon label for each stock, matching `tree$tip.label` in the
-  phylogenetic tree that will be used for analysis
