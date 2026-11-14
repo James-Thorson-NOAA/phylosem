@@ -145,8 +145,8 @@ MCMC = tmbstan( psem0$obj, init = "last.par.best" )
 #> 
 #> SAMPLING FOR MODEL 'tmb_generic' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000272 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 2.72 seconds.
+#> Chain 1: Gradient evaluation took 0.000248 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 2.48 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -163,15 +163,15 @@ MCMC = tmbstan( psem0$obj, init = "last.par.best" )
 #> Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 68.82 seconds (Warm-up)
-#> Chain 1:                63.5 seconds (Sampling)
-#> Chain 1:                132.32 seconds (Total)
+#> Chain 1:  Elapsed Time: 54.787 seconds (Warm-up)
+#> Chain 1:                56.297 seconds (Sampling)
+#> Chain 1:                111.084 seconds (Total)
 #> Chain 1: 
 #> 
 #> SAMPLING FOR MODEL 'tmb_generic' NOW (CHAIN 2).
 #> Chain 2: 
-#> Chain 2: Gradient evaluation took 0.000261 seconds
-#> Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 2.61 seconds.
+#> Chain 2: Gradient evaluation took 0.000217 seconds
+#> Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 2.17 seconds.
 #> Chain 2: Adjust your expectations accordingly!
 #> Chain 2: 
 #> Chain 2: 
@@ -188,15 +188,15 @@ MCMC = tmbstan( psem0$obj, init = "last.par.best" )
 #> Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 #> Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 #> Chain 2: 
-#> Chain 2:  Elapsed Time: 67.702 seconds (Warm-up)
-#> Chain 2:                62.529 seconds (Sampling)
-#> Chain 2:                130.231 seconds (Total)
+#> Chain 2:  Elapsed Time: 56.254 seconds (Warm-up)
+#> Chain 2:                56.528 seconds (Sampling)
+#> Chain 2:                112.782 seconds (Total)
 #> Chain 2: 
 #> 
 #> SAMPLING FOR MODEL 'tmb_generic' NOW (CHAIN 3).
 #> Chain 3: 
-#> Chain 3: Gradient evaluation took 0.00027 seconds
-#> Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 2.7 seconds.
+#> Chain 3: Gradient evaluation took 0.00022 seconds
+#> Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 2.2 seconds.
 #> Chain 3: Adjust your expectations accordingly!
 #> Chain 3: 
 #> Chain 3: 
@@ -213,15 +213,15 @@ MCMC = tmbstan( psem0$obj, init = "last.par.best" )
 #> Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 #> Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 #> Chain 3: 
-#> Chain 3:  Elapsed Time: 69.683 seconds (Warm-up)
-#> Chain 3:                65.385 seconds (Sampling)
-#> Chain 3:                135.068 seconds (Total)
+#> Chain 3:  Elapsed Time: 56.867 seconds (Warm-up)
+#> Chain 3:                52.084 seconds (Sampling)
+#> Chain 3:                108.951 seconds (Total)
 #> Chain 3: 
 #> 
 #> SAMPLING FOR MODEL 'tmb_generic' NOW (CHAIN 4).
 #> Chain 4: 
-#> Chain 4: Gradient evaluation took 0.000277 seconds
-#> Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 2.77 seconds.
+#> Chain 4: Gradient evaluation took 0.000244 seconds
+#> Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 2.44 seconds.
 #> Chain 4: Adjust your expectations accordingly!
 #> Chain 4: 
 #> Chain 4: 
@@ -238,9 +238,9 @@ MCMC = tmbstan( psem0$obj, init = "last.par.best" )
 #> Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 #> Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 #> Chain 4: 
-#> Chain 4:  Elapsed Time: 66.389 seconds (Warm-up)
-#> Chain 4:                68.449 seconds (Sampling)
-#> Chain 4:                134.838 seconds (Total)
+#> Chain 4:  Elapsed Time: 52.047 seconds (Warm-up)
+#> Chain 4:                50.134 seconds (Sampling)
+#> Chain 4:                102.181 seconds (Total)
 #> Chain 4:
 ```
 
