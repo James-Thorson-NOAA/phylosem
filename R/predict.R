@@ -59,7 +59,7 @@ function( object,
     xmap_j = as.vector(xmap_vj[vi,])
 
     # Indexing
-    p = na.omit(xmap_j)
+    p = which(rownames(Q_nn) == "x_vj")[na.omit(xmap_j)]
     n = nrow(Q_nn)
     nk = length(p)
 
@@ -195,7 +195,6 @@ function( x,
     obs = data.frame(Map(function(.) numeric(0), variables))
     obs_labels = vector(length=0)
   }
-
 
   # Avoid numerical singularity
   nj = dim(x$cov)[[1]]
