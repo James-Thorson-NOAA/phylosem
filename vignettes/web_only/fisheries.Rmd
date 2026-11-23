@@ -164,7 +164,7 @@ Data$Order = factor( Data$Order )
 # Make taxonomic tree
 tree = ape::as.phylo( 
   ~Order/Family/Genus/Genus_species, 
-  data = unique(Data[,c("Order","Family","Genus","Genu")]), 
+  data = unique(Data[,c("Order","Family","Genus","Genus_species")]), 
   collapse = FALSE
 )
 tree$edge.length = rep(1,nrow(tree$edge))
