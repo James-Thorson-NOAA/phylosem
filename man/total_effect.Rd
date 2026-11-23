@@ -7,7 +7,7 @@
 total_effect(object)
 }
 \arguments{
-\item{object}{Output from \code{\link{dsem}}}
+\item{object}{Output from \code{\link{phylosem}}}
 }
 \value{
 A data frame listing the time-lag (lag), variable that is undergoing some

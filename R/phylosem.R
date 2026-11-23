@@ -992,7 +992,7 @@ function( x,
 #' Calculate a data frame of total effects representing the
 #' estimated effect of a change in any variable on every other variable.
 #'
-#' @param object Output from \code{\link{dsem}}
+#' @param object Output from \code{\link{phylosem}}
 #'
 #' @details
 #' Total effects are taken from the Leontief matrix \eqn{\mathbf{(I-P)^{-1}}},
