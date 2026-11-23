@@ -11,3 +11,4 @@ docs
 *.tar.gz
 inst/Matrix-version
 inst/TMB-version
+vignettes/web_only/.Rhistory
