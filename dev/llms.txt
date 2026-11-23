@@ -80,10 +80,10 @@ Tools for interpreting output.
   : Convert phylosem to phylopath output
 - [`as_phylo4d()`](https://james-thorson-noaa.github.io/phylosem/dev/reference/as_phylo4d.md)
   : Convert phylosem to phylo4d
-- [`as_sem()`](https://james-thorson-noaa.github.io/phylosem/dev/reference/as_sem.md)
-  : Convert phylosem to sem output
 - [`logLik(`*`<phylosem>`*`)`](https://james-thorson-noaa.github.io/phylosem/dev/reference/logLik.phylosem.md)
   : Extract the (marginal) log-likelihood of a phylosem model
+- [`total_effect()`](https://james-thorson-noaa.github.io/phylosem/dev/reference/total_effect.md)
+  : Calculate total effects
 
 ## Model comparison
 

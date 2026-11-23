@@ -63,14 +63,13 @@ compare_phylosem(
   optional: a character vector of one or more elements, with each
   element giving a string of variable names, separated by commas.
   Variances and covariances among all variables in each such string are
-  added to the model. For confirmatory factor analysis models specified
-  via `cfa`, `covs` defaults to all of the factors in the model, thus
-  specifying all variances and covariances among these factors.
-  *Warning*: `covs="x1, x2"` and `covs=c("x1", "x2")` are *not*
-  equivalent: `covs="x1, x2"` specifies the variance of `x1`, the
-  variance of `x2`, *and* their covariance, while `covs=c("x1", "x2")`
-  specifies the variance of `x1` and the variance of `x2` *but not*
-  their covariance.
+  added to the model. Warning: covs="x1, x2" and covs=c("x1", "x2") are
+  not equivalent: covs="x1, x2" specifies the variance of x1, the
+  variance of x2, and their covariance, while covs=c("x1", "x2")
+  specifies the variance of x1 and the variance of x2 but not their
+  covariance. These same covariances can be added manually via argument
+  \`sem\`, but using argument \`covs\` might save time for models with
+  many variables.
 
 - estimate_ou:
 

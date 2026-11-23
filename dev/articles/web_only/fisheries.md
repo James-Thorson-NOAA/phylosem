@@ -47,10 +47,12 @@ Data$Genus_species = factor( paste0(Data$Genus, "_", Data$Species) )
 Data = Data[match(unique(Data$Genus_species),Data$Genus_species), ]
 
 # log-transform to simplify later syuntax
-Data = cbind( Data, "logM" = log(Data[,'M']),
-                    "logK" = log(Data[,'K']),
-                    "logtmax" = log(Data[,'tmax']),
-                    "logLinf" = log(Data[,'Linf']) )
+Data = cbind( Data, 
+  logM = log(Data[,'M']),
+  logK = log(Data[,'K']),
+  logtmax = log(Data[,'tmax']),
+  logLinf = log(Data[,'Linf']) 
+)
 
 # Identify species in both datasets
 species_to_use = intersect( tree$tip.label, Data$Genus_species )
@@ -165,23 +167,24 @@ plot(my_fitted_DAG, type="color")
 
 
 # Total, direct, and indirect effects
-my_sem = as_sem(psem_best)
-effects(my_sem)
-#> 
-#>  Total Effects (column on row)
-#>               logK   logtmax    logLinf
-#> logtmax -0.4480233  0.000000  0.4073488
-#> logM     0.4579994 -1.022267 -0.4164192
-#> 
-#>  Direct Effects
-#>               logK   logtmax   logLinf
-#> logtmax -0.4480233  0.000000 0.4073488
-#> logM     0.0000000 -1.022267 0.0000000
-#> 
-#>  Indirect Effects
-#>              logK logtmax    logLinf
-#> logtmax 0.0000000       0  0.0000000
-#> logM    0.4579994       0 -0.4164192
+total_effect(psem_best)
+#>         to    from total_effect direct_effect indirect_effect
+#> 1     logM    logM    1.0000000     0.0000000       1.0000000
+#> 2     logK    logM    0.0000000     0.0000000       0.0000000
+#> 3  logtmax    logM    0.0000000     0.0000000       0.0000000
+#> 4  logLinf    logM    0.0000000     0.0000000       0.0000000
+#> 5     logM    logK    0.4579994     0.0000000       0.4579994
+#> 6     logK    logK    1.0000000     0.0000000       1.0000000
+#> 7  logtmax    logK   -0.4480233    -0.4480233       0.0000000
+#> 8  logLinf    logK    0.0000000     0.0000000       0.0000000
+#> 9     logM logtmax   -1.0222668    -1.0222668       0.0000000
+#> 10    logK logtmax    0.0000000     0.0000000       0.0000000
+#> 11 logtmax logtmax    1.0000000     0.0000000       1.0000000
+#> 12 logLinf logtmax    0.0000000     0.0000000       0.0000000
+#> 13    logM logLinf   -0.4164192     0.0000000      -0.4164192
+#> 14    logK logLinf    0.0000000     0.0000000       0.0000000
+#> 15 logtmax logLinf    0.4073488     0.4073488       0.0000000
+#> 16 logLinf logLinf    1.0000000     0.0000000       1.0000000
 ```
 
 We also show how to plot output using phylosignal, although it is
@@ -220,7 +223,11 @@ Data$Family = factor( Data$Family )
 Data$Order = factor( Data$Order )
 
 # Make taxonomic tree
-tree = ape::as.phylo( ~Order/Family/Genus/Genus_species, data=Data, collapse=FALSE)
+tree = ape::as.phylo( 
+  ~Order/Family/Genus/Genus_species, 
+  data = unique(Data[,c("Order","Family","Genus","Genus_species")]), 
+  collapse = FALSE
+)
 tree$edge.length = rep(1,nrow(tree$edge))
 tree = collapse.singles(tree)
 tmp = root(tree, node=ape::Ntip(tree)+1 )

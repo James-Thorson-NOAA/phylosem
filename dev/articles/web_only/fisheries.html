@@ -113,10 +113,12 @@ provide convenient names for the modeled variables.</p>
 <span><span class="va">Data</span> <span class="op">=</span> <span class="va">Data</span><span class="op">[</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/match.Splits.html" class="external-link">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Data</span><span class="op">$</span><span class="va">Genus_species</span><span class="op">)</span>,<span class="va">Data</span><span class="op">$</span><span class="va">Genus_species</span><span class="op">)</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="co"># log-transform to simplify later syuntax</span></span>
-<span><span class="va">Data</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span> <span class="va">Data</span>, <span class="st">"logM"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="st">'M'</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>                    <span class="st">"logK"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="st">'K'</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>                    <span class="st">"logtmax"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="st">'tmax'</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>                    <span class="st">"logLinf"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="st">'Linf'</span><span class="op">]</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="va">Data</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span> <span class="va">Data</span>, </span>
+<span>  logM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="st">'M'</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  logK <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="st">'K'</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  logtmax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="st">'tmax'</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  logLinf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="st">'Linf'</span><span class="op">]</span><span class="op">)</span> </span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Identify species in both datasets</span></span>
 <span><span class="va">species_to_use</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span> <span class="va">tree</span><span class="op">$</span><span class="va">tip.label</span>, <span class="va">Data</span><span class="op">$</span><span class="va">Genus_species</span> <span class="op">)</span></span>
@@ -364,23 +366,24 @@ post-process output.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Total, direct, and indirect effects</span></span>
-<span><span class="va">my_sem</span> <span class="op">=</span> <span class="fu"><a href="../../reference/as_sem.html">as_sem</a></span><span class="op">(</span><span class="va">psem_best</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/effects.html" class="external-link">effects</a></span><span class="op">(</span><span class="va">my_sem</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Total Effects (column on row)</span></span>
-<span><span class="co">#&gt;               logK   logtmax    logLinf</span></span>
-<span><span class="co">#&gt; logtmax -0.4480233  0.000000  0.4073488</span></span>
-<span><span class="co">#&gt; logM     0.4579994 -1.022267 -0.4164192</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Direct Effects</span></span>
-<span><span class="co">#&gt;               logK   logtmax   logLinf</span></span>
-<span><span class="co">#&gt; logtmax -0.4480233  0.000000 0.4073488</span></span>
-<span><span class="co">#&gt; logM     0.0000000 -1.022267 0.0000000</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  Indirect Effects</span></span>
-<span><span class="co">#&gt;              logK logtmax    logLinf</span></span>
-<span><span class="co">#&gt; logtmax 0.0000000       0  0.0000000</span></span>
-<span><span class="co">#&gt; logM    0.4579994       0 -0.4164192</span></span></code></pre></div>
+<span><span class="fu"><a href="../../reference/total_effect.html">total_effect</a></span><span class="op">(</span><span class="va">psem_best</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         to    from total_effect direct_effect indirect_effect</span></span>
+<span><span class="co">#&gt; 1     logM    logM    1.0000000     0.0000000       1.0000000</span></span>
+<span><span class="co">#&gt; 2     logK    logM    0.0000000     0.0000000       0.0000000</span></span>
+<span><span class="co">#&gt; 3  logtmax    logM    0.0000000     0.0000000       0.0000000</span></span>
+<span><span class="co">#&gt; 4  logLinf    logM    0.0000000     0.0000000       0.0000000</span></span>
+<span><span class="co">#&gt; 5     logM    logK    0.4579994     0.0000000       0.4579994</span></span>
+<span><span class="co">#&gt; 6     logK    logK    1.0000000     0.0000000       1.0000000</span></span>
+<span><span class="co">#&gt; 7  logtmax    logK   -0.4480233    -0.4480233       0.0000000</span></span>
+<span><span class="co">#&gt; 8  logLinf    logK    0.0000000     0.0000000       0.0000000</span></span>
+<span><span class="co">#&gt; 9     logM logtmax   -1.0222668    -1.0222668       0.0000000</span></span>
+<span><span class="co">#&gt; 10    logK logtmax    0.0000000     0.0000000       0.0000000</span></span>
+<span><span class="co">#&gt; 11 logtmax logtmax    1.0000000     0.0000000       1.0000000</span></span>
+<span><span class="co">#&gt; 12 logLinf logtmax    0.0000000     0.0000000       0.0000000</span></span>
+<span><span class="co">#&gt; 13    logM logLinf   -0.4164192     0.0000000      -0.4164192</span></span>
+<span><span class="co">#&gt; 14    logK logLinf    0.0000000     0.0000000       0.0000000</span></span>
+<span><span class="co">#&gt; 15 logtmax logLinf    0.4073488     0.4073488       0.0000000</span></span>
+<span><span class="co">#&gt; 16 logLinf logLinf    1.0000000     0.0000000       1.0000000</span></span></code></pre></div>
 <p>We also show how to plot output using phylosignal, although it is
 currently unavailable on CRAN and therefore commented out:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -412,7 +415,11 @@ coefficients are very similar to estimates when using phyogeny.</p>
 <span><span class="va">Data</span><span class="op">$</span><span class="va">Order</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span> <span class="va">Data</span><span class="op">$</span><span class="va">Order</span> <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Make taxonomic tree</span></span>
-<span><span class="va">tree</span> <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span> <span class="op">~</span><span class="va">Order</span><span class="op">/</span><span class="va">Family</span><span class="op">/</span><span class="va">Genus</span><span class="op">/</span><span class="va">Genus_species</span>, data<span class="op">=</span><span class="va">Data</span>, collapse<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">tree</span> <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span> </span>
+<span>  <span class="op">~</span><span class="va">Order</span><span class="op">/</span><span class="va">Family</span><span class="op">/</span><span class="va">Genus</span><span class="op">/</span><span class="va">Genus_species</span>, </span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Data</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Order"</span>,<span class="st">"Family"</span>,<span class="st">"Genus"</span>,<span class="st">"Genus_species"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, </span>
+<span>  collapse <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span><span class="va">tree</span><span class="op">$</span><span class="va">edge.length</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tree</span><span class="op">$</span><span class="va">edge</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">tree</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/collapse.singles.html" class="external-link">collapse.singles</a></span><span class="op">(</span><span class="va">tree</span><span class="op">)</span></span>
 <span><span class="va">tmp</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/root.html" class="external-link">root</a></span><span class="op">(</span><span class="va">tree</span>, node<span class="op">=</span><span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/summary.phylo.html" class="external-link">Ntip</a></span><span class="op">(</span><span class="va">tree</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span> <span class="op">)</span></span>
