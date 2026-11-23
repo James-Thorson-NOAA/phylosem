@@ -2,10 +2,8 @@
 #'
 #' @description Fits a phylogenetic structural equation model
 #'
-#' @inheritParams sem::specifyModel
-#'
-#' @param sem structural equation model structure, passed to either \code{\link[sem]{specifyModel}}
-#'        or \code{\link[sem]{specifyEquations}} and then parsed to control
+#' @param sem Specification for structural equation model structure for
+#'        constructing an interaction among traits along a tree, and then parsed to control
 #'        the set of path coefficients and variance-covariance parameters
 #' @param tree phylogenetic structure, using class \code{\link[ape]{as.phylo}}
 #' @param data data-frame providing numeric values for variables being modeled.  Missing values are inputted
@@ -26,6 +24,13 @@
 #'        For many variables, it is convenient to do e.g.,
 #'        \code{family = Map(function(.) gaussian(), colnames(tsdata))} rather than writing
 #'        them all manually.
+#' @param covs optional: a character vector of one or more elements, with each element giving a string of variable
+#'        names, separated by commas. Variances and covariances among all variables in each such string are
+#'        added to the model. Warning: covs="x1, x2" and covs=c("x1", "x2") are not equivalent:
+#'        covs="x1, x2" specifies the variance of x1, the variance of x2, and their covariance,
+#'        while covs=c("x1", "x2") specifies the variance of x1 and the variance of x2 but not their covariance.
+#'        These same covariances can be added manually via argument `sem`, but using argument `covs` might
+#'        save time for models with many variables.
 #' @param estimate_ou Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 #'        process using additional parameter \code{lnalpha},
 #'        corresponding to the \code{model="OUrandomRoot"} parameterization from \pkg{phylolm}
@@ -66,7 +71,6 @@
 #'
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
 #' @importFrom stats rpois gaussian poisson binomial Gamma coef dnorm pchisq
-#' @importFrom sem sem pathDiagram specifyModel specifyEquations
 #' @importFrom checkmate assertNumeric assertCharacter assertSubset
 #' @importFrom phylopath average_DAGs coef_plot
 #' @importFrom phylobase phylo4d
@@ -270,6 +274,7 @@ function( sem,
   }
   if( any(is.nan(as.matrix(data))) ) stop("Please remove `NaN` values from data, presumably switching to `NA` values")
   if( any(sapply(data, is.factor)) ) stop("Please remove factors from `data`")
+  if( length(tree$tip.label) != length(unique(tree$tip.label)) ) stop("'tree$tip.label' cannot be contain duplicate values")
 
   #
   SEM_model = tryCatch(

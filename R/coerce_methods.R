@@ -28,28 +28,28 @@ function( object ){
   return(out)
 }
 
-#' @title Convert phylosem to sem output
-#'
-#' @description Convert output from package phylosem to output from package sem
-#'
-#' @param object Output from \code{\link{phylosem}}
-#'
-#' @return Output converted to format supplied by \code{\link[sem]{sem}}
-#'
-#' @export
-as_sem <-
-function( object ){
-
-  Sprime = as.matrix(solve(object$report$Q_jj))
-    rownames(Sprime) = colnames(Sprime) = colnames(object$data)
-    Sprime = (Sprime + t(Sprime))/2      # Force symmetric
-  out = sem( object$SEM_model,
-             S = Sprime,
-             N = nrow(object$data) )
-
-  # pass out
-  return(out)
-}
+#as_sem <-
+#function( object ){
+#
+#  # @title Convert phylosem to sem output
+#  #
+#  # @description Convert output from package phylosem to output from package sem
+#  #
+#  # @param object Output from \code{\link{phylosem}}
+#  #
+#  # @return Output converted to format supplied by \code{\link[sem]{sem}}
+#  #
+#  # @export
+#  Sprime = as.matrix(solve(object$report$Q_jj))
+#    rownames(Sprime) = colnames(Sprime) = colnames(object$data)
+#    Sprime = (Sprime + t(Sprime))/2      # Force symmetric
+#  out = sem( object$SEM_model,
+#             S = Sprime,
+#             N = nrow(object$data) )
+#
+#  # pass out
+#  return(out)
+#}
 
 #' @title Convert phylosem to phylo4d
 #'

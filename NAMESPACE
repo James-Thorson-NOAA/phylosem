@@ -13,7 +13,6 @@ S3method(summary,phylosem)
 S3method(vcov,phylosem)
 export(as_fitted_DAG)
 export(as_phylo4d)
-export(as_sem)
 export(average)
 export(best)
 export(beverton_holt)
@@ -24,63 +23,77 @@ export(fixed)
 export(list_parameters)
 export(phylosem)
 export(phylosem_control)
-importFrom(Matrix,Cholesky)
-importFrom(Matrix,crossprod)
-importFrom(Matrix,solve)
-importFrom(Matrix,sparseMatrix)
-importFrom(TMB,MakeADFun)
-importFrom(TMB,compile)
-importFrom(TMB,dynlib)
-importFrom(TMB,sdreport)
-importFrom(ape,Ntip)
-importFrom(ape,node.depth.edgelength)
-importFrom(ape,reorder.phylo)
-importFrom(ape,rtree)
-importFrom(checkmate,assertCharacter)
-importFrom(checkmate,assertNumeric)
-importFrom(checkmate,assertSubset)
+importFrom(Matrix,
+  Cholesky,
+  crossprod,
+  solve,
+  sparseMatrix
+)
+importFrom(TMB,
+  MakeADFun,
+  compile,
+  dynlib,
+  sdreport
+)
+importFrom(ape,
+  Ntip,
+  node.depth.edgelength,
+  reorder.phylo,
+  rtree
+)
+importFrom(checkmate,
+  assertCharacter,
+  assertNumeric,
+  assertSubset
+)
 importFrom(ggplot2,aes)
-importFrom(ggraph,create_layout)
-importFrom(ggraph,geom_edge_arc)
-importFrom(ggraph,geom_node_text)
-importFrom(ggraph,ggraph)
-importFrom(ggraph,rectangle)
-importFrom(ggraph,theme_graph)
-importFrom(graphics,abline)
-importFrom(graphics,legend)
-importFrom(graphics,lines)
-importFrom(graphics,matplot)
-importFrom(graphics,points)
-importFrom(igraph,clusters)
-importFrom(igraph,graph.adjacency)
-importFrom(igraph,graph_from_data_frame)
-importFrom(igraph,layout_)
-importFrom(igraph,plot.igraph)
-importFrom(igraph,with_sugiyama)
+importFrom(ggraph,
+  create_layout,
+  geom_edge_arc,
+  geom_node_text,
+  ggraph,
+  rectangle,
+  theme_graph
+)
+importFrom(graphics,
+  abline,
+  legend,
+  lines,
+  matplot,
+  points
+)
+importFrom(igraph,
+  clusters,
+  graph.adjacency,
+  graph_from_data_frame,
+  layout_,
+  plot.igraph,
+  with_sugiyama
+)
 importFrom(methods,is)
 importFrom(phylobase,phylo4d)
-importFrom(phylopath,average_DAGs)
-importFrom(phylopath,coef_plot)
-importFrom(sem,pathDiagram)
-importFrom(sem,sem)
-importFrom(sem,specifyEquations)
-importFrom(sem,specifyModel)
-importFrom(stats,AIC)
-importFrom(stats,Gamma)
-importFrom(stats,binomial)
-importFrom(stats,coef)
-importFrom(stats,dnorm)
-importFrom(stats,gaussian)
-importFrom(stats,logLik)
-importFrom(stats,na.omit)
-importFrom(stats,nlminb)
-importFrom(stats,optimHess)
-importFrom(stats,pchisq)
-importFrom(stats,plogis)
-importFrom(stats,pnorm)
-importFrom(stats,poisson)
-importFrom(stats,rnorm)
-importFrom(stats,rpois)
-importFrom(stats,vcov)
+importFrom(phylopath,
+  average_DAGs,
+  coef_plot
+)
+importFrom(stats,
+  AIC,
+  Gamma,
+  binomial,
+  coef,
+  dnorm,
+  gaussian,
+  logLik,
+  na.omit,
+  nlminb,
+  optimHess,
+  pchisq,
+  plogis,
+  pnorm,
+  poisson,
+  rnorm,
+  rpois,
+  vcov
+)
 importFrom(viridisLite,viridis)
 useDynLib(phylosem, .registration = TRUE)

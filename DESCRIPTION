@@ -16,7 +16,6 @@ Authors@R:
              comment = c(ORCID = "0000-0002-7366-1868"))
     )
 Imports:
-    sem,
     ape,
     phylobase,
     phylopath,
@@ -62,4 +61,4 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 URL: https://james-thorson-noaa.github.io/phylosem/
 BugReports: https://github.com/James-Thorson-NOAA/phylosem/issues
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1
