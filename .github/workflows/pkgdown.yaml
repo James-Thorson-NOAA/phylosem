@@ -44,7 +44,7 @@ jobs:
           extra-packages: |
             any::pkgdown
             local::.
-            cran/sem@3.1.16
+            cran/sem@3.1-16
           needs: website
 
       - name: Build site
