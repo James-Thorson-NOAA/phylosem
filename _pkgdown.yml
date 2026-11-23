@@ -48,7 +48,6 @@ reference:
   - coef.phylosem
   - as_fitted_DAG
   - as_phylo4d
-  - as_sem
   - logLik.phylosem
 
 - title: 'Model comparison'
