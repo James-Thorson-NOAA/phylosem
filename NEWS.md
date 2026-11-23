@@ -19,6 +19,7 @@
 * add `predict.phylosem` S3 method
 * add `plot.predict_phylosem` S3 method
 * removing package `sem` and adding a minimal set of functions in R/sem_imports.R
+* Add `total_effect` as replacement for `sem::effects`
 
 # phylosem 1.1.4
 * removing `checkDepPackageVersion(dep_pkg="Matrix", this_pkg="TMB")` from `.onLoad()`

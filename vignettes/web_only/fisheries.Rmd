@@ -131,8 +131,7 @@ my_fitted_DAG = as_fitted_DAG(psem_best)
 plot(my_fitted_DAG, type="color")
 
 # Total, direct, and indirect effects
-my_sem = as_sem(psem_best)
-effects(my_sem)
+total_effect(psem_best)
 ```
 
 We also show how to plot output using phylosignal, although it is currently unavailable on CRAN and therefore commented out:

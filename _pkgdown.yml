@@ -49,6 +49,7 @@ reference:
   - as_fitted_DAG
   - as_phylo4d
   - logLik.phylosem
+  - total_effect
 
 - title: 'Model comparison'
   desc: |

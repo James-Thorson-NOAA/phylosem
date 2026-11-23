@@ -23,6 +23,7 @@ export(fixed)
 export(list_parameters)
 export(phylosem)
 export(phylosem_control)
+export(total_effect)
 importFrom(Matrix,
   Cholesky,
   crossprod,
@@ -44,7 +45,8 @@ importFrom(ape,
 importFrom(checkmate,
   assertCharacter,
   assertNumeric,
-  assertSubset
+  assertSubset,
+  assert_class
 )
 importFrom(ggplot2,aes)
 importFrom(ggraph,
