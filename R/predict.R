@@ -178,7 +178,12 @@ function( x,
   #
   if( !missing(data) & !missing(data_labels) ){
     if( missing(tree) ){
-      which_rows = which(data_labels %in% taxa)
+      which_rows = lapply(
+        taxa,
+        FUN = function(taxon){
+          which(data_labels %in% taxon)
+        }
+      )
     }else{
       which_rows = lapply(
         taxa,
@@ -238,7 +243,8 @@ function( x,
     for(i in seq_len(ni)){
       ellipse_i[,,i] = make_ellipse(x$est[variables,i], cov[variables,variables,i])
     }
-    xylim = apply( ellipse_i, MARGIN = 2, FUN = range ) # rows: min, max.  cols: x, y
+    xylim = apply( ellipse_i, MARGIN = 2, FUN = range, na.rm = TRUE ) # rows: min, max.  cols: x, y
+    xylim = apply( rbind(xylim,as.matrix(obs)), MARGIN = 2, FUN = range, na.rm = TRUE )
 
     # Plot stuff
     plot( 1, type = "n", xlim = xylim[,1], ylim = xylim[,2], xlab = variables[1], ylab = variables[2] )
@@ -258,11 +264,13 @@ function( x,
     # Plot data
     points(
       x = rep(xylim[1,1], nrow(obs)), y = obs[,2],
-      col = viridisLite::viridis(n = ni)[match(obs_labels,taxa)]
+      col = viridisLite::viridis(n = ni)[match(obs_labels,taxa)],
+      pch = 1
     )
     points(
       x = obs[,1], y = rep(xylim[1,2], nrow(obs)),
-      col = viridisLite::viridis(n = ni)[match(obs_labels,taxa)]
+      col = viridisLite::viridis(n = ni)[match(obs_labels,taxa)],
+      pch = 4
     )
   }
 }
