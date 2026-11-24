@@ -153,6 +153,9 @@ node_to_tip_dist <- function(phy, node) {
 #' @param variables which variables to plot (can only plot one or two at a time)
 #' @param data optional data.frame of fitted data e.g., \code{fit$data}
 #' @param distance_threshold distance from taxa to use when plotting data
+#' @param tree ...
+#' @param plot_legend logical; whether to display the legend. Default: TRUE.
+#' @param legend_cex numeric; character expansion factor for the legend text. Default: 1.
 #' @param ... Not used
 #'
 #' @method plot predict_phylosem
