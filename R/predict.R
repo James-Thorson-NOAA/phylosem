@@ -164,7 +164,9 @@ function( x,
           data,
           data_labels,
           distance_threshold = 0,
-          tree,
+         tree,
+         plot_legend = TRUE,
+         legend_cex = 1,
           ... ){
 
   #
@@ -224,7 +226,7 @@ function( x,
       ylab = "Distribution for mean",
       xlab = variables
     )
-    legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxa, bty = "n" )
+    if (isTRUE(plot_legend)) legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxa, bty = "n", cex = legend_cex )
 
     # Plot data
     points(
@@ -259,7 +261,7 @@ function( x,
         pch = 3, col = viridisLite::viridis(n = ni)[i]
       )
     }
-    legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxa, bty = "n" )
+    if (isTRUE(plot_legend)) legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxa, bty = "n", cex = legend_cex )
 
     # Plot data
     points(
