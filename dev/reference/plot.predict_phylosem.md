@@ -8,7 +8,18 @@ using
 
 ``` r
 # S3 method for class 'predict_phylosem'
-plot(x, y, variables = 1, data, data_labels, distance_threshold = 0, tree, ...)
+plot(
+  x,
+  y,
+  variables = 1,
+  data,
+  data_labels,
+  distance_threshold = 0,
+  tree,
+  plot_legend = TRUE,
+  legend_cex = 1,
+  ...
+)
 ```
 
 ## Arguments
@@ -41,8 +52,15 @@ plot(x, y, variables = 1, data, data_labels, distance_threshold = 0, tree, ...)
 
 - tree:
 
-  phylogenetic structure, using class
-  [`as.phylo`](https://rdrr.io/pkg/ape/man/as.phylo.html)
+  ...
+
+- plot_legend:
+
+  logical; whether to display the legend. Default: TRUE.
+
+- legend_cex:
+
+  numeric; character expansion factor for the legend text. Default: 1.
 
 - ...:
 
