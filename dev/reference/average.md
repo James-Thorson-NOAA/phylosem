@@ -22,7 +22,7 @@ average(x, cut_off, avg_method)
 - avg_method:
 
   see
-  [`average_DAGs`](https://ax3man.github.io/phylopath/reference/average_DAGs.html)
+  [`phylopath::average_DAGs`](https://ax3man.github.io/phylopath/reference/average_DAGs.html)
 
 ## Value
 
