@@ -55,15 +55,15 @@ plot(
 - ...:
 
   arguments passed to
-  [`plot.igraph`](https://r.igraph.org/reference/plot.igraph.html)
+  [`igraph::plot.igraph`](https://r.igraph.org/reference/plot.igraph.html)
 
 ## Value
 
 Invisibly returns the output from
-[`graph_from_data_frame`](https://r.igraph.org/reference/graph_from_data_frame.html)
+[`igraph::graph_from_data_frame`](https://r.igraph.org/reference/graph_from_data_frame.html)
 which was passed to
-[`plot.igraph`](https://r.igraph.org/reference/plot.igraph.html) for
-plotting.
+[`igraph::plot.igraph`](https://r.igraph.org/reference/plot.igraph.html)
+for plotting.
 
 ## Details
 
