@@ -117,9 +117,11 @@ average <- function(x, cut_off, avg_method) UseMethod('average')
 #'
 #' @param x output from \code{compare_phylosem}
 #' @param cut_off threshold where any model with delta-AIC greater than this value is excluded from average
-#' @param avg_method see \code{\link[phylopath]{average_DAGs}}
+#' @param avg_method see \code{phylopath::average_DAGs}
 #'
-#' @return Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}} after conversion to format from \code{\link[phylopath]{est_DAG}}
+#' @return
+#' Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}}
+#' after conversion to format from \code{phylopath::est_DAG}
 #'
 #' @method average compare_phylosem
 #' @export
