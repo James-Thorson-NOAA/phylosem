@@ -23,11 +23,11 @@ average(x, cut_off = 2, avg_method = "conditional")
 - avg_method:
 
   see
-  [`average_DAGs`](https://ax3man.github.io/phylopath/reference/average_DAGs.html)
+  [`phylopath::average_DAGs`](https://ax3man.github.io/phylopath/reference/average_DAGs.html)
 
 ## Value
 
 Returns an AIC-weighted average of fitted models from
 [`compare_phylosem`](https://james-thorson-noaa.github.io/phylosem/dev/reference/compare_phylosem.md)
 after conversion to format from
-[`est_DAG`](https://ax3man.github.io/phylopath/reference/est_DAG.html)
+[`phylopath::est_DAG`](https://ax3man.github.io/phylopath/reference/est_DAG.html)
