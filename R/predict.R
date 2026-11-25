@@ -153,6 +153,9 @@ node_to_tip_dist <- function(phy, node) {
 #' @param variables which variables to plot (can only plot one or two at a time)
 #' @param data optional data.frame of fitted data e.g., \code{fit$data}
 #' @param distance_threshold distance from taxa to use when plotting data
+#' @param tree ...
+#' @param plot_legend logical; whether to display the legend. Default: TRUE.
+#' @param legend_cex numeric; character expansion factor for the legend text. Default: 1.
 #' @param ... Not used
 #'
 #' @method plot predict_phylosem
@@ -164,7 +167,9 @@ function( x,
           data,
           data_labels,
           distance_threshold = 0,
-          tree,
+         tree,
+         plot_legend = TRUE,
+         legend_cex = 1,
           ... ){
 
   #
@@ -224,7 +229,7 @@ function( x,
       ylab = "Distribution for mean",
       xlab = variables
     )
-    legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxa, bty = "n" )
+    if (isTRUE(plot_legend)) legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxa, bty = "n", cex = legend_cex )
 
     # Plot data
     points(
@@ -259,7 +264,7 @@ function( x,
         pch = 3, col = viridisLite::viridis(n = ni)[i]
       )
     }
-    legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxa, bty = "n" )
+    if (isTRUE(plot_legend)) legend( "topright", fill = viridisLite::viridis(n = ni), legend = taxa, bty = "n", cex = legend_cex )
 
     # Plot data
     points(
