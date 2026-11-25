@@ -72,7 +72,7 @@
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
 #' @importFrom stats rpois gaussian poisson binomial Gamma coef dnorm pchisq
 #' @importFrom checkmate assertNumeric assertCharacter assertSubset assert_class
-#' @importFrom ape Ntip node.depth.edgelength rtree reorder.phylo
+#' @importFrom ape Ntip node.depth.edgelength rtree reorder.phylo rTraitCont
 #' @importFrom TMB compile dynlib MakeADFun sdreport
 #' @importFrom methods is
 #' @importFrom Matrix sparseMatrix solve Cholesky crossprod
@@ -149,31 +149,36 @@
 #' 70(5), 1-21. \doi{10.18637/jss.v070.i05}
 #'
 #' @examples
-#' # Load data set
-#' data(rhino, rhino_tree, package="phylopath")
+#' # Simulate a tree and traits
+#' set.seed(123)
+#' tree = ape::rtree(100)
+#' tree$tip.label = paste0("tip_", seq_len(100))
+#' BM = ape::rTraitCont(tree, sigma = 1)
+#' NL = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+#' LS = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+#' DD = 0.5 * NL + ape::rTraitCont(tree, sigma = 1)
+#' RS = 0.5 * DD + ape::rTraitCont(tree, sigma = 1)
+#' dat = data.frame(BM = BM, NL = NL, LS = LS, DD = DD, RS = RS)
 #'
-#' # Run phylosem
 #' model = "
 #'   DD -> RS, p1
 #'   BM -> LS, p2
 #'   BM -> NL, p3
 #'   NL -> DD, p4
 #' "
-#' psem = phylosem( sem = model,
-#'           data = rhino[,c("BM","NL","DD","RS","LS")],
-#'           tree = rhino_tree )
+#' psem = phylosem( sem = model, data = dat, tree = tree )
+#' summary(psem)
 #'
+#' \dontrun{
 #' # Convert and plot using phylopath
 #' library(phylopath)
 #' my_fitted_DAG = as_fitted_DAG(psem)
 #' coef_plot( my_fitted_DAG )
 #' plot( my_fitted_DAG )
 #'
-#' \dontrun{
 #' # Convert to phylo4d to extract estimated traits and Standard errors
 #' # for all ancestors and tips in the tree.
-#' # In this rhino example, note that species are labeled s1-s100
-#' # and ancestral nodes are not named.
+#' # In this example, note that ancestral nodes are not named.
 #' (traits_est = as_phylo4d(psem))
 #' (traits_SE = as_phylo4d(psem, what="Std. Error"))
 #' }
@@ -276,6 +281,7 @@ function( sem,
   }
   if( any(is.nan(as.matrix(data))) ) stop("Please remove `NaN` values from data, presumably switching to `NA` values")
   if( any(sapply(data, is.factor)) ) stop("Please remove factors from `data`")
+  if( length(tree$tip.label) != Ntip(tree) ) stop("'tree$tip.label' must have same lnegth as the number of tips")
   if( length(tree$tip.label) != length(unique(tree$tip.label)) ) stop("'tree$tip.label' cannot be contain duplicate values")
 
   #

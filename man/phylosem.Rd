@@ -118,31 +118,36 @@ Also note that \pkg{phylopath} by default uses standardized coefficients.  To ac
      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 }
 \examples{
-# Load data set
-data(rhino, rhino_tree, package="phylopath")
+# Simulate a tree and traits
+set.seed(123)
+tree = ape::rtree(100)
+tree$tip.label = paste0("tip_", seq_len(100))
+BM = ape::rTraitCont(tree, sigma = 1)
+NL = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+LS = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+DD = 0.5 * NL + ape::rTraitCont(tree, sigma = 1)
+RS = 0.5 * DD + ape::rTraitCont(tree, sigma = 1)
+dat = data.frame(BM = BM, NL = NL, LS = LS, DD = DD, RS = RS)
 
-# Run phylosem
 model = "
   DD -> RS, p1
   BM -> LS, p2
   BM -> NL, p3
   NL -> DD, p4
 "
-psem = phylosem( sem = model,
-          data = rhino[,c("BM","NL","DD","RS","LS")],
-          tree = rhino_tree )
+psem = phylosem( sem = model, data = dat, tree = tree )
+summary(psem)
 
+\dontrun{
 # Convert and plot using phylopath
 library(phylopath)
 my_fitted_DAG = as_fitted_DAG(psem)
 coef_plot( my_fitted_DAG )
 plot( my_fitted_DAG )
 
-\dontrun{
 # Convert to phylo4d to extract estimated traits and Standard errors
 # for all ancestors and tips in the tree.
-# In this rhino example, note that species are labeled s1-s100
-# and ancestral nodes are not named.
+# In this example, note that ancestral nodes are not named.
 (traits_est = as_phylo4d(psem))
 (traits_SE = as_phylo4d(psem, what="Std. Error"))
 }

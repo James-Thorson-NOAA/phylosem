@@ -39,6 +39,7 @@ importFrom(TMB,
 importFrom(ape,
   Ntip,
   node.depth.edgelength,
+  rTraitCont,
   reorder.phylo,
   rtree
 )
