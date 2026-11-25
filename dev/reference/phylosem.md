@@ -263,19 +263,24 @@ Journal of Statistical Software, 70(5), 1-21.
 ## Examples
 
 ``` r
-# Load data set
-data(rhino, rhino_tree, package="phylopath")
+# Simulate a tree and traits
+set.seed(123)
+tree = ape::rtree(100)
+tree$tip.label = paste0("tip_", seq_len(100))
+BM = ape::rTraitCont(tree, sigma = 1)
+NL = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+LS = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+DD = 0.5 * NL + ape::rTraitCont(tree, sigma = 1)
+RS = 0.5 * DD + ape::rTraitCont(tree, sigma = 1)
+dat = data.frame(BM = BM, NL = NL, LS = LS, DD = DD, RS = RS)
 
-# Run phylosem
 model = "
   DD -> RS, p1
   BM -> LS, p2
   BM -> NL, p3
   NL -> DD, p4
 "
-psem = phylosem( sem = model,
-          data = rhino[,c("BM","NL","DD","RS","LS")],
-          tree = rhino_tree )
+psem = phylosem( sem = model, data = dat, tree = tree )
 #> NOTE: it is generally simpler to use specifyEquations() or cfa()
 #>       see ?specifyEquations
 #> List of estimated fixed and random effects:
@@ -285,33 +290,40 @@ psem = phylosem( sem = model,
 #> Running nlminb_loop #1
 #> Running newton_loop #1
 #> Running sdreport
-
-# Convert and plot using phylopath
-library(phylopath)
+summary(psem)
+#> $call
+#> phylosem(sem = model, tree = tree, data = dat)
 #> 
-#> Attaching package: ‘phylopath’
-#> The following objects are masked from ‘package:phylosem’:
+#> $coefficients
+#>         Path      VarName    Estimate     StdErr     t.value      p.value
+#> 1       <NA> Intercept_BM  0.01442441 0.54167245  0.02662939 9.787553e-01
+#> 2       <NA> Intercept_NL  0.51231290 0.53463328  0.95825105 3.379362e-01
+#> 3       <NA> Intercept_LS -0.80323498 0.58230332  1.37940992 1.677684e-01
+#> 4       <NA> Intercept_DD  0.58010605 0.56265490  1.03101573 3.025334e-01
+#> 5       <NA> Intercept_RS -0.55037960 0.57957109  0.94963259 3.422990e-01
+#> 6   DD -> RS           p1  0.43043885 0.09256584  4.65008329 3.318010e-06
+#> 7   BM -> LS           p2  0.66568735 0.10804219  6.16136501 7.212053e-10
+#> 8   BM -> NL           p3  0.51022399 0.09919735  5.14352416 2.696320e-07
+#> 9   NL -> DD           p4  0.45513844 0.09360801  4.86217431 1.161033e-06
+#> 10 BM <-> BM        V[BM]  0.99134852 0.07045191 14.07127949 0.000000e+00
+#> 11 NL <-> NL        V[NL]  0.97846220 0.06953612 14.07128035 0.000000e+00
+#> 12 LS <-> LS        V[LS]  1.06570580 0.07573626 14.07127516 0.000000e+00
+#> 13 DD <-> DD        V[DD]  1.02589399 0.07290696 14.07127736 0.000000e+00
+#> 14 RS <-> RS        V[RS]  1.05164847 0.07473725 14.07127591 0.000000e+00
 #> 
-#>     average, best, choice
-my_fitted_DAG = as_fitted_DAG(psem)
-coef_plot( my_fitted_DAG )
-#> This model has no confidence intervals, so standard errors are shown instead.
-#> ℹ Fit the model with `boot` larger than 0 for intervals, or set `error_bar = "se"` to silence this message.
-#> Warning: Cannot determine which variables of this model are binary, so the scale of its coefficients is unknown.
-#>   Paths into a binary variable are log odds ratios, while paths into a continuous variable are standardized regression coefficients.
-#> ℹ This model was fitted by a version of phylopath older than 1.4.0, which did not record it. Refit it to label the coefficients, and to stop receiving this warning.
-
-plot( my_fitted_DAG )
-#> Warning: Cannot determine which variables of this model are binary, so the scale of its coefficients is unknown.
-#>   Paths into a binary variable are log odds ratios, while paths into a continuous variable are standardized regression coefficients.
-#> ℹ This model was fitted by a version of phylopath older than 1.4.0, which did not record it. Refit it to label the coefficients, and to stop receiving this warning.
-
+#> attr(,"class")
+#> [1] "summary.phylosem"
 
 if (FALSE) { # \dontrun{
+# Convert and plot using phylopath
+library(phylopath)
+my_fitted_DAG = as_fitted_DAG(psem)
+coef_plot( my_fitted_DAG )
+plot( my_fitted_DAG )
+
 # Convert to phylo4d to extract estimated traits and Standard errors
 # for all ancestors and tips in the tree.
-# In this rhino example, note that species are labeled s1-s100
-# and ancestral nodes are not named.
+# In this example, note that ancestral nodes are not named.
 (traits_est = as_phylo4d(psem))
 (traits_SE = as_phylo4d(psem, what="Std. Error"))
 } # }

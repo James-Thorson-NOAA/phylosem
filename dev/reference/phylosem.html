@@ -247,19 +247,24 @@ TMB: Automatic differentiation and Laplace approximation. Journal of Statistical
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load data set</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">rhino</span>, <span class="va">rhino_tree</span>, package<span class="op">=</span><span class="st">"phylopath"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Simulate a tree and traits</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree</span> <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html" class="external-link">rtree</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree</span><span class="op">$</span><span class="va">tip.label</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"tip_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">BM</span> <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rTraitCont.html" class="external-link">rTraitCont</a></span><span class="op">(</span><span class="va">tree</span>, sigma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">NL</span> <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">BM</span> <span class="op">+</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rTraitCont.html" class="external-link">rTraitCont</a></span><span class="op">(</span><span class="va">tree</span>, sigma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">LS</span> <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">BM</span> <span class="op">+</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rTraitCont.html" class="external-link">rTraitCont</a></span><span class="op">(</span><span class="va">tree</span>, sigma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">DD</span> <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">NL</span> <span class="op">+</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rTraitCont.html" class="external-link">rTraitCont</a></span><span class="op">(</span><span class="va">tree</span>, sigma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">RS</span> <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">DD</span> <span class="op">+</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rTraitCont.html" class="external-link">rTraitCont</a></span><span class="op">(</span><span class="va">tree</span>, sigma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>BM <span class="op">=</span> <span class="va">BM</span>, NL <span class="op">=</span> <span class="va">NL</span>, LS <span class="op">=</span> <span class="va">LS</span>, DD <span class="op">=</span> <span class="va">DD</span>, RS <span class="op">=</span> <span class="va">RS</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Run phylosem</span></span></span>
 <span class="r-in"><span><span class="va">model</span> <span class="op">=</span> <span class="st">"</span></span></span>
 <span class="r-in"><span><span class="st">  DD -&gt; RS, p1</span></span></span>
 <span class="r-in"><span><span class="st">  BM -&gt; LS, p2</span></span></span>
 <span class="r-in"><span><span class="st">  BM -&gt; NL, p3</span></span></span>
 <span class="r-in"><span><span class="st">  NL -&gt; DD, p4</span></span></span>
 <span class="r-in"><span><span class="st">"</span></span></span>
-<span class="r-in"><span><span class="va">psem</span> <span class="op">=</span> <span class="fu">phylosem</span><span class="op">(</span> sem <span class="op">=</span> <span class="va">model</span>,</span></span>
-<span class="r-in"><span>          data <span class="op">=</span> <span class="va">rhino</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BM"</span>,<span class="st">"NL"</span>,<span class="st">"DD"</span>,<span class="st">"RS"</span>,<span class="st">"LS"</span><span class="op">)</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>          tree <span class="op">=</span> <span class="va">rhino_tree</span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">psem</span> <span class="op">=</span> <span class="fu">phylosem</span><span class="op">(</span> sem <span class="op">=</span> <span class="va">model</span>, data <span class="op">=</span> <span class="va">dat</span>, tree <span class="op">=</span> <span class="va">tree</span> <span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> NOTE: it is generally simpler to use specifyEquations() or cfa()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>       see ?specifyEquations</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> List of estimated fixed and random effects:</span>
@@ -269,33 +274,40 @@ TMB: Automatic differentiation and Laplace approximation. Journal of Statistical
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running nlminb_loop #1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running newton_loop #1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running sdreport</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Convert and plot using phylopath</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ax3man.github.io/phylopath/" class="external-link">phylopath</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘phylopath’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:phylosem’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     average, best, choice</span>
-<span class="r-in"><span><span class="va">my_fitted_DAG</span> <span class="op">=</span> <span class="fu"><a href="as_fitted_DAG.html">as_fitted_DAG</a></span><span class="op">(</span><span class="va">psem</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://ax3man.github.io/phylopath/reference/coef_plot.html" class="external-link">coef_plot</a></span><span class="op">(</span> <span class="va">my_fitted_DAG</span> <span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This model has no confidence intervals, so standard errors are shown instead.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> Fit the model with `boot` larger than 0 for intervals, or set `error_bar = "se"` to silence this message.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot determine which variables of this model are binary, so the scale of its coefficients is unknown.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Paths into a binary variable are log odds ratios, while paths into a continuous variable are standardized regression coefficients.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> This model was fitted by a version of phylopath older than 1.4.0, which did not record it. Refit it to label the coefficients, and to stop receiving this warning.</span>
-<span class="r-plt img"><img src="phylosem-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span> <span class="va">my_fitted_DAG</span> <span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Cannot determine which variables of this model are binary, so the scale of its coefficients is unknown.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Paths into a binary variable are log odds ratios, while paths into a continuous variable are standardized regression coefficients.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> This model was fitted by a version of phylopath older than 1.4.0, which did not record it. Refit it to label the coefficients, and to stop receiving this warning.</span>
-<span class="r-plt img"><img src="phylosem-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">psem</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $call</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> phylosem(sem = model, tree = tree, data = dat)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Path      VarName    Estimate     StdErr     t.value      p.value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       &lt;NA&gt; Intercept_BM  0.01442441 0.54167245  0.02662939 9.787553e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       &lt;NA&gt; Intercept_NL  0.51231290 0.53463328  0.95825105 3.379362e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       &lt;NA&gt; Intercept_LS -0.80323498 0.58230332  1.37940992 1.677684e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       &lt;NA&gt; Intercept_DD  0.58010605 0.56265490  1.03101573 3.025334e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       &lt;NA&gt; Intercept_RS -0.55037960 0.57957109  0.94963259 3.422990e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   DD -&gt; RS           p1  0.43043885 0.09256584  4.65008329 3.318010e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   BM -&gt; LS           p2  0.66568735 0.10804219  6.16136501 7.212053e-10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   BM -&gt; NL           p3  0.51022399 0.09919735  5.14352416 2.696320e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   NL -&gt; DD           p4  0.45513844 0.09360801  4.86217431 1.161033e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 BM &lt;-&gt; BM        V[BM]  0.99134852 0.07045191 14.07127949 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 NL &lt;-&gt; NL        V[NL]  0.97846220 0.06953612 14.07128035 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 LS &lt;-&gt; LS        V[LS]  1.06570580 0.07573626 14.07127516 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 DD &lt;-&gt; DD        V[DD]  1.02589399 0.07290696 14.07127736 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 RS &lt;-&gt; RS        V[RS]  1.05164847 0.07473725 14.07127591 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "summary.phylosem"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># Convert and plot using phylopath</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ax3man.github.io/phylopath/" class="external-link">phylopath</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">my_fitted_DAG</span> <span class="op">=</span> <span class="fu"><a href="as_fitted_DAG.html">as_fitted_DAG</a></span><span class="op">(</span><span class="va">psem</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ax3man.github.io/phylopath/reference/coef_plot.html" class="external-link">coef_plot</a></span><span class="op">(</span> <span class="va">my_fitted_DAG</span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span> <span class="va">my_fitted_DAG</span> <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Convert to phylo4d to extract estimated traits and Standard errors</span></span></span>
 <span class="r-in"><span><span class="co"># for all ancestors and tips in the tree.</span></span></span>
-<span class="r-in"><span><span class="co"># In this rhino example, note that species are labeled s1-s100</span></span></span>
-<span class="r-in"><span><span class="co"># and ancestral nodes are not named.</span></span></span>
+<span class="r-in"><span><span class="co"># In this example, note that ancestral nodes are not named.</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">traits_est</span> <span class="op">=</span> <span class="fu"><a href="as_phylo4d.html">as_phylo4d</a></span><span class="op">(</span><span class="va">psem</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">traits_SE</span> <span class="op">=</span> <span class="fu"><a href="as_phylo4d.html">as_phylo4d</a></span><span class="op">(</span><span class="va">psem</span>, what<span class="op">=</span><span class="st">"Std. Error"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
