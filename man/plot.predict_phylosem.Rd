@@ -4,7 +4,18 @@
 \alias{plot.predict_phylosem}
 \title{plot predictions from phylosem}
 \usage{
-\method{plot}{predict_phylosem}(x, y, variables = 1, data, data_labels, distance_threshold = 0, tree, ...)
+\method{plot}{predict_phylosem}(
+  x,
+  y,
+  variables = 1,
+  data,
+  data_labels,
+  distance_threshold = 0,
+  tree,
+  plot_legend = TRUE,
+  legend_cex = 1,
+  ...
+)
 }
 \arguments{
 \item{x}{Output from \code{\link{predict.phylosem}}}
@@ -20,7 +31,11 @@
 
 \item{distance_threshold}{distance from taxa to use when plotting data}
 
-\item{tree}{phylogenetic structure, using class \code{\link[ape]{as.phylo}}}
+\item{tree}{...}
+
+\item{plot_legend}{logical; whether to display the legend. Default: TRUE.}
+
+\item{legend_cex}{numeric; character expansion factor for the legend text. Default: 1.}
 
 \item{...}{Not used}
 }
