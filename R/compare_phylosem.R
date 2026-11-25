@@ -31,18 +31,21 @@ function( sem_set,
 
   # Loop through models
   for( modelI in seq_along(sem_set) ){
-    fit = tryCatch( phylosem( sem = sem_set[[modelI]],
-    #fit = phylosem( sem = sem_set[[modelI]],
-                              tree = tree,
-                              data = data,
-                              family = family,
-                              covs = covs,
-                              estimate_ou = estimate_ou,
-                              estimate_lambda = estimate_lambda,
-                              estimate_kappa = estimate_kappa,
-                              control = control,
-                              ... ),
-                    error = function(e) e )
+    fit = tryCatch(
+      phylosem(
+        sem = sem_set[[modelI]],
+        tree = tree,
+        data = data,
+        family = family,
+        covs = covs,
+        estimate_ou = estimate_ou,
+        estimate_lambda = estimate_lambda,
+        estimate_kappa = estimate_kappa,
+        control = control,
+        ...
+      ),
+      error = function(e) e
+    )
     if( isTRUE(is(fit, "phylosem")) ){
       out[[modelI]] = fit
     }

@@ -4,7 +4,7 @@
 #'
 #' @param object Output from \code{\link{phylosem}}
 #'
-#' @return Convert output to format supplied by \code{\link[phylopath]{est_DAG}}
+#' @return Convert output to format supplied by \code{phylopath::est_DAG}
 #'
 #' @export
 as_fitted_DAG <-
@@ -62,18 +62,23 @@ function( object ){
 #' @param object Output from \code{\link{phylosem}}
 #' @param what Select what to convert (Estimate / Std. Error).
 #'
-#' @return phylosem output to converted format supplied by \code{\link[phylobase]{phylo4d}}
+#' @return phylosem output to converted format supplied by \code{phylobase::phylo4d}
 #'
 #' @export
 as_phylo4d <-
 function( object,
           what = c("Estimate", "Std. Error") ){
 
+  # phylobase is in Suggests, so check at run time
+  if( !requireNamespace("phylobase", quietly = TRUE) ){
+    stop("Please install package 'phylobase' to use `as_phylo4d`", call. = FALSE)
+  }
+
   #
   what = match.arg(what)
   traits = as.list( object$sdrep, what=what )$x_vj
   colnames(traits) = colnames(object$data)
-  out = phylo4d( x=object$tree, all.data=traits )
+  out = phylobase::phylo4d( x=object$tree, all.data=traits )
 
   # pass out
   return(out)

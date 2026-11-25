@@ -17,8 +17,6 @@ Authors@R:
     )
 Imports:
     ape,
-    phylobase,
-    phylopath,
     methods,
     checkmate,
     ggplot2,
@@ -31,6 +29,8 @@ Depends:
     TMB,
     R (>= 4.0.0),
 Suggests:
+    phylobase,
+    phylopath,
     semPlot,
     TreeTools,
     Rphylopars,

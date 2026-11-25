@@ -12,7 +12,7 @@ as_phylo4d(object, what = c("Estimate", "Std. Error"))
 \item{what}{Select what to convert (Estimate / Std. Error).}
 }
 \value{
-phylosem output to converted format supplied by \code{\link[phylobase]{phylo4d}}
+phylosem output to converted format supplied by \code{phylobase::phylo4d}
 }
 \description{
 Convert output from package phylosem to phylo4d object from package phylobase
