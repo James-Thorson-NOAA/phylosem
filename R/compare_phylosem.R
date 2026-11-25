@@ -107,7 +107,7 @@ function( x,
 #'
 #' @param x output from \code{compare_phylosem}
 #' @param cut_off threshold where any model with delta-AIC greater than this value is excluded from average
-#' @param avg_method see \code{\link[phylopath]{average_DAGs}}
+#' @param avg_method see \code{phylopath::average_DAGs}
 #'
 #' @return Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}} after conversion to format from [phylopath::est_DAG]
 #'
@@ -128,6 +128,11 @@ function( x,
           cut_off = 2,
           avg_method = "conditional") {
 
+  # Check Suggested packages at run time
+  if( !requireNamespace("phylopath", quietly = TRUE) ){
+    stop("Please install package 'igraph' to use `average.compare_phylosem`", call. = FALSE)
+  }
+
   AICs <- vapply(x, AIC, 1)
   dAICs <- AICs - min(AICs)
 
@@ -141,5 +146,5 @@ function( x,
   #  selected_DAGS[[i]] = as( selected[[i]], "fitted_DAG" )
   #}
   selected_DAGs <- lapply(selected, as_fitted_DAG)
-  average_DAGs(selected_DAGs, w[dAICs < cut_off], avg_method = avg_method)
+  phylopath::average_DAGs(selected_DAGs, w[dAICs < cut_off], avg_method = avg_method)
 }

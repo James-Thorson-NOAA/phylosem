@@ -930,8 +930,6 @@ function( x,
     SE = out$SE,
     wald_pvalue = (1 - pchisq( (out$Estimate / out$SE)^2, df = 1 ))
   )
-  #  DF$label = paste0(DF$label, add_stars)
-  #}
   if( isFALSE(keep_twoheaded) ){
     DF = DF[ which(DF$from != DF$to), ]
   }
@@ -941,7 +939,7 @@ function( x,
   }else if( edge_label=="name"){
     DF$label = DF$name
   }
-  
+
   if( is.null(vertices) ){
     vertices = union( out$to, out$from )
   }else{
