@@ -18,4 +18,4 @@ as_fitted_DAG(object)
 ## Value
 
 Convert output to format supplied by
-[`est_DAG`](https://ax3man.github.io/phylopath/reference/est_DAG.html)
+[`phylopath::est_DAG`](https://ax3man.github.io/phylopath/reference/est_DAG.html)

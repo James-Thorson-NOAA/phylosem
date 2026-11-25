@@ -23,7 +23,7 @@ as_phylo4d(object, what = c("Estimate", "Std. Error"))
 ## Value
 
 phylosem output to converted format supplied by
-[`phylo4d`](https://rdrr.io/pkg/phylobase/man/phylo4d-methods.html)
+[`phylobase::phylo4d`](https://rdrr.io/pkg/phylobase/man/phylo4d-methods.html)
 
 ## Details
 
