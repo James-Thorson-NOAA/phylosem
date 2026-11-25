@@ -1,0 +1,37 @@
+name: sanitizers
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, dev]
+
+jobs:
+  san-check:
+    runs-on: ubuntu-latest
+
+    container:
+      #image: ghcr.io/r-hub/containers/gcc13:latest       # Doesn't find error
+      image: ghcr.io/r-hub/containers/clang-asan:latest   # Same as Ripley
+
+    env:
+      UBSAN_OPTIONS: print_stacktrace=1
+      ASAN_OPTIONS: detect_leaks=0
+      _R_CHECK_FORCE_SUGGESTS_: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show compiler configuration
+        run: |
+          for v in CXX CXX17 CXX17FLAGS CXX17STD CXXFLAGS LDFLAGS; do
+            echo "$v = $(R CMD config $v)"
+          done
+
+      - name: Install dependencies
+        run: |
+          R -q -e 'install.packages("pak")'
+          R -q -e 'pak::pkg_install(c("local::.", "rcmdcheck", "testthat", "knitr", "rmarkdown"))'
+
+      - name: Run check
+        run: |
+          R -q -e 'rcmdcheck::rcmdcheck(args = c("--no-manual", "--ignore-vignettes"), build_args = "--no-build-vignettes", error_on = "error")'

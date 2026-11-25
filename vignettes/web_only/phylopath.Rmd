@@ -5,8 +5,8 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Detailed comparison with `phylopath`}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteDepends{phylopath,adephylo}
+  %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   chunk_output_type: console
 ---

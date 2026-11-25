@@ -8,41 +8,52 @@ phylosem(
   sem,
   tree,
   data,
-  family = rep("fixed", ncol(data)),
+  family = Map(function(.) fixed(), colnames(data)),
   covs = colnames(data),
   estimate_ou = FALSE,
   estimate_lambda = FALSE,
   estimate_kappa = FALSE,
   data_labels = rownames(data),
   tmb_inputs = NULL,
+  estimate_xbar = NULL,
+  experiments = NULL,
   control = phylosem_control()
 )
 }
 \arguments{
-\item{sem}{structural equation model structure, passed to either \code{\link[sem]{specifyModel}}
-or \code{\link[sem]{specifyEquations}} and then parsed to control
+\item{sem}{Specification for structural equation model structure for
+constructing an interaction among traits along a tree, and then parsed to control
 the set of path coefficients and variance-covariance parameters}
 
 \item{tree}{phylogenetic structure, using class \code{\link[ape]{as.phylo}}}
 
-\item{data}{data-frame providing variables being modeled.  Missing values are inputted
+\item{data}{data-frame providing numeric values for variables being modeled.  Missing values are inputted
 as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
-then it still must be inputted as a column of \code{data} with entirely NA values.}
+then it still must be inputted as a column of \code{data} with entirely NA values.
+Bernoulli variables must be coded as 0s or 1s, and factors are not allowed.}
 
-\item{family}{Character-vector listing the distribution used for each column of \code{data}, where
-each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
-\code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
-Other options correspond to different specifications of measurement error.}
+\item{family}{A named list of families, each returning a class \code{family},
+including [fixed()], [gaussian()], [binomial()], [Gamma()],
+and [poisson()], with names that match levels of
+\code{colnames(data)} to allow different
+families by variable.  Family [fixed()] specifies that states
+are known (i.e., measurements for that variable have no error).
+Other families allow users to supply a link function including `identity`,
+`log`, `logit`, or `cloglog`.  For example
+\code{family = list(y = binomial("logit"), x = fixed())}
+would specify logit-linked Bernoulli distribution for variable `data$y`
+and a fixed (no measurement error) distribution for `data$x`.
+For many variables, it is convenient to do e.g.,
+\code{family = Map(function(.) gaussian(), colnames(tsdata))} rather than writing
+them all manually.}
 
-\item{covs}{optional: a character vector of one or more elements, with each element
-  	giving a string of variable names, separated by commas. Variances and covariances
-  	among all variables in each such string are added to the model. For confirmatory
-  	factor analysis models specified via \code{cfa}, \code{covs} defaults to all of
-  	the factors in the model, thus specifying all variances and covariances among these factors.
-  	\emph{Warning}: \code{covs="x1, x2"} and \code{covs=c("x1", "x2")} are \emph{not}
-  	equivalent: \code{covs="x1, x2"} specifies the variance of \code{x1}, the variance
-  	of \code{x2}, \emph{and} their covariance, while \code{covs=c("x1", "x2")} specifies
-  	the variance of \code{x1} and the variance of \code{x2} \emph{but not} their covariance.}
+\item{covs}{optional: a character vector of one or more elements, with each element giving a string of variable
+names, separated by commas. Variances and covariances among all variables in each such string are
+added to the model. Warning: covs="x1, x2" and covs=c("x1", "x2") are not equivalent:
+covs="x1, x2" specifies the variance of x1, the variance of x2, and their covariance,
+while covs=c("x1", "x2") specifies the variance of x1 and the variance of x2 but not their covariance.
+These same covariances can be added manually via argument `sem`, but using argument `covs` might
+save time for models with many variables.}
 
 \item{estimate_ou}{Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 process using additional parameter \code{lnalpha},
@@ -60,6 +71,16 @@ lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}}
 
 \item{tmb_inputs}{optional tagged list that overrides the default constructor
 for TMB inputs (use at your own risk)}
+
+\item{estimate_xbar}{character-vector listing columns of \code{data} for which to estimate the mean,
+which is subtracted off of \code{data} prior to evaluating relationships among traits.
+The default \code{estimate_xbar = NULL} estimates the mean for every column with at least one value
+that is not \code{NA} (i.e., does *not* estimate the mean for latent variables).
+If you want to have no \code{xbar} parameters, use \code{estimate_xbar = vector()}.}
+
+\item{experiments}{Optional output from \code{\link{beverton_holt}}, or other future options,
+representing experimental measurements that are used to estimate traits.
+Default \code{experiments=NULL} ignores this input.}
 
 \item{control}{Output from \code{\link{phylosem_control}}, used to define user
 settings, and see documentation for that function for details.}
@@ -97,20 +118,27 @@ Also note that \pkg{phylopath} by default uses standardized coefficients.  To ac
      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 }
 \examples{
-# Load data set
-data(rhino, rhino_tree, package="phylopath")
+# Simulate a tree and traits
+set.seed(123)
+tree = ape::rtree(100)
+tree$tip.label = paste0("tip_", seq_len(100))
+BM = ape::rTraitCont(tree, sigma = 1)
+NL = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+LS = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+DD = 0.5 * NL + ape::rTraitCont(tree, sigma = 1)
+RS = 0.5 * DD + ape::rTraitCont(tree, sigma = 1)
+dat = data.frame(BM = BM, NL = NL, LS = LS, DD = DD, RS = RS)
 
-# Run phylosem
 model = "
   DD -> RS, p1
   BM -> LS, p2
   BM -> NL, p3
   NL -> DD, p4
 "
-psem = phylosem( sem = model,
-          data = rhino[,c("BM","NL","DD","RS","LS")],
-          tree = rhino_tree )
+psem = phylosem( sem = model, data = dat, tree = tree )
+summary(psem)
 
+\dontrun{
 # Convert and plot using phylopath
 library(phylopath)
 my_fitted_DAG = as_fitted_DAG(psem)
@@ -119,24 +147,9 @@ plot( my_fitted_DAG )
 
 # Convert to phylo4d to extract estimated traits and Standard errors
 # for all ancestors and tips in the tree.
-# In this rhino example, note that species are labeled s1-s100
-# and ancestral nodes are not named.
+# In this example, note that ancestral nodes are not named.
 (traits_est = as_phylo4d(psem))
 (traits_SE = as_phylo4d(psem, what="Std. Error"))
-
-# Convert to sem and plot
-library(sem)
-my_sem = as_sem(psem)
-pathDiagram( model = my_sem,
-                  style = "traditional",
-                  edge.labels = "values" )
-effects( my_sem )
-
-# Plot using semPlot
-if( require(semPlot) ){
-  myplot = semPlotModel( my_sem )
-  semPaths( my_sem,
-                   nodeLabels = myplot@Vars$name )
 }
 
 }

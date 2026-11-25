@@ -4,7 +4,7 @@
 #'
 #' @param object Output from \code{\link{phylosem}}
 #'
-#' @return Convert output to format supplied by \code{\link[phylopath]{est_DAG}}
+#' @return Convert output to format supplied by \code{phylopath::est_DAG}
 #'
 #' @export
 as_fitted_DAG <-
@@ -12,37 +12,44 @@ function( object ){
 
   # extract and name identical to output from est_DAG
   out = list(
-    coef = t(object$report$Rho_jj),
-    se = t(as.list(object$sdrep, what="Std. Error", report=TRUE)$Rho_jj)
+    coef = t(as.matrix(object$report$Rho_jj))
   )
-  dimnames(out$coef) = dimnames(out$se) = list( colnames(object$data), colnames(object$data) )
+  dimnames(out$coef) = list( colnames(object$data), colnames(object$data) )
+
+  if( !is.null(object$sdrep) ){
+    SE_Rho_jj = object$report$Rho_jj
+    SE_Rho_jj@x = as.vector(as.list(object$sdrep, what="Std. Error", report=TRUE)$nonzeroRho_z)
+    out$se = t(as.matrix(SE_Rho_jj))
+    dimnames(out$se) = dimnames(out$coef)
+  }
 
   # pass out
   class(out) = "fitted_DAG"
   return(out)
 }
 
-#' @title Convert phylosem to sem output
-#'
-#' @description Convert output from package phylosem to output from package sem
-#'
-#' @param object Output from \code{\link{phylosem}}
-#'
-#' @return Output converted to format supplied by \code{\link[sem]{sem}}
-#'
-#' @export
-as_sem <-
-function( object ){
-
-  Sprime = object$report$V_jj
-    rownames(Sprime) = colnames(Sprime) = colnames(object$data)
-  out = sem( object$SEM_model,
-             S = Sprime,
-             N = nrow(object$data) )
-
-  # pass out
-  return(out)
-}
+#as_sem <-
+#function( object ){
+#
+#  # @title Convert phylosem to sem output
+#  #
+#  # @description Convert output from package phylosem to output from package sem
+#  #
+#  # @param object Output from \code{\link{phylosem}}
+#  #
+#  # @return Output converted to format supplied by \code{\link[sem]{sem}}
+#  #
+#  # @export
+#  Sprime = as.matrix(solve(object$report$Q_jj))
+#    rownames(Sprime) = colnames(Sprime) = colnames(object$data)
+#    Sprime = (Sprime + t(Sprime))/2      # Force symmetric
+#  out = sem( object$SEM_model,
+#             S = Sprime,
+#             N = nrow(object$data) )
+#
+#  # pass out
+#  return(out)
+#}
 
 #' @title Convert phylosem to phylo4d
 #'
@@ -55,18 +62,23 @@ function( object ){
 #' @param object Output from \code{\link{phylosem}}
 #' @param what Select what to convert (Estimate / Std. Error).
 #'
-#' @return phylosem output to converted format supplied by \code{\link[phylobase]{phylo4d}}
+#' @return phylosem output to converted format supplied by \code{phylobase::phylo4d}
 #'
 #' @export
 as_phylo4d <-
 function( object,
           what = c("Estimate", "Std. Error") ){
 
+  # phylobase is in Suggests, so check at run time
+  if( !requireNamespace("phylobase", quietly = TRUE) ){
+    stop("Please install package 'phylobase' to use `as_phylo4d`", call. = FALSE)
+  }
+
   #
   what = match.arg(what)
   traits = as.list( object$sdrep, what=what )$x_vj
   colnames(traits) = colnames(object$data)
-  out = phylo4d( x=object$tree, all.data=traits )
+  out = phylobase::phylo4d( x=object$tree, all.data=traits )
 
   # pass out
   return(out)

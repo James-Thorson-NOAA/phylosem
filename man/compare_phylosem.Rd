@@ -8,7 +8,7 @@ compare_phylosem(
   sem_set,
   tree,
   data,
-  family = rep("fixed", ncol(data)),
+  family = Map(function(.) fixed(), colnames(data)),
   covs,
   estimate_ou = FALSE,
   estimate_lambda = FALSE,
@@ -24,24 +24,33 @@ where each element will be passed as argument \code{sem} to
 
 \item{tree}{phylogenetic structure, using class \code{\link[ape]{as.phylo}}}
 
-\item{data}{data-frame providing variables being modeled.  Missing values are inputted
+\item{data}{data-frame providing numeric values for variables being modeled.  Missing values are inputted
 as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
-then it still must be inputted as a column of \code{data} with entirely NA values.}
+then it still must be inputted as a column of \code{data} with entirely NA values.
+Bernoulli variables must be coded as 0s or 1s, and factors are not allowed.}
 
-\item{family}{Character-vector listing the distribution used for each column of \code{data}, where
-each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
-\code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
-Other options correspond to different specifications of measurement error.}
+\item{family}{A named list of families, each returning a class \code{family},
+including [fixed()], [gaussian()], [binomial()], [Gamma()],
+and [poisson()], with names that match levels of
+\code{colnames(data)} to allow different
+families by variable.  Family [fixed()] specifies that states
+are known (i.e., measurements for that variable have no error).
+Other families allow users to supply a link function including `identity`,
+`log`, `logit`, or `cloglog`.  For example
+\code{family = list(y = binomial("logit"), x = fixed())}
+would specify logit-linked Bernoulli distribution for variable `data$y`
+and a fixed (no measurement error) distribution for `data$x`.
+For many variables, it is convenient to do e.g.,
+\code{family = Map(function(.) gaussian(), colnames(tsdata))} rather than writing
+them all manually.}
 
-\item{covs}{optional: a character vector of one or more elements, with each element
-  	giving a string of variable names, separated by commas. Variances and covariances
-  	among all variables in each such string are added to the model. For confirmatory
-  	factor analysis models specified via \code{cfa}, \code{covs} defaults to all of
-  	the factors in the model, thus specifying all variances and covariances among these factors.
-  	\emph{Warning}: \code{covs="x1, x2"} and \code{covs=c("x1", "x2")} are \emph{not}
-  	equivalent: \code{covs="x1, x2"} specifies the variance of \code{x1}, the variance
-  	of \code{x2}, \emph{and} their covariance, while \code{covs=c("x1", "x2")} specifies
-  	the variance of \code{x1} and the variance of \code{x2} \emph{but not} their covariance.}
+\item{covs}{optional: a character vector of one or more elements, with each element giving a string of variable
+names, separated by commas. Variances and covariances among all variables in each such string are
+added to the model. Warning: covs="x1, x2" and covs=c("x1", "x2") are not equivalent:
+covs="x1, x2" specifies the variance of x1, the variance of x2, and their covariance,
+while covs=c("x1", "x2") specifies the variance of x1 and the variance of x2 but not their covariance.
+These same covariances can be added manually via argument `sem`, but using argument `covs` might
+save time for models with many variables.}
 
 \item{estimate_ou}{Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 process using additional parameter \code{lnalpha},

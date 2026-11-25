@@ -2,31 +2,55 @@
 #'
 #' @description Fits a phylogenetic structural equation model
 #'
-#' @inheritParams sem::specifyModel
-#'
-#' @param sem structural equation model structure, passed to either \code{\link[sem]{specifyModel}}
-#'        or \code{\link[sem]{specifyEquations}} and then parsed to control
+#' @param sem Specification for structural equation model structure for
+#'        constructing an interaction among traits along a tree, and then parsed to control
 #'        the set of path coefficients and variance-covariance parameters
 #' @param tree phylogenetic structure, using class \code{\link[ape]{as.phylo}}
-#' @param data data-frame providing variables being modeled.  Missing values are inputted
+#' @param data data-frame providing numeric values for variables being modeled.  Missing values are inputted
 #'        as NA.  If an SEM includes a latent variable (i.e., variable with no available measurements)
 #'        then it still must be inputted as a column of \code{data} with entirely NA values.
-#' @param family Character-vector listing the distribution used for each column of \code{data}, where
-#'        each element must be \code{fixed}, \code{normal}, \code{binomial}, or \code{poisson}.
-#'        \code{family="fixed"} is default behavior and assumes that a given variable is measured exactly.
-#'        Other options correspond to different specifications of measurement error.
+#'        Bernoulli variables must be coded as 0s or 1s, and factors are not allowed.
+#' @param family A named list of families, each returning a class \code{family},
+#'        including [fixed()], [gaussian()], [binomial()], [Gamma()],
+#'        and [poisson()], with names that match levels of
+#'        \code{colnames(data)} to allow different
+#'        families by variable.  Family [fixed()] specifies that states
+#'        are known (i.e., measurements for that variable have no error).
+#'        Other families allow users to supply a link function including `identity`,
+#'        `log`, `logit`, or `cloglog`.  For example
+#'        \code{family = list(y = binomial("logit"), x = fixed())}
+#'        would specify logit-linked Bernoulli distribution for variable `data$y`
+#'        and a fixed (no measurement error) distribution for `data$x`.
+#'        For many variables, it is convenient to do e.g.,
+#'        \code{family = Map(function(.) gaussian(), colnames(tsdata))} rather than writing
+#'        them all manually.
+#' @param covs optional: a character vector of one or more elements, with each element giving a string of variable
+#'        names, separated by commas. Variances and covariances among all variables in each such string are
+#'        added to the model. Warning: covs="x1, x2" and covs=c("x1", "x2") are not equivalent:
+#'        covs="x1, x2" specifies the variance of x1, the variance of x2, and their covariance,
+#'        while covs=c("x1", "x2") specifies the variance of x1 and the variance of x2 but not their covariance.
+#'        These same covariances can be added manually via argument `sem`, but using argument `covs` might
+#'        save time for models with many variables.
 #' @param estimate_ou Boolean indicating whether to estimate an autoregressive (Ornstein-Uhlenbeck)
 #'        process using additional parameter \code{lnalpha},
 #'        corresponding to the \code{model="OUrandomRoot"} parameterization from \pkg{phylolm}
 #'        as listed in \doi{10.1093/sysbio/syu005}
 #' @param estimate_lambda Boolean indicating whether to estimate additional branch lengths for
 #'        phylogenetic tips (a.k.a. the Pagel-lambda term) using additional parameter \code{logitlambda}
+#' @param estimate_xbar character-vector listing columns of \code{data} for which to estimate the mean,
+#'        which is subtracted off of \code{data} prior to evaluating relationships among traits.
+#'        The default \code{estimate_xbar = NULL} estimates the mean for every column with at least one value
+#'        that is not \code{NA} (i.e., does *not* estimate the mean for latent variables).
+#'        If you want to have no \code{xbar} parameters, use \code{estimate_xbar = vector()}.
 #' @param estimate_kappa Boolean indicating whether to estimate a nonlinear scaling of branch
 #'        lengths (a.k.a. the Pagel-kappa term) using additional parameter \code{lnkappa}
 #' @param data_labels For each row of \code{data}, listing the corresponding name from
 #'        \code{tree$tip.label}.  Default pulls \code{data_labels} from \code{rownames(data)}
 #' @param tmb_inputs optional tagged list that overrides the default constructor
 #'        for TMB inputs (use at your own risk)
+#' @param experiments Optional output from \code{\link{beverton_holt}}, or other future options,
+#'        representing experimental measurements that are used to estimate traits.
+#'        Default \code{experiments=NULL} ignores this input.
 #' @param control Output from \code{\link{phylosem_control}}, used to define user
 #'        settings, and see documentation for that function for details.
 #'
@@ -46,12 +70,14 @@
 #'      \pkg{phylosem} and \pkg{phylopath}, standardize each variable to have a standard deviation of 1.0 prior to fitting with \pkg{phylosem}.
 #'
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
-#' @importFrom sem sem pathDiagram specifyModel specifyEquations
-#' @importFrom phylopath average_DAGs coef_plot
-#' @importFrom phylobase phylo4d
-#' @importFrom ape Ntip node.depth.edgelength rtree
+#' @importFrom stats rpois gaussian poisson binomial Gamma coef dnorm pchisq
+#' @importFrom checkmate assertNumeric assertCharacter assertSubset assert_class
+#' @importFrom ape Ntip node.depth.edgelength rtree reorder.phylo rTraitCont
 #' @importFrom TMB compile dynlib MakeADFun sdreport
 #' @importFrom methods is
+#' @importFrom Matrix sparseMatrix solve Cholesky crossprod
+#' @importFrom viridisLite viridis
+#' @importFrom graphics abline legend lines matplot points
 #'
 #' @return
 #' An object (list) of class `phylosem`. Elements include:
@@ -123,20 +149,27 @@
 #' 70(5), 1-21. \doi{10.18637/jss.v070.i05}
 #'
 #' @examples
-#' # Load data set
-#' data(rhino, rhino_tree, package="phylopath")
+#' # Simulate a tree and traits
+#' set.seed(123)
+#' tree = ape::rtree(100)
+#' tree$tip.label = paste0("tip_", seq_len(100))
+#' BM = ape::rTraitCont(tree, sigma = 1)
+#' NL = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+#' LS = 0.5 * BM + ape::rTraitCont(tree, sigma = 1)
+#' DD = 0.5 * NL + ape::rTraitCont(tree, sigma = 1)
+#' RS = 0.5 * DD + ape::rTraitCont(tree, sigma = 1)
+#' dat = data.frame(BM = BM, NL = NL, LS = LS, DD = DD, RS = RS)
 #'
-#' # Run phylosem
 #' model = "
 #'   DD -> RS, p1
 #'   BM -> LS, p2
 #'   BM -> NL, p3
 #'   NL -> DD, p4
 #' "
-#' psem = phylosem( sem = model,
-#'           data = rhino[,c("BM","NL","DD","RS","LS")],
-#'           tree = rhino_tree )
+#' psem = phylosem( sem = model, data = dat, tree = tree )
+#' summary(psem)
 #'
+#' \dontrun{
 #' # Convert and plot using phylopath
 #' library(phylopath)
 #' my_fitted_DAG = as_fitted_DAG(psem)
@@ -145,24 +178,9 @@
 #'
 #' # Convert to phylo4d to extract estimated traits and Standard errors
 #' # for all ancestors and tips in the tree.
-#' # In this rhino example, note that species are labeled s1-s100
-#' # and ancestral nodes are not named.
+#' # In this example, note that ancestral nodes are not named.
 #' (traits_est = as_phylo4d(psem))
 #' (traits_SE = as_phylo4d(psem, what="Std. Error"))
-#'
-#' # Convert to sem and plot
-#' library(sem)
-#' my_sem = as_sem(psem)
-#' pathDiagram( model = my_sem,
-#'                   style = "traditional",
-#'                   edge.labels = "values" )
-#' effects( my_sem )
-#'
-#' # Plot using semPlot
-#' if( require(semPlot) ){
-#'   myplot = semPlotModel( my_sem )
-#'   semPaths( my_sem,
-#'                    nodeLabels = myplot@Vars$name )
 #' }
 #'
 #' @useDynLib phylosem, .registration = TRUE
@@ -171,15 +189,25 @@ phylosem <-
 function( sem,
           tree,
           data,
-          family = rep("fixed", ncol(data)),
+          family = Map(function(.) fixed(), colnames(data)),
           covs = colnames(data),
           estimate_ou = FALSE,
           estimate_lambda = FALSE,
           estimate_kappa = FALSE,
           data_labels = rownames(data),
           tmb_inputs = NULL,
+          estimate_xbar = NULL,
+          experiments = NULL,
           control = phylosem_control() ){
 
+  # MOVING TO SUGGESTS
+  # @importFrom phylopath average_DAGs coef_plot
+  # @importFrom phylobase phylo4d
+  # @importFrom igraph plot.igraph graph_from_data_frame with_sugiyama layout_ graph.adjacency clusters
+  # @importFrom ggraph ggraph geom_edge_arc create_layout rectangle geom_node_text theme_graph
+  # @importFrom ggplot2 aes
+
+  start_time = Sys.time()
   # Function that converts SEM model to a RAM, see `?sem` for more context
   build_ram = function( model, vars ){
     vars = sapply( vars, FUN=function(char){gsub("-", "", gsub(" ", "", char))} )
@@ -189,6 +217,7 @@ function( sem,
 
     # EXCERPT FROM `getAnywhere("sem.semmod")`
     heads = from = to = rep(0, n.paths)
+    moderator = rep( -1, n.paths )
     for (p in 1:n.paths) {
       #path = sem:::parse.path(model[p, 1])
       path = parse_path(model[p, 1])
@@ -202,8 +231,16 @@ function( sem,
     }
     missing_vars = setdiff( c(from,to), vars )
     if( length(missing_vars) > 0 ) stop( "Check `build_ram`:", paste0(missing_vars,sep=", ") )
-
     ram = data.frame(matrix(0, nrow=p, ncol=5))
+
+    # ADD LOGIC FOR MODERATOR VARIABLES
+    which_rows = par.names %in% vars
+    if( any(which_rows) ){
+      heads[which_rows] = ifelse( heads[which_rows] == 1, 3, heads[which_rows] )
+      moderator[which_rows] = match( par.names[which_rows], vars )
+      par.names[which_rows] = NA
+    }
+
     pars = na.omit(unique(par.names))
     ram[, 1] = heads
     ram[, 2] = apply(outer(vars, to, "=="), 2, which)
@@ -213,7 +250,8 @@ function( sem,
       ram[, 4] = unlist(lapply(par.nos, function(x) if (length(x)==0){0}else{x}))
     }
     ram[, 5] = startvalues
-    colnames(ram) = c("heads", "to", "from", "parameter", "start")
+    ram[, 6] = moderator
+    colnames(ram) = c("heads", "to", "from", "parameter", "start", "moderator")
     return(ram)
   }
 
@@ -225,6 +263,14 @@ function( sem,
   #  stop("measurement errors using `measurement_error=TRUE` are confounded with `estimate_lambda=TRUE`")
   #}
   # General error checks
+  if( is.null(experiments) ){
+    experiments = list( type = "none" )
+  }else if( experiments$type == "BH" ){
+    if( isFALSE( "phi" %in% colnames(data)) ){
+      stop("`data` must include `phi` if experiments$type = `BH`")
+    }
+  }
+
   if( isFALSE(is(control, "phylosem_control")) ) stop("`control` must be made by `phylosem_control()`")
 
   if( isFALSE(is(tree, "phylo")) ){
@@ -233,9 +279,10 @@ function( sem,
   if( !("edge.length" %in% names(tree)) ){
     stop("`tree` must include `edge.length` slot")
   }
-  familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, "gamma"=4, NA )
-  if( any(is.na(familycode_j)) ) stop("Check `family`")
   if( any(is.nan(as.matrix(data))) ) stop("Please remove `NaN` values from data, presumably switching to `NA` values")
+  if( any(sapply(data, is.factor)) ) stop("Please remove factors from `data`")
+  if( length(tree$tip.label) != Ntip(tree) ) stop("'tree$tip.label' must have same lnegth as the number of tips")
+  if( length(tree$tip.label) != length(unique(tree$tip.label)) ) stop("'tree$tip.label' cannot be contain duplicate values")
 
   #
   SEM_model = tryCatch(
@@ -253,6 +300,15 @@ function( sem,
   }
   RAM = build_ram( SEM_model, colnames(data) )
 
+  # Check for errors in RAM
+  if( any(is.na(as.numeric(RAM[,5])) & (RAM[,4]==0) & (RAM[,1] %in% c(1,2))) ){
+    stop("Some starting value for a fixed parameter is NA.  Please fix")
+  }
+  # Disable moderators for now
+  #if( any(RAM[,1] %in% c(3)) ){
+  #  stop("Moderators not allowed")
+  #}
+
   #
   n_tip = Ntip(tree)
   vroot = n_tip + 1
@@ -261,7 +317,12 @@ function( sem,
   height_v = node.depth.edgelength(tree)
   # seems like length_e + height_v should be equal in an ultrametric tree
   if(vroot %in% edge_ez[,2]) stop("Check for problems")
-  if(any(length_e==0)) stop("`tree` contains an edge with length of zero; please fix")
+  if( estimate_lambda==FALSE ){
+    if(any( length_e==0)) stop("if `estimate_lambda==FALSE`, `tree` cannot contains any edge with length of zero")
+  }
+  if( estimate_lambda==TRUE ){
+    if(any( (length_e==0) & (edge_ez[,2]>n_tip) )) stop("if `estimate_lambda==TRUE`, `tree` cannot contains any interior edge with length of zero")
+  }
 
   # associate each datum with tree
   v_i = match( data_labels, c(tree$tip.label,tree$node.label) )
@@ -269,31 +330,108 @@ function( sem,
     stop("Check that all `data_labels` are present in `c(tree$tip.label,tree$node.label)`")
   }
 
+  # Process `estimate_xbar`
+  if( is.null(estimate_xbar) ){ # is TRUE for estimate_xbar = c()
+    estimate_xbar = na.omit( ifelse(colSums(!is.na(data))==0, NA, colnames(data)) )
+  }else{
+    if( isFALSE(control$quiet) ){
+      if( !all(estimate_xbar %in% colnames(data)) ){
+        warning("Some `estimate_xbar` is not in the column names of `data`")
+      }
+    }
+  }
+
+  # distribution/link
+  build_distributions <-
+  function( variables ){
+
+    # Construct log_sigma based on family
+    remove_last = function(x) x[-length(x)]
+
+    # Fixed values
+    sigma_j = lapply( family, FUN=function(x){
+                       switch( x$family[length(x$family)],
+                         "fixed" = c(),
+                         "gaussian" = NA,
+                         "poisson" = c(),
+                         "binomial" = c(),
+                         "Gamma" = NA,
+                         "categorical" = c()
+                       )} )
+    Nsigma_j = sapply(sigma_j, length)
+    sigmastart_j = remove_last(cumsum(c(0,Nsigma_j)))
+    names(sigmastart_j) = variables
+
+    #
+    family_code = sapply( family, FUN=function(x){
+                       c("fixed" = 0,
+                         "gaussian" = 1,
+                         "binomial" = 2,
+                         "bernoulli" = 2,
+                         "poisson" = 3,
+                         "Gamma" = 4,
+                         "categorical" = 5
+                       )[x$family]} )
+    link_code = sapply( family, FUN=function(x){
+                       c("identity" = 0,
+                         "log" = 1,
+                         "logit" = 2,
+                         "cloglog" = 3,
+                         "mlogit" = 4
+                       )[x$link]} )
+    group = sapply( family, FUN=function(x){
+                       ifelse(is.null(x$group),NA,x$group)} )
+    group = as.numeric(factor(group))
+    group = ifelse( is.na(group), 0, group )
+    out = list(
+      family_code = family_code,
+      link_code = link_code,
+      group = group,
+      Nsigma_j = Nsigma_j,
+      sigmastart_j = sigmastart_j,
+      sigma_j = sigma_j
+    )
+    return(out)
+  }
+  family = family[match(colnames(data), names(family))]
+  distributions = build_distributions( colnames(data) )
+  #familycode_j = sapply( tolower(family), FUN=switch, "fixed"=0, "normal"=1, "norm"=1, "binomial"=2, "binom"=2, "poisson"=3, "pois"=3, "gamma"=4, NA )
+  if( any(is.na(distributions$familycode_j)) ) stop("Check `family`")
+
   #
   if( is.null(tmb_inputs) ){
     # Build data
-    data_list = list( "n_tip" = n_tip,
-                      "edge_ez" = edge_ez - 1,
-                      "length_e" = length_e,
-                      "RAM" = as.matrix(RAM[,1:4]),
-                      "RAMstart" = as.numeric(RAM[,5]),
-                      "estimate_ou" = estimate_ou,
-                      "estimate_lambda" = estimate_lambda,
-                      "estimate_kappa" = estimate_kappa,
-                      "height_v" = height_v,
-                      "y_ij" = as.matrix(data),
-                      "v_i" = v_i - 1,
-                      "familycode_j" = familycode_j )
+    data_list = list(
+      n_tip = n_tip,
+      edge_ez = edge_ez - 1,
+      length_e = length_e,
+      RAM = as.matrix(RAM[,c(1:4,6)]),
+      #RAMstart = as.numeric( subset(RAM, heads %in% c(1,2))[,5] ),
+      RAMstart = as.numeric( RAM[,5] ),
+      estimate_ou = estimate_ou,
+      estimate_lambda = estimate_lambda,
+      estimate_kappa = estimate_kappa,
+      height_v = height_v,
+      y_ij = as.matrix(data),
+      v_i = v_i - 1,
+      familycode_j = distributions$family_code,
+      linkcode_j = distributions$link_code,
+      sigmastart_j = distributions$sigmastart_j,
+      group_j = distributions$group,
+      experiments_type = experiments$type
+    )
 
     # Build parameters
     rmatrix = function(nrow, ncol) matrix(rnorm(nrow*ncol),nrow=nrow,ncol=ncol)
-    parameters_list = list( "beta_z" = rep(0.1, max(RAM[,4])),
-                            "lnsigma_j" = rep(0,ncol(data)),
-                            "lnalpha" = log(1),
-                            "logitlambda" = plogis(2),
-                            "lnkappa" = log(1),
-                            "x_vj" = 0.1 * rmatrix( nrow=nrow(edge_ez)+1, ncol=ncol(data) ),
-                            "xbar_j" = rep(0,ncol(data)) )
+    parameters_list = list(
+      beta_z = rep(0.1, max(RAM[,4])),
+      lnsigma_z = rep(0, sum(distributions$Nsigma_j)),
+      lnalpha = log(1),
+      logitlambda = plogis(2),
+      lnkappa = log(1),
+      x_vj = 0.1 * rmatrix( nrow=nrow(edge_ez)+1, ncol=ncol(data) ),
+      xbar_j = rep(0,ncol(data))
+    )
     # Build map
     map_list = list()
     # Start off map_list$x_vj, which has multiple constraints
@@ -302,13 +440,13 @@ function( sem,
     map_list$x_vj[data_list$n_tip+1,] = ifelse( colSums(!is.na(data))==0, NA, map_list$x_vj[data_list$n_tip+1,] )
 
     # Settings
-    map_list$lnsigma_j = 1:length(parameters_list$lnsigma_j)
+    #map_list$lnsigma_j = 1:length(parameters_list$lnsigma_j)
     for( j in 1:ncol(data)){
       # Turn off SD of measurement error
-      if( familycode_j[j] %in% c(0,2,3) ){
-        map_list$lnsigma_j[j] = NA
+      if( data_list$familycode_j[j] %in% c(0,2,3) ){
+        #map_list$lnsigma_j[j] = NA
       }
-      if( familycode_j[j] == 0 ){
+      if( data_list$familycode_j[j] == 0 ){
         # Fix random-effects for tips at their observed values
         parameters_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), parameters_list$x_vj[v_i,j], data_list$y_ij[,j] )
         map_list$x_vj[v_i,j] = ifelse( is.na(data_list$y_ij[,j]), map_list$x_vj[v_i,j], NA )
@@ -320,7 +458,8 @@ function( sem,
     if( estimate_ou==FALSE ){
       map_list$xbar_j = factor(rep( NA, length(parameters_list$xbar_j) ))
     }else{
-      map_list$xbar_j = factor( ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data)) )
+      #map_list$xbar_j = factor( ifelse(colSums(!is.na(data))==0, NA, 1:ncol(data)) )
+      map_list$xbar_j = factor( ifelse(colnames(data) %in% estimate_xbar, seq_len(ncol(data)), NA) )
     }
     if( estimate_lambda==FALSE ){
       map_list$logitlambda = factor(NA)
@@ -331,32 +470,90 @@ function( sem,
 
     # wrap up map_list$x_vj
     map_list$x_vj = factor(map_list$x_vj)
-    map_list$lnsigma_j = factor(map_list$lnsigma_j)
+    #map_list$lnsigma_j = factor(map_list$lnsigma_j)
 
     # Build random
     random = c("x_vj")
 
+    if( experiments$type == "BH" ){
+      population_data = experiments$population_data
+      time_data = experiments$time_data
+
+      # match populations to tree
+      population_data$v_p = match( population_data[,'species'], c(tree$tip.label,tree$node.label) )
+      population_data = na.omit(population_data)
+      n_p = length(unique(population_data[,'population']))
+
+      # match time-series to population
+      time_data$p_k = match( time_data[,'population'], population_data[,'population'] )
+      time_data = na.omit(time_data)
+
+      # Augment data
+      data_list = c(
+        data_list,
+        list(
+          j_phi = which( colnames(data) == "phi" ),
+          v_p = population_data$v_p,
+          p_k = time_data$p_k,
+          W_kz = as.matrix(time_data[,c('R','S')]),
+          U_pz = log(as.matrix(population_data[,c('SPR0','M')])),
+          variation_in_compensation = experiments$variation_in_compensation,
+          form = experiments$form,
+          SD_logb = experiments$SD_logb
+        )
+      )
+
+      # Augment parameters
+      parameters_list = c(
+        parameters_list,
+        list(
+          logsigmaR_p = rep(0, n_p),
+          logb_p = rep(0, n_p)
+        )
+      )
+      if( isTRUE(experiments$variation_in_compensation) ){
+        parameters_list$phi_p = rep(0, n_p)
+        parameters_list$logsigmaphi = 0
+        random = c(random, "phi_p")
+      }
+    }
+
     # Bundle
-    tmb_inputs = list( map_list=map_list, parameters_list=parameters_list, data_list=data_list, random=random )
+    tmb_inputs = list(
+      map_list = map_list,
+      parameters_list = parameters_list,
+      data_list = data_list,
+      random = random
+    )
   }else{
     if(!all(c() %in% names(tmb_inputs)) ){
       stop("Check contents of `tmb_inputs`")
     }
   }
 
+  # Necessary when using variables as paths
+  TMB::config(tmbad.atomic_sparse_log_determinant = FALSE, DLL = "phylosem")
+
   # Build TMB object
-  obj = MakeADFun( data = tmb_inputs$data_list,
-                        parameters = tmb_inputs$parameters_list,
-                        map = tmb_inputs$map_list,
-                        random = tmb_inputs$random,
-                        DLL = "phylosem" )
+  obj = MakeADFun(
+    data = tmb_inputs$data_list,
+    parameters = tmb_inputs$parameters_list,
+    map = tmb_inputs$map_list,
+    random = tmb_inputs$random,
+    profile = control$profile,
+    DLL = "phylosem"
+  )
   if(control$quiet==FALSE) list_parameters(obj)
-  results = list( "data" = data,
-                  "SEM_model" = SEM_model,
-                  "obj" = obj,
-                  "call" = match.call(),
-                  "tree" = tree,
-                  "tmb_inputs" = tmb_inputs )
+  results = list(
+    data = data,
+    experiments = experiments,
+    data_labels = data_labels,
+    SEM_model = SEM_model,
+    obj = obj,
+    call = match.call(),
+    tree = tree,
+    tmb_inputs = tmb_inputs
+  )
 
   # Export stuff
   if( control$run_model==FALSE ){
@@ -375,12 +572,16 @@ function( sem,
   results$opt = list( "par"=obj$par )
   for( i in seq_len(max(0,control$nlminb_loops)) ){
     if( isFALSE(control$quiet) ) message("Running nlminb_loop #", i)
-    results$opt = nlminb( start = results$opt$par,
-                  objective = obj$fn,
-                  gradient = obj$gr,
-                  control = list( eval.max = control$eval.max,
-                                  iter.max = control$iter.max,
-                                  trace = control$trace ) )
+    results$opt = nlminb(
+      start = results$opt$par,
+      objective = obj$fn,
+      gradient = obj$gr,
+      control = list(
+        eval.max = control$eval.max,
+        iter.max = control$iter.max,
+        trace = control$trace
+      )
+    )
   }
 
   # Newtonsteps
@@ -396,15 +597,21 @@ function( sem,
   if( isTRUE(control$getsd) ){
     if( isFALSE(control$quiet) ) message("Running sdreport")
     Hess_fixed = optimHess( par=results$opt$par, fn=obj$fn, gr=obj$gr )
-    results$sdrep = sdreport( obj,
-                              hessian.fixed=Hess_fixed,
-                              getJointPrecision = control$getJointPrecision )
+    results$sdrep = sdreport(
+      obj,
+      hessian.fixed = Hess_fixed,
+      getJointPrecision = control$getJointPrecision
+    )
+    if( isTRUE(control$getJointPrecision) ){
+      results$L_jointPrecision = Matrix::Cholesky( results$sdrep$jointPrecision, LDL = FALSE )
+    }
   }else{
     results$sdrep = NULL
   }
 
   results$report = obj$report()
   results$parhat = obj$env$parList()
+  results$run_time = Sys.time() - start_time
   class(results) = "phylosem"
   return( results )
 }
@@ -431,6 +638,8 @@ function( sem,
 #' @param quiet Boolean indicating whether to run model printing messages to terminal or not;
 #' @param getJointPrecision whether to get the joint precision matrix.  Passed
 #'        to \code{\link[TMB]{sdreport}}.
+#' @param profile Parameters to profile out of the likelihood (this subset will be
+#'        appended to random with Laplace approximation disabled).
 #'
 #' @return
 #' An S3 object of class "phylosem_control" that specifies detailed model settings,
@@ -446,7 +655,8 @@ function( nlminb_loops = 1,
           getsd = TRUE,
           quiet = FALSE,
           run_model = TRUE,
-          getJointPrecision = FALSE ){
+          getJointPrecision = FALSE,
+          profile = c() ){
 
   # Return
   structure( list(
@@ -458,7 +668,8 @@ function( nlminb_loops = 1,
     getsd = getsd,
     quiet = quiet,
     run_model = run_model,
-    getJointPrecision = getJointPrecision
+    getJointPrecision = getJointPrecision,
+    profile = profile
   ), class = "phylosem_control" )
 }
 
@@ -491,24 +702,49 @@ print.phylosem <- function(x, ...)
 #' @method coef phylosem
 #' @export
 coef.phylosem = function( object, standardized=FALSE, ... ){
+
   beta_z = object$opt$par[names(object$opt$par)=="beta_z"]
-  RAM = object$obj$env$data$RAM
-  if(nrow(RAM) != nrow(object$SEM_model)) stop("Check assumptions")
-  for( i in which(RAM[,1]==1) ){
-    if( standardized==TRUE ){
-      beta_z[i] = beta_z[i] * abs(beta_z[which( RAM[,'from']==RAM[i,'from'] & RAM[,'to']==RAM[i,'from'] )])
-      beta_z[i] = beta_z[i] / abs(beta_z[which( RAM[,'from']==RAM[i,'to'] & RAM[,'to']==RAM[i,'to'] )])
+  if( is.null(object$sdrep) | isTRUE(standardized) ){
+    se_z = NA * beta_z
+  }else{
+    se_z = sqrt(diag(object$sdrep$cov.fixed))[names(object$sdrep$par.fixed)=="beta_z"]
+  }
+
+  # RAM has different length than beta_z
+  RAM_i = object$obj$env$data$RAM
+  if(nrow(RAM_i) != nrow(object$SEM_model)) stop("Check assumptions")
+
+  # Get betas and SEs for length of RAM_i
+  beta_i = beta_z[ifelse(RAM_i[,4]==0, NA, RAM_i[,4])]
+    beta_i = ifelse( is.na(beta_i), as.numeric(object$SEM_model[,3]), beta_i )
+  se_i = se_z[ifelse(RAM_i[,4]==0, NA, RAM_i[,4])]
+
+  # change for standardized values
+  for( i in which(RAM_i[,1]==1) ){
+    if( isTRUE(standardized) ){
+      beta_i[i] = beta_i[i] * abs(beta_i[which( RAM_i[,'from']==RAM_i[i,'from'] & RAM_i[,'to']==RAM_i[i,'from'] )])
+      beta_i[i] = beta_i[i] / abs(beta_i[which( RAM_i[,'from']==RAM_i[i,'to'] & RAM_i[,'to']==RAM_i[i,'to'] )])
     }
   }
+
   # Report variances
-  for( i in which(RAM[,1]==2) ){
-    if( RAM[i,'from'] == RAM[i,'to'] ){
-      beta_z[i] = beta_z[i]^2
+  for( i in which(RAM_i[,1]==2) ){
+    if( RAM_i[i,'from'] == RAM_i[i,'to'] ){
+      beta_i[i] = beta_i[i]^2
+      se_i[i] = NA
     }
   }
-  SEM_params = beta_z[ifelse(RAM[,4]==0, NA, RAM[,4])]
-  SEM_params = ifelse( is.na(SEM_params), as.numeric(object$SEM_model[,3]), SEM_params )
-  return( data.frame(Path=object$SEM_model[,1], Parameter=object$SEM_model[,2], Estimate=SEM_params ) )
+
+  # Compile
+  out = data.frame(
+    Path = object$SEM_model[,1],
+    from = names(object$data)[RAM_i[,'from']],
+    to = names(object$data)[RAM_i[,'to']],
+    Parameter = object$SEM_model[,2],
+    Estimate = beta_i,
+    SE = se_i
+  )
+  return( out )
 }
 
 #' @title Extract Variance-Covariance Matrix
@@ -550,11 +786,14 @@ function( object,
   return( V )
 }
 
-# @title Extract the (marginal) log-likelihood of a phylosem model
-#
-# @return object of class \code{logLik} with attributes
-#   \item{val}{log-likelihood}
-#   \item{df}{number of parameters}
+#' @title Extract the (marginal) log-likelihood of a phylosem model
+#'
+#' @param object Output from \code{phylosem}
+#' @param ... Not used
+#'
+#' @return object of class \code{logLik} with attributes
+#'   \item{val}{log-likelihood}
+#'   \item{df}{number of parameters}
 #' @importFrom stats logLik
 #' @export
 logLik.phylosem <- function(object, ...) {
@@ -636,69 +875,172 @@ summary.phylosem = function( object, ... ){
   return(out)
 }
 
-#' @title predict values for new tip
+#' @title Plot phylosem
 #'
-#' @description Predict phylosem
-#'
-#' @inheritParams phytools::bind.tip
+#' @description Plot from a fitted \code{phylosem} model
 #'
 #' @param x Output from \code{\link{phylosem}}
-#' @param ... passed to \code{\link[phytools]{bind.tip}}
+#' @param y Not used
+#' @param edge_label Whether to plot parameter names, estimated values,
+#'        or estimated values along with stars indicating significance at
+#'        0.05, 0.01, or 0.001 levels (based on two-sided Wald tests)
+#' @param vertices optional charater vector, listing variables to plot
+#'        and subsetting edges to only plot those connecting those vertices
+#' @param keep_twoheaded whether to included two-headed arrows
+#' @param digits integer indicating the number of decimal places to be used
+#' @param style Whether to make a graph using \code{igraph} or \code{ggraph}
+#' @param ... arguments passed to \code{igraph::plot.igraph}
 #'
-#' @return predict new values
+#' @details
+#' This function coerces output from a graph and then plots the graph.
 #'
-#' @method predict phylosem
+#' @return
+#' Invisibly returns the output from \code{igraph::graph_from_data_frame}
+#' which was passed to \code{igraph::plot.igraph} for plotting.
+#'
+#' @method plot phylosem
 #' @export
-#predict.phylosem <-
-#function( x,
-#          tip.label = "new_tip",
-#          edge.length = NULL,
-#          where = NULL,
-#          ... ){
-#
-#  if( is.character(where) ){
-#    where = which( c(x$tree$tip.label,x$tree$node.label) == where )
-#    if(length(where)!=1) stop("`where` not found in `tree$tip.label` or `tree$node.label`")
-#  }
-#
-#  # Return existing prediction OR rebuild
-#  if( where <= Ntip(x$tree) ){
-#    out = x$report$x_vj[where,]
-#  }else{
-#    # Add default edge.length
-#    if(is.null(edge.length)){
-#      if(is.ultrametric(x$tree)){
-#        # node.depth, node.height, node.depth.edgelength
-#        node_depth = node.depth.edgelength(x$tree)
-#        edge_length = x$tree$edge.length
-#        node_edgeout_length = edge_length[ match(1:(Ntip(x$tree)+Nnode(x$tree)),x$tree$edge[,1]) ]
-#        node_and_edgeout_depth = node_depth + ifelse( is.na(node_edgeout_length), 0, node_edgeout_length )
-#        tree_depth = max(node_and_edgeout_depth)
-#        edge.length = tree_depth - node_depth[where]
-#      }else{
-#        stop("Must supply `edge.length`")
-#      }
-#    }
-#
-#    # build new tree
-#    tree_new = phytools::bind.tip( x$tree,
-#                                   tip.label = tip.label,
-#                                   edge.length = edge.length,
-#                                   where = where,
-#                                   position = 0,
-#                                   ... )
-#
-#    # refit
-#    Args = as.list(x$call[-1])
-#    Args$tree = tree_new
-#    Args$startpar = x$opt$par
-#    Args$quiet = TRUE
-#    psem_new = do.call("phylosem", Args )
-#
-#    # extract
-#    out = psem_new$report$x_vj[ which(psem_new$tree$tip.label == tip.label), ]
-#  }
-#
-#  names(out) = colnames(x$data)
-#  return( out )
-#}
+plot.phylosem <-
+function( x,
+          y,
+          edge_label = c("name","value"),
+          digits = 2,
+          vertices = NULL,
+          keep_twoheaded = FALSE,
+          style = c("ggraph","igraph"),
+          ... ){
+
+  style = match.arg(style)
+  edge_label = match.arg(edge_label)
+
+  # Check Suggested packages at run time
+  if( !requireNamespace("igraph", quietly = TRUE) ){
+    stop("Please install package 'igraph' to use `plot.phylosem`", call. = FALSE)
+  }
+  if( style == "ggraph" ){
+    if( !requireNamespace("ggraph", quietly = TRUE) || !requireNamespace("ggplot2", quietly = TRUE) ){
+      stop("Please install packages 'ggraph' and 'ggplot2' to use `style = 'ggraph'`, or use `style = 'igraph'`", call. = FALSE)
+    }
+  }
+
+  # Extract stuff
+  out = coef(x)
+
+  # Format inputs
+  DF = data.frame(
+    from = out$from,
+    to = out$to,
+    name = out$Parameter,
+    estimate = out$Estimate,
+    round_estimate = round(out$Estimate, digits=digits),
+    SE = out$SE,
+    wald_pvalue = (1 - pchisq( (out$Estimate / out$SE)^2, df = 1 ))
+  )
+  if( isFALSE(keep_twoheaded) ){
+    DF = DF[ which(DF$from != DF$to), ]
+  }
+
+  if( edge_label=="value"){
+    DF$label = DF$round_estimate
+  }else if( edge_label=="name"){
+    DF$label = DF$name
+  }
+
+  if( is.null(vertices) ){
+    vertices = union( out$to, out$from )
+  }else{
+    DF = DF[ which((DF$from %in% vertices) & (DF$to %in% vertices)), ]
+  }
+
+  # Create and plotgraph
+  pg <- igraph::graph_from_data_frame(
+    d = DF,
+    directed = TRUE,
+    vertices = data.frame(vertices)
+  )
+  out = list( DF = DF, pg = pg )
+
+  # Two plot styles
+  if(style=="igraph"){
+    coords = igraph::layout_(pg, igraph::with_sugiyama())
+    plot( pg, layout = coords, ... )
+  }
+  if(style=="ggraph"){
+    # Modified from phylopath::plot.DAG
+    algorithm = 'sugiyama'
+    manual_layout = NULL
+    text_size = 6
+    box_x = 12
+    box_y = 8
+    edge_width = 1
+    curvature = 0
+    rotation = 0
+    flip_x = FALSE
+    flip_y = FALSE
+    label = DF$label
+    l = ggraph::create_layout(pg, 'igraph', algorithm = algorithm)
+    arrow = grid::arrow(type = 'closed', 18, grid::unit(15, 'points'))
+    gplot = ggraph::ggraph(l) +
+      ggraph::geom_edge_arc(
+        ggplot2::aes(label = label),
+        strength = curvature, arrow = arrow, edge_width = edge_width,
+        end_cap = ggraph::rectangle(box_x, box_y, 'mm'),
+        start_cap = ggraph::rectangle(box_x, box_y, 'mm')
+      ) +
+      ggraph::geom_node_text(ggplot2::aes_(label = ~name), size = text_size) +
+      ggraph::theme_graph(base_family = 'sans')
+    plot(gplot)
+    out$gplot = gplot
+  }
+  return(invisible(out))
+}
+
+#' @title Calculate total effects
+#'
+#' @description
+#' Calculate a data frame of total effects representing the
+#' estimated effect of a change in any variable on every other variable.
+#'
+#' @param object Output from \code{\link{phylosem}}
+#'
+#' @details
+#' Total effects are taken from the Leontief matrix \eqn{\mathbf{(I-P)^{-1}}},
+#' where \eqn{\mathbf{P}} is the path matrix across variables.
+#' \eqn{\mathbf{(I-P)}^{-1} \mathbf{\delta} }
+#' calculates the effect of a perturbation represented by vector \eqn{\mathbf{\delta}}
+#'
+#' @return
+#' A data frame listing the time-lag (lag), variable that is undergoing some
+#' exogenous change (from), and the variable being impacted (to), along with the
+#' total effect (total_effect) including direct and indirect pathways, and the
+#' partial "direct" effect (direct_effect)
+#'
+#' @export
+total_effect <-
+function( object ){
+
+  # Checks
+  checkmate::assert_class( object, "phylosem" )
+
+  # Extract path matrix
+  P_kk = object$report$Rho_jj
+
+  # Define innovations
+  IminusRho_kk = diag(nrow(P_kk)) - P_kk
+
+  # Calculate partial effect
+  Partial_kj = P_kk
+
+  # Calculate total effect using sparse matrices
+  Total_kj = solve(IminusRho_kk)
+
+  # Make into data frame
+  out = expand.grid(
+    "to" = colnames(object$data),
+    "from" = colnames(object$data)
+  )
+  out$total_effect = as.vector(Total_kj)
+  out$direct_effect = as.vector(Partial_kj)
+  out$indirect_effect = out$total_effect - out$direct_effect
+  return(out)
+}

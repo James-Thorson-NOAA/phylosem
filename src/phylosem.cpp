@@ -96,6 +96,19 @@
 //}
 
 template<class Type>
+vector<Type> get_nonzero_elements( Eigen::SparseMatrix<Type> M ) {
+    std::vector<Type> values;
+
+    for (int k = 0; k < M.outerSize(); ++k) {
+        for (typename Eigen::SparseMatrix<Type>::InnerIterator it(M, k); it; ++it) {
+            values.push_back(it.value());
+        }
+    }
+
+    return values;  // Return vector of nonzero values if needed
+}
+
+template<class Type>
 Type objective_function<Type>::operator() ()
 {
   //using namespace Eigen;
@@ -115,10 +128,14 @@ Type objective_function<Type>::operator() ()
   DATA_UPDATE( y_ij ); // Experiment with cAIC
   DATA_IVECTOR( v_i );
   DATA_IVECTOR( familycode_j );
+  DATA_IVECTOR( linkcode_j );
+  DATA_IVECTOR( sigmastart_j );
+  DATA_IVECTOR( group_j );
+  DATA_STRING( experiments_type );
 
   // Parameters
   PARAMETER_VECTOR( beta_z );
-  PARAMETER_VECTOR( lnsigma_j );
+  PARAMETER_VECTOR( lnsigma_z );
   PARAMETER( lnalpha );
   PARAMETER( logitlambda );
   PARAMETER( lnkappa );
@@ -130,37 +147,72 @@ Type objective_function<Type>::operator() ()
   int n_v = x_vj.rows();      // vertices = edges + 1
   int n_j = x_vj.cols();      // variables
   int n_i = y_ij.rows();      // data
+  int n_g = group_j.maxCoeff();
+  // n_p = number of populations ... optional
+  // n_k = number of experimental observations ... optional
   int vparent, vchild;
   int vroot = n_tip;          // vroot = n_tip+1 - 1, where latter -1 is converting from R to CPP indexing
 
   // JNLL
   Type jnll = 0;
-  vector<Type> jnll_v( n_v );
-  matrix<Type> jnll_ij( n_i, n_j );
+  vector<Type> jnll_v( n_v );         // Likelihood by phylogenetic edge
+  matrix<Type> jnll_ij( n_i, n_j );   // Likelihood by sample in y_ij (excluding base level for grouped categories)
+  matrix<Type> jnll_ig( n_i, n_g );   // Likelihood for base level per group of factor levels
   jnll_ij.setZero();
   jnll_v.setZero();
+  jnll_ig.setZero();
 
   // Global vars
   Type alpha = exp( lnalpha );
   Type lambda = invlogit( logitlambda );
   Type kappa = exp( lnkappa );
   matrix<Type> yhat_ij( n_i, n_j );
+  matrix<Type> mu_vj( n_v, n_j );
   vector<Type> rho_v( n_v );
   vector<Type> var_v( n_v );
-  vector<Type> sigma_j( n_j );
-  sigma_j = exp( lnsigma_j );
-  matrix<Type> Vtmp( n_j, n_j );
+  vector<Type> sigma_z = exp( lnsigma_z );
   matrix<Type> eps_vj( n_v, n_j );
+  matrix<Type> sumpred_vg( n_v, n_g );
+  matrix<Type> sumobs_ig( n_i, n_g );
   eps_vj.setZero();
+  sumpred_vg.setZero();
+  sumobs_ig.setZero();
 
-  // Assemble Evolutionary covariance
-  matrix<Type> V_jj( n_j, n_j );
-  matrix<Type> L_jj(n_j, n_j);
-  matrix<Type> Rho_jj(n_j, n_j);
-  matrix<Type> Gamma_jj(n_j, n_j);
-  matrix<Type> I_jj( n_j, n_j );
-  Rho_jj.setZero();
-  Gamma_jj.setZero();
+  //// Assemble Evolutionary covariance
+  //matrix<Type> Vtmp( n_j, n_j );
+  //matrix<Type> V_jj( n_j, n_j );
+  //matrix<Type> L_jj(n_j, n_j);
+  //matrix<Type> Rho_jj(n_j, n_j);
+  //matrix<Type> Gamma_jj(n_j, n_j);
+  //matrix<Type> I_jj( n_j, n_j );
+  //Rho_jj.setZero();
+  //Gamma_jj.setZero();
+  //I_jj.setIdentity();
+  //Type tmp;
+  //for(int r=0; r<RAM.rows(); r++){
+  //  // Extract estimated or fixed value
+  //  if(RAM(r,3)>=1){
+  //    tmp = beta_z(RAM(r,3)-1);
+  //  }else{
+  //    tmp = RAMstart(r);
+  //  }
+  //  // Assign to proper matrix
+  //  if(RAM(r,0)==1){
+  //    Rho_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+  //  }else{
+  //    Gamma_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+  //  }
+  //}
+  //L_jj = I_jj - Rho_jj;
+  //L_jj = atomic::matinv( L_jj );
+  //L_jj = L_jj * Gamma_jj;
+  //V_jj = L_jj * L_jj.transpose();
+
+  //// Assemble Evolutionary covariance
+  Eigen::SparseMatrix<Type> Qtmp( n_j, n_j );
+  Eigen::SparseMatrix<Type> Rho_jj(n_j, n_j);
+  Eigen::SparseMatrix<Type> Gamma_jj(n_j, n_j);
+  Eigen::SparseMatrix<Type> I_jj( n_j, n_j );
   I_jj.setIdentity();
   Type tmp;
   for(int r=0; r<RAM.rows(); r++){
@@ -172,28 +224,42 @@ Type objective_function<Type>::operator() ()
     }
     // Assign to proper matrix
     if(RAM(r,0)==1){
-      Rho_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
-    }else{
-      Gamma_jj( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+      Rho_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = tmp;
+    }
+    if(RAM(r,0)==2){
+      Gamma_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = tmp; // Cholesky of covariance, so -Inf to Inf;
+    }
+    if(RAM(r,0)==3){
+      // done by edge later
     }
   }
-  L_jj = I_jj - Rho_jj;
-  L_jj = atomic::matinv( L_jj );
-  L_jj = L_jj * Gamma_jj;
-  V_jj = L_jj * L_jj.transpose();
+  Eigen::SparseMatrix<Type> V_jj = Gamma_jj.transpose() * Gamma_jj;
+  matrix<Type> Vinv_jj = tmbutils::invertSparseMatrix( V_jj );
+  Eigen::SparseMatrix<Type> Vinv2_jj = asSparseMatrix( Vinv_jj );
 
   // Distribution of OU evolution -- Root
   // Correlation between i and parent(i) as distance -> INF
+  // Load in moderators for root
+  for(int r=0; r<RAM.rows(); r++){
+    if(RAM(r,0)==3){
+      Rho_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = x_vj( vroot, RAM(r,4)-1 );
+    }
+  }
+  Eigen::SparseMatrix<Type> IminusRho_jj = I_jj - Rho_jj;
+  Eigen::SparseMatrix<Type> Q_jj = IminusRho_jj.transpose() * Vinv2_jj * IminusRho_jj;
+
   if( estimate_ou==1 ){
     rho_v(vroot) = 0;
     // SD of Ornstein-Uhlenbeck process as distance -> INF
     var_v(vroot) = Type(1.0) / (2*alpha);
     // conditional probability
-    Vtmp = V_jj * var_v(vroot);
     for(int j=0; j<n_j; j++){
       eps_vj(vroot,j) = x_vj(vroot,j) - xbar_j(j);
     }
-    jnll_v(vroot) = MVNORM(Vtmp)( eps_vj.row(vroot) );
+    //Vtmp = V_jj * var_v(vroot);
+    //jnll_v(vroot) = MVNORM(Vtmp)( eps_vj.row(vroot) );
+    Qtmp = Q_jj / var_v(vroot);
+    jnll_v(vroot) = GMRF(Qtmp)( eps_vj.row(vroot) );
     // Optionally fix the root at the mean
   }else{
     rho_v(vroot) = NAN;
@@ -203,6 +269,16 @@ Type objective_function<Type>::operator() ()
   for(int e=0; e<n_e; e++){ // PARALLEL_REGION
     vchild = edge_ez(e,1);
     vparent = edge_ez(e,0);
+
+    // Load in moderators
+    for(int r=0; r<RAM.rows(); r++){
+      if(RAM(r,0)==3){
+        Rho_jj.coeffRef( RAM(r,1)-1, RAM(r,2)-1 ) = 0.5 * ( x_vj( vchild, RAM(r,4)-1 ) + x_vj( vparent, RAM(r,4)-1 ) );
+      }
+    }
+    IminusRho_jj = I_jj - Rho_jj;
+    Q_jj = IminusRho_jj.transpose() * Vinv2_jj * IminusRho_jj;
+
     if( estimate_ou==1 ){
       // Correlation between i and parent(i)
       rho_v(vchild) = exp( -alpha * pow(length_e(e),kappa) );
@@ -215,52 +291,213 @@ Type objective_function<Type>::operator() ()
     // conditional probability
     if( estimate_lambda==1 ){
       if( vchild < n_tip ){
-        Vtmp = V_jj * ( lambda*var_v(vchild) + (1-lambda)*height_v(vchild) );
+        //Vtmp = V_jj * ( lambda*var_v(vchild) + (1-lambda)*height_v(vchild) );
+        Qtmp = Q_jj / ( lambda*var_v(vchild) + (1-lambda)*height_v(vchild) );
       }else{
-        Vtmp = V_jj * ( lambda*var_v(vchild) );
+        //Vtmp = V_jj * ( lambda*var_v(vchild) );
+        Qtmp = Q_jj / ( lambda*var_v(vchild) );
       }
     }else{
-      Vtmp = V_jj * var_v(vchild);
+      //Vtmp = V_jj * var_v(vchild);
+      Qtmp = Q_jj / var_v(vchild);
     }
     //xtmp_j = (x_vj.row(vchild).array()-xbar_j) - rho_v(vchild)*(x_vj.row(vparent).array()-xbar_j);
     for(int j=0; j<n_j; j++){
       eps_vj(vchild,j) = (x_vj(vchild,j)-xbar_j(j)) - rho_v(vchild)*(x_vj(vparent,j)-xbar_j(j));
     }
-    jnll_v(vchild) = MVNORM(Vtmp)( eps_vj.row(vchild) );
+    //jnll_v(vchild) = MVNORM(Vtmp)( eps_vj.row(vchild) );
+    jnll_v(vchild) = GMRF(Qtmp)( eps_vj.row(vchild) );
   }
   jnll += jnll_v.sum();
 
   // Distribution for data
+  for(int v=0; v<n_v; v++){
+    for(int j=0; j<n_j; j++){
+      // Link function
+      if( linkcode_j(j)==0 ){
+        // identity link
+        mu_vj(v,j) = x_vj(v,j);
+      }
+      if( linkcode_j(j)==1 ){
+        // log link
+        mu_vj(v,j) = exp(x_vj(v,j));
+      }
+      if( linkcode_j(j)==2 ){
+        // logit link
+        mu_vj(v,j) = invlogit(x_vj(v,j));
+      }
+      if( linkcode_j(j)==3 ){
+        // cloglog link
+        mu_vj(v,j) = Type(1.0) - exp( -1.0 * exp(x_vj(v,j)) );
+      }
+      if( linkcode_j(j)==4 ){
+        // multivariate-logit link
+        mu_vj(v,j) = exp(x_vj(v,j));
+        sumpred_vg(v,group_j(j)-1) += exp(x_vj(v,j));
+      }
+    }
+    // Divide by total across levels for each group for categorical traits
+    for(int j=0; j<n_j; j++){
+      if( linkcode_j(j)==4 ){
+        // multivariate-logit link
+        mu_vj(v,j) /= 1.0 + sumpred_vg(v,group_j(j)-1) ;
+      }
+    }
+  }
+
+  // Distribution for data
   for(int i=0; i<n_i; i++){
-  for(int j=0; j<n_j; j++){ // PARALLEL_REGION
-    if( !R_IsNA(asDouble(y_ij(i,j))) ){
-      // familycode = 0 :  don't include likelihood
-      if( familycode_j(j)==0 ){
-        yhat_ij(i,j) = x_vj(v_i(i),j);
-      }
+  for(int j=0; j<n_j; j++){
+    yhat_ij(i,j) = mu_vj(v_i(i),j);
+    // Likelihood
+    //if( familycode_j(j)==0 ){
+    // familycode = 0 :  don't include likelihood
+    //}
+    if( familycode_j(j)==1 ){
       // familycode = 1 :  normal
-      if( familycode_j(j)==1 ){
-        yhat_ij(i,j) = x_vj(v_i(i),j);
-        jnll_ij(i,j) -= dnorm( y_ij(i,j), yhat_ij(i,j), sigma_j(j), true );
+      if(R_FINITE(asDouble(y_ij(i,j)))){
+        jnll_ij(i,j) -= dnorm( y_ij(i,j), mu_vj(v_i(i),j), sigma_z(sigmastart_j(j)), true );
       }
+    }
+    if( familycode_j(j)==2 ){
       // familycode = 2 :  binomial
-      if( familycode_j(j)==2 ){
-        yhat_ij(i,j) = invlogit(x_vj(v_i(i),j));
-        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), yhat_ij(i,j), true );
+      if(R_FINITE(asDouble(y_ij(i,j)))){
+        jnll_ij(i,j) -= dbinom( y_ij(i,j), Type(1.0), mu_vj(v_i(i),j), true );
       }
+    }
+    if( familycode_j(j)==3 ){
       // familycode = 3 :  Poisson
-      if( familycode_j(j)==3 ){
-        yhat_ij(i,j) = exp(x_vj(v_i(i),j));
-        jnll_ij(i,j) -= dpois( y_ij(i,j), yhat_ij(i,j), true );
+      if(R_FINITE(asDouble(y_ij(i,j)))){
+        jnll_ij(i,j) -= dpois( y_ij(i,j), mu_vj(v_i(i),j), true );
       }
+    }
+    if( familycode_j(j)==4 ){
       // familycode = 4 :  Gamma:   shape = 1/CV^2; scale = mean*CV^2
-      if( familycode_j(j)==4 ){
-        yhat_ij(i,j) = exp(x_vj(v_i(i),j));
-        jnll_ij(i,j) -= dgamma( y_ij(i,j), pow(sigma_j(j),-2), yhat_ij(i,j)*pow(sigma_j(j),2), true );
+      if(R_FINITE(asDouble(y_ij(i,j)))){
+        jnll_ij(i,j) -= dgamma( y_ij(i,j), pow(sigma_z(sigmastart_j(j)),-2), mu_vj(v_i(i),j)*pow(sigma_z(sigmastart_j(j)),2), true );
+      }
+    }
+    if( familycode_j(j)==5 ){
+      // familycode = 5 :  Categorical
+      if(R_FINITE(asDouble(y_ij(i,j)))){
+        if(y_ij(i,j) > 0){
+          jnll_ij(i,j) -= log(mu_vj(v_i(i),j));
+          sumobs_ig(i,group_j(j)-1) += y_ij(i,j);
+        }
+      }else{
+        sumobs_ig(i,group_j(j)-1) = NAN;
       }
     }
   }}
   jnll += jnll_ij.sum();
+
+  // Likelihood for base level per group
+  for(int i=0; i<n_i; i++){
+  for(int g=0; g<n_g; g++){
+    if(R_FINITE(asDouble(sumobs_ig(i,g)))){
+      if( sumobs_ig(i,g) == 0 ){    // Include term only if this is the level for the factor
+        jnll_ig(i,g) -= log( 1.0 / (1.0 + sumpred_vg(v_i(i),g)));
+      }
+    }
+  }}
+  jnll += jnll_ig.sum();
+
+  if( experiments_type == "BH" ){
+    // Extra data
+    DATA_INTEGER( j_phi );  // R-index for column of phi
+    DATA_IVECTOR( v_p );    // R-index for vertex for each population
+    DATA_IVECTOR( p_k );    // R-index for population for each SR sample
+    DATA_MATRIX( W_kz ); // W_kz.col(0)=R;   W_kz.col(1)=S
+    DATA_MATRIX( U_pz ); // U_pz.col(0)=log_SPR0;   U_pz.col(1)=log_M
+    DATA_INTEGER( variation_in_compensation ); // 0: no variation.  1: yes variation
+    DATA_STRING( form ); // "MAER" (maximum annual excess replacement) or "MLER" (maximum lifetime excess replacement)
+    DATA_SCALAR( SD_logb );
+    int n_k = W_kz.rows();   // Number of SR samples
+    int n_p = U_pz.rows();   // Number of populations
+
+    // Extra parameters
+    PARAMETER_VECTOR( logsigmaR_p );
+    PARAMETER_VECTOR( logb_p );
+
+    // Denominator, to convert annual to lifetime if necessary
+    vector<Type> denom_p( n_p );
+    for( int p=0; p < n_p; p++ ){
+      if( form == "MAER" ){
+        denom_p(p) = 1.0 - exp(-1 * exp(U_pz(p,1)));
+      }else{
+        denom_p(p) = 1.0;
+      }
+    }
+
+    // Stock-specific variation in maximum lifetime replacement rate
+    // Using 1 + value to ensure MLRR > 1, matching FishLife v2 (i.e., Thorson 2020)
+    vector<Type> MLRR_p( n_p );
+    if( variation_in_compensation == 1 ){
+      PARAMETER_VECTOR( phi_p );   // Stock-specific variation in density dependence, log(MAER) or log(MLER)
+      PARAMETER( logsigmaphi );
+      for( int p=0; p < n_p; p++ ){
+        jnll -= dnorm( phi_p(p), x_vj( v_p(p)-1, j_phi-1 ), exp(logsigmaphi), true);
+        MLRR_p(p) = 1.0 + exp(phi_p(p)) / denom_p(p);
+      }
+    }else{
+      for( int p=0; p < n_p; p++ ){
+        MLRR_p(p) = 1.0 + exp(x_vj( v_p(p)-1, j_phi-1 )) / denom_p(p);
+      }
+    }
+
+    // convert to slope at the origin and steepness
+    vector<Type> loga_p( n_p );
+    vector<Type> h_p( n_p );
+    for( int p=0; p < n_p; p++ ){
+      loga_p(p) = log(MLRR_p(p)) - U_pz(p,0);
+      h_p(p) = MLRR_p(p) / (4.0 + MLRR_p(p));
+    }
+
+    vector<Type> jnll_k( n_k );
+    jnll_k.setZero();
+    vector<Type> logmu_k( n_k );
+    vector<Type> sigmaR_p = exp(logsigmaR_p);
+    vector<Type> b_p = exp(logb_p);
+    for( int k=0; k < n_k; k++ ){
+      logmu_k(k) = loga_p(p_k(k)-1) + log( W_kz(k,1) / (1.0 + W_kz(k,1) / b_p(p_k(k)-1) ) );
+      jnll_k(k) -= dnorm( log(W_kz(k,0)), logmu_k(k), sigmaR_p(p_k(k)-1), true );
+    }
+    jnll += jnll_k.sum();
+    // Include dnorm(logb, 0, 10) penalty to match Thorson 2020
+    if( R_FINITE(asDouble(SD_logb)) ){
+      jnll -= sum( dnorm(logb_p, 0.0, SD_logb, true) );
+    }
+    REPORT( logmu_k );
+    REPORT( MLRR_p );
+    REPORT( h_p );
+    REPORT( jnll_k );
+
+    // Calculate CV in logmu_k by population
+    vector<Type> sum_logmu_p(n_p);
+    vector<Type> num_logmu_p(n_p);
+    vector<Type> var_logmu_p(n_p);
+    sum_logmu_p.setZero();
+    num_logmu_p.setZero();
+    var_logmu_p.setZero();
+    // Calculate mean of logmu_k by population
+    for( int k=0; k<n_k; k++ ){
+      num_logmu_p(p_k(k)-1) += 1;
+      sum_logmu_p(p_k(k)-1) += logmu_k(k);
+    }
+    vector<Type> mean_logmu_p = sum_logmu_p / num_logmu_p;
+    // Calculate SD of logmu_k by population
+    for( int k=0; k<n_k; k++ ){
+      var_logmu_p(p_k(k)-1) += pow( logmu_k(k) - mean_logmu_p(p_k(k)-1), 2 );
+    }
+    vector<Type> sd_logmu_p = pow( var_logmu_p, 0.5 );
+
+    // Penalize low variance in predictive recruitment
+    //Type Pen_lowvar_lnRhat = 1;    // Value used in Thorson-2020
+    //if( Pen_lowvar_lnRhat > 0 ){
+    //  jnll -= Pen_lowvar_lnRhat * sum(log(sd_logmu_p));
+    //}
+    REPORT( sd_logmu_p );
+  }
 
   // Calculate intercept
   vector<Type> root_j = x_vj.row(vroot);
@@ -270,20 +507,35 @@ Type objective_function<Type>::operator() ()
   REPORT( intercept_j );
   ADREPORT( intercept_j );
 
+  // Extract elements of sparse matrix
+  //vector<Type> nonzeroRho_z( Rho_jj.nonZeros() );
+  //for( int z = 0; z<Rho_jj.nonZeros(); z++ ){
+  //  nonzeroRho_z(z) = Rho_jj.coeffRef(z);
+  //}
+  vector<Type> nonzeroRho_z = get_nonzero_elements( Rho_jj );
+
   // Reporting
   REPORT( rho_v );
   REPORT( var_v );
-  REPORT( V_jj );
+  //REPORT( V_jj );
+  REPORT( Q_jj );
   REPORT( Rho_jj );
   REPORT( Gamma_jj );
   REPORT( jnll );
   REPORT( jnll_v );
   REPORT( jnll_ij );
+  if( n_g > 0 ){
+    REPORT( jnll_ig );
+    REPORT( sumobs_ig );
+    REPORT( sumpred_vg );
+  }
   REPORT( alpha );
   REPORT( x_vj );
   REPORT( yhat_ij );  // Testing for cAIC
+  REPORT( mu_vj );  // response-scale predictor (including categorical traits)
   REPORT( eps_vj );
-  ADREPORT( Rho_jj );
+//  ADREPORT( Rho_jj );
+  ADREPORT( nonzeroRho_z );
   ADREPORT( alpha );
   ADREPORT( lambda );
   ADREPORT( kappa );

@@ -11,10 +11,11 @@
 
 \item{cut_off}{threshold where any model with delta-AIC greater than this value is excluded from average}
 
-\item{avg_method}{see \code{\link[phylopath]{average_DAGs}}}
+\item{avg_method}{see \code{phylopath::average_DAGs}}
 }
 \value{
-Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}} after conversion to format from \code{\link[phylopath]{est_DAG}}
+Returns an AIC-weighted average of fitted models from \code{\link{compare_phylosem}}
+after conversion to format from \code{phylopath::est_DAG}
 }
 \description{
 Choose model

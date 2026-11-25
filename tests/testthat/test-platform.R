@@ -23,14 +23,14 @@ test_that("phylosem example is working ", {
 
   # Convert and plot using phylopath
   as_fitted_DAG(psem)
-  as_sem(psem)
+  #as_sem(psem)
   as_phylo4d(psem)
 
   #
   logLik(psem)
   AIC(psem)
   summary(psem)
-  print(sem)
+  print(psem)
   coef(psem)
   vcov(psem, which="fixed")
   vcov(psem, which="random")
@@ -53,9 +53,11 @@ test_that("phylosem example is working ", {
     NL -> DD, p4
     DD -> RS, p1
   "
-  myset = compare_phylosem( sem_set = list("one"=model,"two"=model2),
-          data = rhino[,c("BM","NL","DD","RS","LS")],
-          tree = rhino_tree )
+  myset = compare_phylosem(
+    sem_set = list("one"=model,"two"=model2),
+    data = rhino[,c("BM","NL","DD","RS","LS")],
+    tree = rhino_tree
+  )
   best(myset)
   choice(myset,1)
   average(myset)
