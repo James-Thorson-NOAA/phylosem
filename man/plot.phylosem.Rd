@@ -33,11 +33,11 @@ and subsetting edges to only plot those connecting those vertices}
 
 \item{style}{Whether to make a graph using \code{igraph} or \code{ggraph}}
 
-\item{...}{arguments passed to \code{\link[igraph]{plot.igraph}}}
+\item{...}{arguments passed to \code{igraph::plot.igraph}}
 }
 \value{
-Invisibly returns the output from \code{\link[igraph]{graph_from_data_frame}}
-which was passed to \code{\link[igraph]{plot.igraph}} for plotting.
+Invisibly returns the output from \code{igraph::graph_from_data_frame}
+which was passed to \code{igraph::plot.igraph} for plotting.
 }
 \description{
 Plot from a fitted \code{phylosem} model

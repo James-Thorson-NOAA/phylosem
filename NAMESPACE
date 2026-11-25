@@ -48,15 +48,6 @@ importFrom(checkmate,
   assertSubset,
   assert_class
 )
-importFrom(ggplot2,aes)
-importFrom(ggraph,
-  create_layout,
-  geom_edge_arc,
-  geom_node_text,
-  ggraph,
-  rectangle,
-  theme_graph
-)
 importFrom(graphics,
   abline,
   legend,
@@ -64,20 +55,7 @@ importFrom(graphics,
   matplot,
   points
 )
-importFrom(igraph,
-  clusters,
-  graph.adjacency,
-  graph_from_data_frame,
-  layout_,
-  plot.igraph,
-  with_sugiyama
-)
 importFrom(methods,is)
-importFrom(phylobase,phylo4d)
-importFrom(phylopath,
-  average_DAGs,
-  coef_plot
-)
 importFrom(stats,
   AIC,
   Gamma,

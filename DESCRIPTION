@@ -19,9 +19,6 @@ Imports:
     ape,
     methods,
     checkmate,
-    ggplot2,
-    igraph,
-    ggraph,
     Matrix,
     viridisLite,
     graphics
@@ -29,6 +26,9 @@ Depends:
     TMB,
     R (>= 4.0.0),
 Suggests:
+    ggplot2,
+    igraph,
+    ggraph,
     phylobase,
     phylopath,
     semPlot,

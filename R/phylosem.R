@@ -72,14 +72,9 @@
 #' @importFrom stats AIC na.omit nlminb optimHess plogis pnorm rnorm
 #' @importFrom stats rpois gaussian poisson binomial Gamma coef dnorm pchisq
 #' @importFrom checkmate assertNumeric assertCharacter assertSubset assert_class
-#' @importFrom phylopath average_DAGs coef_plot
-#' @importFrom phylobase phylo4d
 #' @importFrom ape Ntip node.depth.edgelength rtree reorder.phylo
 #' @importFrom TMB compile dynlib MakeADFun sdreport
 #' @importFrom methods is
-#' @importFrom igraph plot.igraph graph_from_data_frame with_sugiyama layout_ graph.adjacency clusters
-#' @importFrom ggraph ggraph geom_edge_arc create_layout rectangle geom_node_text theme_graph
-#' @importFrom ggplot2 aes
 #' @importFrom Matrix sparseMatrix solve Cholesky crossprod
 #' @importFrom viridisLite viridis
 #' @importFrom graphics abline legend lines matplot points
@@ -199,6 +194,13 @@ function( sem,
           estimate_xbar = NULL,
           experiments = NULL,
           control = phylosem_control() ){
+
+  # MOVING TO SUGGESTS
+  # @importFrom phylopath average_DAGs coef_plot
+  # @importFrom phylobase phylo4d
+  # @importFrom igraph plot.igraph graph_from_data_frame with_sugiyama layout_ graph.adjacency clusters
+  # @importFrom ggraph ggraph geom_edge_arc create_layout rectangle geom_node_text theme_graph
+  # @importFrom ggplot2 aes
 
   start_time = Sys.time()
   # Function that converts SEM model to a RAM, see `?sem` for more context
@@ -881,14 +883,14 @@ summary.phylosem = function( object, ... ){
 #' @param keep_twoheaded whether to included two-headed arrows
 #' @param digits integer indicating the number of decimal places to be used
 #' @param style Whether to make a graph using \code{igraph} or \code{ggraph}
-#' @param ... arguments passed to \code{\link[igraph]{plot.igraph}}
+#' @param ... arguments passed to \code{igraph::plot.igraph}
 #'
 #' @details
 #' This function coerces output from a graph and then plots the graph.
 #'
 #' @return
-#' Invisibly returns the output from \code{\link[igraph]{graph_from_data_frame}}
-#' which was passed to \code{\link[igraph]{plot.igraph}} for plotting.
+#' Invisibly returns the output from \code{igraph::graph_from_data_frame}
+#' which was passed to \code{igraph::plot.igraph} for plotting.
 #'
 #' @method plot phylosem
 #' @export
@@ -905,26 +907,29 @@ function( x,
   style = match.arg(style)
   edge_label = match.arg(edge_label)
 
+  # Check Suggested packages at run time
+  if( !requireNamespace("igraph", quietly = TRUE) ){
+    stop("Please install package 'igraph' to use `plot.phylosem`", call. = FALSE)
+  }
+  if( style == "ggraph" ){
+    if( !requireNamespace("ggraph", quietly = TRUE) || !requireNamespace("ggplot2", quietly = TRUE) ){
+      stop("Please install packages 'ggraph' and 'ggplot2' to use `style = 'ggraph'`, or use `style = 'igraph'`", call. = FALSE)
+    }
+  }
+
   # Extract stuff
   out = coef(x)
 
   # Format inputs
   DF = data.frame(
-    from = out$from, 
-    to = out$to, 
-    name = out$Parameter, 
+    from = out$from,
+    to = out$to,
+    name = out$Parameter,
     estimate = out$Estimate,
     round_estimate = round(out$Estimate, digits=digits),
     SE = out$SE,
     wald_pvalue = (1 - pchisq( (out$Estimate / out$SE)^2, df = 1 ))
   )
-  #if( edge_label=="value"){
-  #  DF$label = 
-  #}
-  #if( edge_label == "value_and_stars" ){
-  #  DF$label = round(out$Estimate, digits=digits)
-  #  add_stars = cut(out[,'p_value'], breaks=c(1,0.05,0.01,0.001,0) )
-  #  add_stars = c("***","**","*","")[as.numeric(add_stars)]
   #  DF$label = paste0(DF$label, add_stars)
   #}
   if( isFALSE(keep_twoheaded) ){
@@ -944,16 +949,16 @@ function( x,
   }
 
   # Create and plotgraph
-  pg <- graph_from_data_frame( 
+  pg <- igraph::graph_from_data_frame(
     d = DF,
     directed = TRUE,
-    vertices = data.frame(vertices) 
+    vertices = data.frame(vertices)
   )
   out = list( DF = DF, pg = pg )
 
   # Two plot styles
   if(style=="igraph"){
-    coords = layout_(pg, with_sugiyama())
+    coords = igraph::layout_(pg, igraph::with_sugiyama())
     plot( pg, layout = coords, ... )
   }
   if(style=="ggraph"){
@@ -973,7 +978,7 @@ function( x,
     arrow = grid::arrow(type = 'closed', 18, grid::unit(15, 'points'))
     gplot = ggraph::ggraph(l) +
       ggraph::geom_edge_arc(
-        aes(label = label),
+        ggplot2::aes(label = label),
         strength = curvature, arrow = arrow, edge_width = edge_width,
         end_cap = ggraph::rectangle(box_x, box_y, 'mm'),
         start_cap = ggraph::rectangle(box_x, box_y, 'mm')
